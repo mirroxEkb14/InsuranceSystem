@@ -1,0 +1,66 @@
+﻿<Window x:Class="InsuranceSystemDemo.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        xmlns:local="clr-namespace:InsuranceSystemDemo"
+        Title="Welcome!" Height="400" Width="600"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize">
+    <Window.Background>
+        <ImageBrush ImageSource="Resources/symbolic_umbrella_covering_a_f.png" Stretch="UniformToFill" />
+    </Window.Background>
+
+    <Grid>
+        <!-- Background for the text -->
+        <Border Background="#80000000"
+                CornerRadius="10"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                Margin="50,0,50,5"
+                Height="40"
+                Opacity="0">
+            <Border.Triggers>
+                <EventTrigger RoutedEvent="Loaded">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <!-- Fade-in Animation for Border -->
+                            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                             From="0" To="1"
+                                             Duration="0:0:1" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Border.Triggers>
+
+            <!-- Animating Text -->
+            <TextBlock Text="Welcome to Insurance System"
+                       FontSize="20"
+                       FontWeight="Bold"
+                       Foreground="White"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       TextAlignment="Center"
+                       Opacity="0">
+            <TextBlock.Triggers>
+                <EventTrigger RoutedEvent="Loaded">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <!-- Fade-in Animation -->
+                            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                             From="0" To="1"
+                                             Duration="0:0:1" />
+                            <!-- Vertical Animation (Slide Up) -->
+                            <ThicknessAnimation Storyboard.TargetProperty="Margin"
+                                                From="0,0,0,30"
+                                                To="5,0,5,5"
+                                                Duration="0:0:1" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </TextBlock.Triggers>
+        </TextBlock>
+        </Border>
+    </Grid>
+</Window>
