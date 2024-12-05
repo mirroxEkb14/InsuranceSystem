@@ -9,7 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\a_photorealistic_serene_and_professional_horizontal_background.png" />
     <None Remove="Resources\calming_tones_and_abstract_elements_symboliz.png" />
+    <None Remove="Resources\insurance_company_the_image_sho.png" />
     <None Remove="Resources\symbolic_element_of_safety.png" />
     <None Remove="Resources\symbolic_umbrella_covering_a_f.png" />
   </ItemGroup>
@@ -24,7 +26,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Resources\a_photorealistic_serene_and_professional_horizontal_background.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\calming_tones_and_abstract_elements_symboliz.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\insurance_company_the_image_sho.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\symbolic_element_of_safety.png">

@@ -10,4 +10,3 @@ public class ActivePolicies
     public string? ClientName { get; set; }
     public int PolicyCount { get; set; }
 }
-

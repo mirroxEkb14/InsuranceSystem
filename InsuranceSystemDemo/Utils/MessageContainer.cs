@@ -11,6 +11,11 @@ public static class MessageContainer
     public const string AdminRole = "Admin";
     public const string UserRole = "User";
 
+    public const string KlientiTableName = "Klienti";
+    public const string PoliciesTableName = "ActivePolicies";
+
+    public const string AddFunctionalityNotSupported = "Add functionality is not supported for this table.";
+
     public const string ConnectionStringKey = "ConnectionStrings:DefaultConnection";
     public const string LoginUsernameHint = "Enter your username here...";
     public const string LoginUsernameErrorMessage = "Please enter a valid username.";
@@ -31,6 +36,21 @@ public static class MessageContainer
     public const string RegisterExistingEmail = "Such an email already exists.";
     public const string RegisterExistingPhone = "Such a phone number already exists.";
     public const string RegisterSuccess = "Registration successful!";
+
+    public const string AddClientRequiredFirstName = "First Name is required.";
+    public const string AddClientRequiredLastName = "Last Name is required.";
+    public const string AddClientRequiredEmail = "Email is required.";
+    public const string AddClientInvalidEmail = "Invalid email format.";
+    public const string AddClientRequiredPhone = "Phone number is required.";
+    public const string AddClientRequiredStreet = "Street is required.";
+    public const string AddClientRequiredCity = "City is required.";
+    public const string AddClientRequiredCountry = "Country is required.";
+    public const string AddClientRequiredHouseNumber = "House Number is required.";
+    public const string AddClientRequiredPostalCode = "Postal Code is required.";
+    public const string AddClientSuccess = "Client added successfully!";
+
+    public const string DataGridCellEditingSaveChanges = "Do you want to save the changes?";
+    public const string DataGridCellEditingChangesSaved = "Changes saved successfully.";
 
     public static string GetUnexpectedErrorMessage(string errorMessage = "no message available") =>
         string.Format(UnexpectedErrorMessage, errorMessage);

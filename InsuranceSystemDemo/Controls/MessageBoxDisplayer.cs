@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using InsuranceSystemDemo.Utils;
+using System.Windows;
 
 namespace InsuranceSystemDemo.Controls;
 
@@ -12,4 +13,10 @@ public static class MessageBoxDisplayer
 
     public static void ShowInfo(string message, string title = "Information") =>
         MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Information);
+
+    public static MessageBoxResult ShowDataGridCellEditingSaveChanges() =>
+        MessageBox.Show(MessageContainer.DataGridCellEditingSaveChanges,
+            "Save Changes",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Question);
 }

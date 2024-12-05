@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿#region Imports
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using InsuranceSystemDemo.Controls;
 using InsuranceSystemDemo.Database;
@@ -7,15 +8,14 @@ using InsuranceSystemDemo.Utils;
 using InsuranceSystemDemo.Views;
 using Microsoft.EntityFrameworkCore;
 using System.Windows;
+#endregion
 
 namespace InsuranceSystemDemo.ViewModels;
 
 public partial class LoginViewModel : ObservableObject
 {
-    [ObservableProperty]
-    private string? _username;
-    [ObservableProperty]
-    private string? _password;
+    [ObservableProperty] private string? _username;
+    [ObservableProperty] private string? _password;
 
     public LoginViewModel()
     {
@@ -109,13 +109,13 @@ public partial class LoginViewModel : ObservableObject
         {
             if (user.Role == MessageContainer.AdminRole)
             {
-                var mainWindow = new MainWindow();
-                mainWindow.Show();
+                var dashboardView = new DashboardView();
+                dashboardView.Show();
             }
             else if (user.Role == MessageContainer.UserRole)
             {
-                var userDashboard = new UserDashboardView();
-                userDashboard.Show();
+                var dashboardView = new DashboardView();
+                dashboardView.Show();
             }
             else
             {

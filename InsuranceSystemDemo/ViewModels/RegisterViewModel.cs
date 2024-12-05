@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿#region Imports
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using InsuranceSystemDemo.Controls;
 using InsuranceSystemDemo.Database;
@@ -7,6 +8,7 @@ using InsuranceSystemDemo.Utils;
 using InsuranceSystemDemo.Views;
 using Microsoft.EntityFrameworkCore;
 using System.Windows;
+#endregion
 
 namespace InsuranceSystemDemo.ViewModels;
 
@@ -21,13 +23,10 @@ public partial class RegisterViewModel : ObservableObject
     [ObservableProperty] private string? _confirmPassword;
     [ObservableProperty] private string? _errorMessage;
 
-    public RegisterViewModel() { }
-
     [RelayCommand]
     public void Register()
     {
         ErrorMessage = null;
-
         ErrorMessage = RegisterValidator.ValidateUsername(Username)
                        ?? RegisterValidator.ValidateFirstName(FirstName)
                        ?? RegisterValidator.ValidateLastName(LastName)
