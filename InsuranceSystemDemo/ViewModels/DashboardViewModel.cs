@@ -3,12 +3,15 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using InsuranceSystemDemo.Controls;
 using InsuranceSystemDemo.Database;
+using InsuranceSystemDemo.Models;
 using InsuranceSystemDemo.Utils;
 using InsuranceSystemDemo.Views;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+
+
 #endregion
 
 namespace InsuranceSystemDemo.ViewModels;
@@ -19,6 +22,10 @@ public partial class DashboardViewModel : ObservableObject
     [ObservableProperty] private string? _searchQuery;
     [ObservableProperty] private string _currentTableName;
 
+    [ObservableProperty]
+    private object? selectedItem;
+
+
     private readonly DatabaseContext _context;
 
     public DashboardViewModel(DatabaseContext context)
@@ -27,6 +34,8 @@ public partial class DashboardViewModel : ObservableObject
         CurrentTableName = MessageContainer.KlientiTableName;
         SwitchToKlientiCommand.Execute(null);
     }
+
+
 
     //
     // Summary:
@@ -142,11 +151,88 @@ public partial class DashboardViewModel : ObservableObject
         SwitchToCurrentTable();
     }
 
-    [RelayCommand]
+[RelayCommand]
     public void DeleteItem()
     {
+        if (CurrentTableName != MessageContainer.KlientiTableName)
+        {
+            MessageBox.Show("Deletion is not supported for this type.");
+            return;
+        }
+
         
+        var selectedClient = SelectedItem as Klient;
+        if (selectedClient == null)
+        {
+            MessageBox.Show("Please select a client to delete.");
+            return;
+        }
+
+        var result = MessageBox.Show(
+            $"Are you sure you want to delete the client '{selectedClient.Jmeno} {selectedClient.Prijmeni}'?",
+            "Confirm Deletion",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning
+        );
+
+        if (result != MessageBoxResult.Yes)
+        {
+            return;
+        }
+
+        using (var transaction = _context.Database.BeginTransaction())
+        {
+            try
+            {
+                var clientToRemove = _context.Klienti
+                    .Include(k => k.Adresa)
+                    .FirstOrDefault(k => k.IdKlientu == selectedClient.IdKlientu);
+
+                if (clientToRemove == null)
+                {
+                    MessageBox.Show("Client not found in the database.");
+                    return;
+                }
+
+                var addressId = clientToRemove.Adresa?.IdAdresa;
+
+                _context.Klienti.Remove(clientToRemove);
+                _context.SaveChanges();
+
+                if (addressId != null)
+                {
+                    
+                    var addressUsageCount = _context.Klienti.Count(k => k.AdresaId == addressId);
+                    if (addressUsageCount == 0)
+                    {
+                        var addressToRemove = _context.Adresy.Find(addressId);
+                        if (addressToRemove != null)
+                        {
+                            _context.Adresy.Remove(addressToRemove);
+                            _context.SaveChanges();
+                        }
+                    }
+                }
+
+                transaction.Commit();
+
+                MessageBox.Show("Client and associated address were successfully deleted.");
+                SwitchToCurrentTable();
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                var detailedMessage = ex.InnerException?.Message ?? ex.Message;
+                MessageBox.Show($"An error occurred while deleting the client: {detailedMessage}");
+            }
+        }
     }
+
+
+
+
+
+
 
     [RelayCommand]
     public void Logout()

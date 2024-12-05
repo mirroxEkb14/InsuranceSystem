@@ -53,14 +53,16 @@
 
         <!-- DataGrid -->
         <DataGrid x:Name="MainDataGrid" 
-                  AutoGenerateColumns="True"
-                  CanUserAddRows="False"
-                  Margin="10"
-                  SelectionMode="Single" 
-                  Grid.Row="2"
-                  ItemsSource="{Binding CurrentTableData}"
-                  AutoGeneratingColumn="MainDataGrid_AutoGeneratingColumn"
-                  CellEditEnding="MainDataGrid_CellEditEnding">
+          AutoGenerateColumns="True"
+          CanUserAddRows="False"
+          Margin="10"
+          SelectionMode="Single"
+          Grid.Row="2"
+          ItemsSource="{Binding CurrentTableData}"
+          SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+          RowEditEnding="MainDataGrid_RowEditEnding"
+          BeginningEdit="MainDataGrid_BeginningEdit"
+          AutoGeneratingColumn="MainDataGrid_AutoGeneratingColumn">
         </DataGrid>
 
         <!-- Action Buttons -->

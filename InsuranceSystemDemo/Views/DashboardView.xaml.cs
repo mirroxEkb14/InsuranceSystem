@@ -12,6 +12,9 @@ namespace InsuranceSystemDemo.Views;
 
 public partial class DashboardView : Window
 {
+    private object? _originalItem = null; 
+    private bool _isProcessingEdit = false; 
+
     //
     // Summary:
     //     Creates «DatabaseContext» options.
@@ -35,15 +38,41 @@ public partial class DashboardView : Window
     }
 
     #region DataGrid Cell Editing Logic
-    private void MainDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+
+    private void MainDataGrid_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
     {
-        if (e.EditAction == DataGridEditAction.Commit)
+        
+        _originalItem = CloneItem(e.Row.Item);
+    }
+
+    private void MainDataGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
+    {
+        if (_isProcessingEdit) return;
+
+        try
         {
-            var result = MessageBoxDisplayer.ShowDataGridCellEditingSaveChanges();
-            if (result == MessageBoxResult.Yes)
-                SaveChanges(e.Row.Item);
-            else
-                ((DashboardViewModel)DataContext).SwitchToCurrentTable();
+            _isProcessingEdit = true;
+
+            if (e.EditAction == DataGridEditAction.Commit)
+            {
+                
+                MainDataGrid.CommitEdit(DataGridEditingUnit.Row, true);
+
+                // Спрашиваем пользователя, хочет ли он сохранить изменения
+                var result = MessageBoxDisplayer.ShowDataGridCellEditingSaveChanges();
+                if (result == MessageBoxResult.Yes)
+                {
+                    SaveChanges(e.Row.Item); 
+                }
+                else
+                {
+                    RestoreOriginalItem(e.Row.Item); 
+                }
+            }
+        }
+        finally
+        {
+            _isProcessingEdit = false;
         }
     }
 
@@ -62,5 +91,43 @@ public partial class DashboardView : Window
             ((DashboardViewModel)DataContext).SwitchToCurrentTable();
         }
     }
+
+  
+    private void RestoreOriginalItem(object currentItem)
+    {
+        if (_originalItem is Klient originalKlient && currentItem is Klient editedKlient)
+        {
+            editedKlient.IdKlientu = originalKlient.IdKlientu;
+            editedKlient.Jmeno = originalKlient.Jmeno;
+            editedKlient.Prijmeni = originalKlient.Prijmeni;
+            editedKlient.Email = originalKlient.Email;
+            editedKlient.Telefon = originalKlient.Telefon;
+            editedKlient.AdresaId = originalKlient.AdresaId;
+            editedKlient.Adresa = originalKlient.Adresa;
+
+           
+            MainDataGrid.Items.Refresh();
+        }
+    }
+
+  
+    private object CloneItem(object item)
+    {
+        return item switch
+        {
+            Klient klient => new Klient
+            {
+                IdKlientu = klient.IdKlientu,
+                Jmeno = klient.Jmeno,
+                Prijmeni = klient.Prijmeni,
+                Email = klient.Email,
+                Telefon = klient.Telefon,
+                AdresaId = klient.AdresaId,
+                Adresa = klient.Adresa
+            },
+            _ => null
+        };
+    }
+
     #endregion
 }

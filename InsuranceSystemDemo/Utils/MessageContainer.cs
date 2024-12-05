@@ -52,6 +52,10 @@ public static class MessageContainer
     public const string DataGridCellEditingSaveChanges = "Do you want to save the changes?";
     public const string DataGridCellEditingChangesSaved = "Changes saved successfully.";
 
+
+
+    public const string DeleteFunctionalityNotSupported = "Delete functionality is not supported for this table.";
+
     public static string GetUnexpectedErrorMessage(string errorMessage = "no message available") =>
         string.Format(UnexpectedErrorMessage, errorMessage);
 }
