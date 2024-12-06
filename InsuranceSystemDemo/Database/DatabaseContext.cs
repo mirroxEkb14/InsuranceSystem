@@ -54,6 +54,37 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
             entity.Property(e => e.Role)
                 .HasColumnName("ROLE");
         });
+
+        modelBuilder.Entity<Adresa>(entity =>
+        {
+            entity.HasKey(a => a.IdAdresa);
+            entity.ToTable("ADRESA");
+        });
+
+        modelBuilder.Entity<Klient>(entity =>
+        {
+            entity.ToTable("KLIENT");
+            entity.HasKey(k => k.IdKlientu);
+            entity.Property(k => k.Jmeno)
+                .HasColumnName("JMENO")
+                .IsRequired();
+            entity.Property(k => k.Prijmeni)
+                .HasColumnName("PRIJMENI")
+                .IsRequired();
+            entity.Property(k => k.Email)
+                .HasColumnName("EMAIL");
+            entity.Property(k => k.Telefon)
+                .HasColumnName("TELEFON");
+            entity.Property(k => k.DatumNarozeni)
+                .HasColumnName("DATUM_NAROZENI");
+
+            entity
+                .HasOne(k => k.Adresa)
+                .WithMany()
+                .HasForeignKey(k => k.AdresaId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
         modelBuilder.Entity<ActivePolicies>().HasNoKey();
         modelBuilder.Entity<ClientContacts>().HasNoKey();
         modelBuilder.Entity<UploadedDocuments>().HasNoKey();
