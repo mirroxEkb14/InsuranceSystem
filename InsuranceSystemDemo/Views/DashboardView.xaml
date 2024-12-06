@@ -59,8 +59,8 @@
           ItemsSource="{Binding CurrentTableData}"
           SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
           RowEditEnding="MainDataGrid_RowEditEnding"
-          BeginningEdit="MainDataGrid_BeginningEdit"
-          AutoGeneratingColumn="MainDataGrid_AutoGeneratingColumn">
+          BeginningEdit="MainDataGrid_BeginningEdit">
+
         </DataGrid>
 
         <!-- Action Buttons -->

@@ -5,6 +5,8 @@ using InsuranceSystemDemo.Controls;
 using InsuranceSystemDemo.Database;
 using InsuranceSystemDemo.Models;
 using InsuranceSystemDemo.Utils;
+using Microsoft.EntityFrameworkCore;
+using Oracle.ManagedDataAccess.Client;
 using System.Windows;
 #endregion
 
@@ -29,13 +31,12 @@ public partial class AddAddressViewModel : ObservableObject
 
         try
         {
-            var newAddress = CreateAddress();
-
             using var context = new DatabaseContext(DatabaseContextGetter.GetDatabaseContextOptions());
-            context.Adresy.Add(newAddress);
-            context.SaveChanges();
 
-            MessageBoxDisplayer.ShowInfo(MessageContainer.AddAddressSuccess);
+            
+            var newAddressId = AddAddressUsingProcedure(context);
+
+            MessageBoxDisplayer.ShowInfo($"Address successfully added");
             Cancel();
         }
         catch (Exception ex)
@@ -52,7 +53,7 @@ public partial class AddAddressViewModel : ObservableObject
             .SingleOrDefault(w => w.DataContext == this)?.Close();
     }
 
-    #region Provate Helper Methods
+    #region Private Helper Methods
     private bool ValidateInputs()
     {
         if (string.IsNullOrWhiteSpace(Ulice))
@@ -93,14 +94,32 @@ public partial class AddAddressViewModel : ObservableObject
         return true;
     }
 
-    private Adresa CreateAddress() =>
-        new()
+    private int AddAddressUsingProcedure(DatabaseContext context)
+    {
+        // Параметр для возврата ID нового адреса
+        var addressIdParam = new OracleParameter("p_id_adresa", OracleDbType.Int32)
         {
-            Ulice = Ulice,
-            Mesto = Mesto,
-            Stat = Stat,
-            CisloPopisne = CisloPopisne,
-            PSC = Psc
+            Direction = System.Data.ParameterDirection.Output
         };
+
+        // Выполнение процедуры
+        context.Database.ExecuteSqlRaw(
+            "BEGIN ADD_ADDRESS(:p_ulice, :p_mesto, :p_stat, :p_cislo_popisne, :p_psc, :p_id_adresa); END;",
+            new OracleParameter("p_ulice", Ulice),
+            new OracleParameter("p_mesto", Mesto),
+            new OracleParameter("p_stat", Stat),
+            new OracleParameter("p_cislo_popisne", Convert.ToInt32(CisloPopisne)),
+            new OracleParameter("p_psc", Convert.ToInt32(Psc)),
+            addressIdParam
+        );
+
+        // Преобразование возвращённого значения в int
+        if (addressIdParam.Value is Oracle.ManagedDataAccess.Types.OracleDecimal oracleDecimal)
+        {
+            return oracleDecimal.ToInt32();
+        }
+
+        throw new Exception("Failed to retrieve the new address ID.");
+    }
     #endregion
 }

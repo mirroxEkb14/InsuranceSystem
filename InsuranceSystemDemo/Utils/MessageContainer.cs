@@ -55,7 +55,6 @@ public static class MessageContainer
 
 
 
-    public const string DeleteFunctionalityNotSupported = "Delete functionality is not supported for this table.";
 
     public const string AddAddressRequiredStreet = "Street is required.";
     public const string AddAddressRequiredCity = "City is required.";

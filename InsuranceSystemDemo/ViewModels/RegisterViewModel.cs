@@ -7,6 +7,8 @@ using InsuranceSystemDemo.Models;
 using InsuranceSystemDemo.Utils;
 using InsuranceSystemDemo.Views;
 using Microsoft.EntityFrameworkCore;
+using Oracle.ManagedDataAccess.Client; 
+using System.Data;
 using System.Windows;
 #endregion
 
@@ -93,19 +95,36 @@ public partial class RegisterViewModel : ObservableObject
     {
         string hashedPassword = PasswordHasher.HashPassword(Password!);
 
-        var newUser = new User
+        
+        var userIdParam = new OracleParameter("p_user_id", OracleDbType.Int32)
         {
-            Username = Username,
-            Password = hashedPassword,
-            Role = MessageContainer.UserRole,
-            FirstName = FirstName,
-            LastName = LastName,
-            Email = Email,
-            Phone = Phone
+            Direction = ParameterDirection.Output
         };
 
-        context.Users.Add(newUser);
-        context.SaveChanges();
+       
+        context.Database.ExecuteSqlRaw(
+            "BEGIN ADDUSER(:p_username, :p_password, :p_role, :p_first_name, :p_last_name, :p_email, :p_phone, :p_user_id); END;",
+            new OracleParameter("p_username", Username),
+            new OracleParameter("p_password", hashedPassword),
+            new OracleParameter("p_role", MessageContainer.UserRole), // Роль
+            new OracleParameter("p_first_name", FirstName),
+            new OracleParameter("p_last_name", LastName),
+            new OracleParameter("p_email", Email),
+            new OracleParameter("p_phone", Phone),
+            userIdParam
+        );
+
+        
+        if (userIdParam.Value != DBNull.Value)
+        {
+            var oracleDecimal = (Oracle.ManagedDataAccess.Types.OracleDecimal)userIdParam.Value;
+            int newUserId = oracleDecimal.ToInt32();
+            //MessageBoxDisplayer.ShowInfo($"New user ID: {newUserId}");
+        }
+        else
+        {
+            throw new Exception("Failed to create user: ID was not returned.");
+        }
     }
 
     private void RedirectToLoginView()

@@ -1,133 +1,166 @@
 ﻿#region Imports
+using CommunityToolkit.Mvvm.ComponentModel;
 using InsuranceSystemDemo.Controls;
 using InsuranceSystemDemo.Database;
 using InsuranceSystemDemo.Models;
 using InsuranceSystemDemo.Utils;
 using InsuranceSystemDemo.ViewModels;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 #endregion
 
-namespace InsuranceSystemDemo.Views;
-
-public partial class DashboardView : Window
+namespace InsuranceSystemDemo.Views
 {
-    private object? _originalItem = null; 
-    private bool _isProcessingEdit = false; 
-
-    //
-    // Summary:
-    //     Creates «DatabaseContext» options.
-    //     Sets the «DataContext» with the passed parameter.
-    public DashboardView()
+    public partial class DashboardView : Window
     {
-        InitializeComponent();
+        private object? _originalItem;
+        private bool _isProcessingEdit = false;
 
-        var options = DatabaseContextGetter.GetDatabaseContextOptions();
-        var context = new DatabaseContext(options);
-        DataContext = new DashboardViewModel(context);
-    }
-
-    //
-    // Summary:
-    //     Prevents generating useless columns such as the «Adresa» column for the «Klienti» table.
-    private void MainDataGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
-    {
-        if (e.PropertyName == "Adresa")
-            e.Cancel = true;
-    }
-
-    #region DataGrid Cell Editing Logic
-
-    private void MainDataGrid_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
-    {
-        
-        _originalItem = CloneItem(e.Row.Item);
-    }
-
-    private void MainDataGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
-    {
-        if (_isProcessingEdit) return;
-
-        try
+        public DashboardView()
         {
-            _isProcessingEdit = true;
+            InitializeComponent();
 
-            if (e.EditAction == DataGridEditAction.Commit)
+            var options = DatabaseContextGetter.GetDatabaseContextOptions();
+            var context = new DatabaseContext(options);
+            DataContext = new DashboardViewModel(context);
+        }
+
+        private void MainDataGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        {
+            if (e.PropertyName == "AdresaId" || e.PropertyName == "IdKlientu" || e.PropertyName == "Adresa" || e.PropertyName == "IdAdresa")
             {
-                
-                MainDataGrid.CommitEdit(DataGridEditingUnit.Row, true);
-
-                // Спрашиваем пользователя, хочет ли он сохранить изменения
-                var result = MessageBoxDisplayer.ShowDataGridCellEditingSaveChanges();
-                if (result == MessageBoxResult.Yes)
-                {
-                    SaveChanges(e.Row.Item); 
-                }
-                else
-                {
-                    RestoreOriginalItem(e.Row.Item); 
-                }
+                e.Cancel = true;
             }
         }
-        finally
-        {
-            _isProcessingEdit = false;
-        }
-    }
 
-    private void SaveChanges(object editedItem)
-    {
-        try
+        private void MainDataGrid_LoadingRow(object sender, DataGridRowEventArgs e)
         {
-            using var context = new DatabaseContext(DatabaseContextGetter.GetDatabaseContextOptions());
-            context.Klienti.Update((Klient)editedItem);
-            context.SaveChanges();
-            MessageBoxDisplayer.ShowInfo(MessageContainer.DataGridCellEditingChangesSaved);
+            e.Row.Header = (e.Row.GetIndex() + 1).ToString();
         }
-        catch (Exception ex)
+
+        #region DataGrid Cell Editing Logic
+
+        private void MainDataGrid_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
         {
-            MessageBoxDisplayer.ShowError(MessageContainer.GetUnexpectedErrorMessage(ex.Message));
-            ((DashboardViewModel)DataContext).SwitchToCurrentTable();
+            _originalItem = CloneItem(e.Row.Item);
         }
-    }
 
-  
-    private void RestoreOriginalItem(object currentItem)
-    {
-        if (_originalItem is Klient originalKlient && currentItem is Klient editedKlient)
+        private void MainDataGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
         {
-            editedKlient.IdKlientu = originalKlient.IdKlientu;
-            editedKlient.Jmeno = originalKlient.Jmeno;
-            editedKlient.Prijmeni = originalKlient.Prijmeni;
-            editedKlient.Email = originalKlient.Email;
-            editedKlient.Telefon = originalKlient.Telefon;
-            editedKlient.AdresaId = originalKlient.AdresaId;
-            editedKlient.Adresa = originalKlient.Adresa;
+            if (_isProcessingEdit) return;
 
-           
-            MainDataGrid.Items.Refresh();
-        }
-    }
-
-  
-    private object CloneItem(object item)
-    {
-        return item switch
-        {
-            Klient klient => new Klient
+            try
             {
-                IdKlientu = klient.IdKlientu,
-                Jmeno = klient.Jmeno,
-                Prijmeni = klient.Prijmeni,
-                Email = klient.Email,
-                Telefon = klient.Telefon,
-                AdresaId = klient.AdresaId,
-                Adresa = klient.Adresa
-            },
-            _ => null
-        };
-    }
+                _isProcessingEdit = true;
 
-    #endregion
+                if (e.EditAction == DataGridEditAction.Commit)
+                {
+                    MainDataGrid.CommitEdit(DataGridEditingUnit.Row, true);
+
+                    var result = MessageBoxDisplayer.ShowDataGridCellEditingSaveChanges();
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        SaveChanges(e.Row.Item); 
+                    }
+                    else
+                    {
+                        RestoreOriginalItem(e.Row.Item);
+                    }
+                }
+            }
+            finally
+            {
+                _isProcessingEdit = false;
+            }
+        }
+
+
+        private void SaveChanges(object editedItem)
+        {
+            try
+            {
+                using var context = new DatabaseContext(DatabaseContextGetter.GetDatabaseContextOptions());
+
+                if (editedItem is Klient klient)
+                {
+                    context.Klienti.Update(klient);
+                }
+                else if (editedItem is Adresa adresa)
+                {
+                    context.Adresy.Update(adresa);
+                }
+
+                context.SaveChanges();
+                MessageBoxDisplayer.ShowInfo(MessageContainer.DataGridCellEditingChangesSaved);
+            }
+            catch (Exception ex)
+            {
+                MessageBoxDisplayer.ShowError(MessageContainer.GetUnexpectedErrorMessage(ex.Message));
+                ((DashboardViewModel)DataContext).SwitchToCurrentTable();
+            }
+        }
+
+        private void RestoreOriginalItem(object currentItem)
+        {
+            if (_originalItem is Klient originalKlient && currentItem is Klient editedKlient)
+            {
+              
+                editedKlient.IdKlientu = originalKlient.IdKlientu;
+                editedKlient.Jmeno = originalKlient.Jmeno;
+                editedKlient.Prijmeni = originalKlient.Prijmeni;
+                editedKlient.Email = originalKlient.Email;
+                editedKlient.Telefon = originalKlient.Telefon;
+                editedKlient.AdresaId = originalKlient.AdresaId;
+                editedKlient.Adresa = originalKlient.Adresa;
+            }
+            else if (_originalItem is Adresa originalAdresa && currentItem is Adresa editedAdresa)
+            {
+               
+                editedAdresa.IdAdresa = originalAdresa.IdAdresa;
+                editedAdresa.Ulice = originalAdresa.Ulice;
+                editedAdresa.Mesto = originalAdresa.Mesto;
+                editedAdresa.Stat = originalAdresa.Stat;
+                editedAdresa.CisloPopisne = originalAdresa.CisloPopisne;
+                editedAdresa.PSC = originalAdresa.PSC;
+            }
+
+     
+     ((DashboardViewModel)DataContext).SwitchToCurrentTable();
+        }
+
+
+
+        private object CloneItem(object item)
+        {
+            if (item is Klient klient)
+            {
+                return new Klient
+                {
+                    IdKlientu = klient.IdKlientu,
+                    Jmeno = klient.Jmeno,
+                    Prijmeni = klient.Prijmeni,
+                    Email = klient.Email,
+                    Telefon = klient.Telefon,
+                    AdresaId = klient.AdresaId,
+                    Adresa = klient.Adresa
+                };
+            }
+            else if (item is Adresa adresa)
+            {
+                return new Adresa
+                {
+                    IdAdresa = adresa.IdAdresa,
+                    Ulice = adresa.Ulice,
+                    Mesto = adresa.Mesto,
+                    Stat = adresa.Stat,
+                    CisloPopisne = adresa.CisloPopisne,
+                    PSC = adresa.PSC
+                };
+            }
+            throw new ArgumentException("Unsupported type for cloning");
+        }
+
+        #endregion
+    }
 }

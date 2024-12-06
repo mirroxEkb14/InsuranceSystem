@@ -160,80 +160,92 @@ public partial class DashboardViewModel : ObservableObject
         SwitchToCurrentTable();
     }
 
-[RelayCommand]
+    [RelayCommand]
     public void DeleteItem()
     {
-        if (CurrentTableName != MessageContainer.KlientiTableName)
+        if (SelectedItem == null)
         {
-            MessageBox.Show("Deletion is not supported for this type.");
+            MessageBox.Show("Please select an item to delete.");
             return;
         }
 
-        
-        var selectedClient = SelectedItem as Klient;
-        if (selectedClient == null)
+        if (SelectedItem is Klient selectedClient)
         {
-            MessageBox.Show("Please select a client to delete.");
-            return;
-        }
+            var confirmationMessage = $"Are you sure you want to delete the client {selectedClient.Jmeno} {selectedClient.Prijmeni}?";
 
-        var result = MessageBox.Show(
-            $"Are you sure you want to delete the client '{selectedClient.Jmeno} {selectedClient.Prijmeni}'?",
-            "Confirm Deletion",
-            MessageBoxButton.YesNo,
-            MessageBoxImage.Warning
-        );
+            var result = MessageBox.Show(
+                confirmationMessage,
+                "Confirm Deletion",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning
+            );
 
-        if (result != MessageBoxResult.Yes)
-        {
-            return;
-        }
-
-        using (var transaction = _context.Database.BeginTransaction())
-        {
-            try
+            if (result != MessageBoxResult.Yes)
             {
-                var clientToRemove = _context.Klienti
-                    .Include(k => k.Adresa)
-                    .FirstOrDefault(k => k.IdKlientu == selectedClient.IdKlientu);
-
-                if (clientToRemove == null)
-                {
-                    MessageBox.Show("Client not found in the database.");
-                    return;
-                }
-
-                var addressId = clientToRemove.Adresa?.IdAdresa;
-
-                _context.Klienti.Remove(clientToRemove);
-                _context.SaveChanges();
-
-                if (addressId != null)
-                {
-                    
-                    var addressUsageCount = _context.Klienti.Count(k => k.AdresaId == addressId);
-                    if (addressUsageCount == 0)
-                    {
-                        var addressToRemove = _context.Adresy.Find(addressId);
-                        if (addressToRemove != null)
-                        {
-                            _context.Adresy.Remove(addressToRemove);
-                            _context.SaveChanges();
-                        }
-                    }
-                }
-
-                transaction.Commit();
-
-                MessageBox.Show("Client and associated address were successfully deleted.");
-                SwitchToCurrentTable();
+                return;
             }
-            catch (Exception ex)
+
+            using (var transaction = _context.Database.BeginTransaction())
             {
-                transaction.Rollback();
-                var detailedMessage = ex.InnerException?.Message ?? ex.Message;
-                MessageBox.Show($"An error occurred while deleting the client: {detailedMessage}");
+                try
+                {
+                    var clientIdParam = new Oracle.ManagedDataAccess.Client.OracleParameter("p_id", selectedClient.IdKlientu);
+
+                    _context.Database.ExecuteSqlRaw("BEGIN DELETE_CLIENT(:p_id); END;", clientIdParam);
+
+                    transaction.Commit();
+
+                    MessageBox.Show($"Client {selectedClient.Jmeno} {selectedClient.Prijmeni} was successfully deleted.");
+                    SwitchToCurrentTable();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    var detailedMessage = ex.InnerException?.Message ?? ex.Message;
+                    MessageBox.Show($"An error occurred while deleting the client: {detailedMessage}");
+                }
             }
+        }
+        else if (SelectedItem is Adresa selectedAddress)
+        {
+            var confirmationMessage = $"Are you sure you want to delete the address at {selectedAddress.Ulice}, {selectedAddress.Mesto}?";
+
+            var result = MessageBox.Show(
+                confirmationMessage,
+                "Confirm Deletion",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning
+            );
+
+            if (result != MessageBoxResult.Yes)
+            {
+                return;
+            }
+
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    var addressIdParam = new Oracle.ManagedDataAccess.Client.OracleParameter("p_id_adresa", selectedAddress.IdAdresa);
+
+                    _context.Database.ExecuteSqlRaw("BEGIN DELETE_ADDRESS(:p_id_adresa); END;", addressIdParam);
+
+                    transaction.Commit();
+
+                    MessageBox.Show($"Address at {selectedAddress.Ulice}, {selectedAddress.Mesto} was successfully deleted.");
+                    SwitchToCurrentTable();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    var detailedMessage = ex.InnerException?.Message ?? ex.Message;
+                    MessageBox.Show($"An error occurred while deleting the address: {detailedMessage}");
+                }
+            }
+        }
+        else
+        {
+            MessageBox.Show("Deletion is only supported for clients and addresses.");
         }
     }
 

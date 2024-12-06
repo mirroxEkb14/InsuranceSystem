@@ -1,8 +1,14 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Data;
+using CommunityToolkit.Mvvm.ComponentModel;
 using InsuranceSystemDemo.Controls;
 using InsuranceSystemDemo.Database;
-using InsuranceSystemDemo.Models;
 using InsuranceSystemDemo.Utils;
+using System.Diagnostics.Metrics;
+using System.IO;
+using Microsoft.EntityFrameworkCore;
+using Oracle.ManagedDataAccess.Client;
+using Oracle.ManagedDataAccess.Types;
+using System.Windows;
 
 namespace InsuranceSystemDemo.ViewModels;
 
@@ -20,6 +26,7 @@ public partial class AddClientViewModel : AddItemViewModel
     [ObservableProperty] private string? _houseNumber;
     [ObservableProperty] private string? _postalCode;
 
+
     public override void Save()
     {
         ErrorMessage = null;
@@ -30,9 +37,9 @@ public partial class AddClientViewModel : AddItemViewModel
         using var context = new DatabaseContext(DatabaseContextGetter.GetDatabaseContextOptions());
         try
         {
-            var newAddress = CreateAddress(context);
-            HandleClient(context, newAddress.IdAdresa);
-            MessageBoxDisplayer.ShowInfo(MessageContainer.AddClientSuccess);
+            var addressId = CreateAddress(context);
+            HandleClient(context, addressId);
+            //MessageBoxDisplayer.ShowInfo(MessageContainer.AddClientSuccess);
             Cancel();
         }
         catch (Exception ex)
@@ -97,34 +104,58 @@ public partial class AddClientViewModel : AddItemViewModel
         return true;
     }
 
-    private Adresa CreateAddress(DatabaseContext context)
+    private int CreateAddress(DatabaseContext context)
     {
-        var newAddress = new Adresa
+        var addressId = new OracleParameter("p_id_adresa", OracleDbType.Int32)
         {
-            Ulice = Street,
-            Mesto = City,
-            Stat = Country,
-            CisloPopisne = HouseNumber,
-            PSC = PostalCode
+            Direction = ParameterDirection.Output
         };
-        context.Adresy.Add(newAddress);
-        context.SaveChanges();
-        return newAddress;
+
+        context.Database.ExecuteSqlRaw(
+            "BEGIN ADDADDRESS(:p_ulice, :p_mesto, :p_stat, :p_cislo_popisne, :p_psc, :p_id_adresa); END;",
+            new OracleParameter("p_ulice", Street),
+            new OracleParameter("p_mesto", City),
+            new OracleParameter("p_stat", Country),
+            new OracleParameter("p_cislo_popisne", Convert.ToInt32(HouseNumber)),
+            new OracleParameter("p_psc", Convert.ToInt32(PostalCode)),
+            addressId
+        );
+
+        var oracleDecimal = (OracleDecimal)addressId.Value;
+        return oracleDecimal.ToInt32();
     }
 
     private void HandleClient(DatabaseContext context, int addressId)
     {
-        var newClient = new Klient
+        var clientId = new OracleParameter("p_id_klient", OracleDbType.Decimal)
         {
-            Jmeno = FirstName,
-            Prijmeni = LastName,
-            Email = Email,
-            Telefon = Phone,
-            AdresaId = addressId,
-            DatumNarozeni = BirthDate
+            Direction = ParameterDirection.Output
         };
-        context.Klienti.Add(newClient);
-        context.SaveChanges();
+
+        context.Database.ExecuteSqlRaw(
+            "BEGIN ADDCLIENT(:p_jmeno, :p_prijmeni, :p_email, :p_telefon, :p_datum_narozeni, :p_adresa_id, :p_id_klient); END;",
+            new OracleParameter("p_jmeno", FirstName),
+            new OracleParameter("p_prijmeni", LastName),
+            new OracleParameter("p_email", Email),
+            new OracleParameter("p_telefon", Convert.ToInt64(Phone)),
+            new OracleParameter("p_datum_narozeni", BirthDate.HasValue ? BirthDate.Value : DBNull.Value),
+            new OracleParameter("p_adresa_id", addressId),
+            clientId
+        );
+
+        if (clientId.Value != DBNull.Value)
+        {
+            var oracleDecimal = (OracleDecimal)clientId.Value;
+            int newClientId = oracleDecimal.ToInt32();
+            //MessageBox.Show($"New client ID: {newClientId}");
+        }
+        else
+        {
+            throw new Exception("Client ID is null.");
+        }
     }
+
+
+
     #endregion
 }

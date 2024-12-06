@@ -1,0 +1,35 @@
+удаление адресов 
+
+
+
+CREATE OR REPLACE TRIGGER trg_delete_adresa_after_klient
+FOR DELETE ON KLIENT
+COMPOUND TRIGGER
+   TYPE AddressIdList IS TABLE OF KLIENT.ADRESA_ID_ADRESA%TYPE;
+   g_address_ids AddressIdList := AddressIdList();
+   v_count NUMBER; COUNT(*)
+
+AFTER EACH ROW IS
+BEGIN
+   IF :OLD.ADRESA_ID_ADRESA IS NOT NULL THEN
+      g_address_ids.EXTEND;
+      g_address_ids(g_address_ids.COUNT) := :OLD.ADRESA_ID_ADRESA;
+   END IF;
+END AFTER EACH ROW;
+
+AFTER STATEMENT IS
+BEGIN
+   IF g_address_ids.COUNT > 0 THEN
+      FOR i IN g_address_ids.FIRST .. g_address_ids.LAST LOOP
+         SELECT COUNT(*) INTO v_count
+         FROM KLIENT
+         WHERE ADRESA_ID_ADRESA = g_address_ids(i);
+
+         IF v_count = 0 THEN
+            DELETE FROM ADRESA WHERE ID_ADRESA = g_address_ids(i);
+         END IF;
+      END LOOP;
+   END IF;
+END AFTER STATEMENT;
+END;
+/
