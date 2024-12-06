@@ -1,6 +1,4 @@
-﻿#region Imports
-using CommunityToolkit.Mvvm.ComponentModel;
-using InsuranceSystemDemo.Controls;
+﻿using InsuranceSystemDemo.Controls;
 using InsuranceSystemDemo.Database;
 using InsuranceSystemDemo.Models;
 using InsuranceSystemDemo.Utils;
@@ -8,7 +6,6 @@ using InsuranceSystemDemo.ViewModels;
 using System;
 using System.Windows;
 using System.Windows.Controls;
-#endregion
 
 namespace InsuranceSystemDemo.Views
 {
@@ -28,6 +25,7 @@ namespace InsuranceSystemDemo.Views
 
         private void MainDataGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
         {
+            
             if (e.PropertyName == "AdresaId" || e.PropertyName == "IdKlientu" || e.PropertyName == "Adresa" || e.PropertyName == "IdAdresa")
             {
                 e.Cancel = true;
@@ -36,6 +34,7 @@ namespace InsuranceSystemDemo.Views
 
         private void MainDataGrid_LoadingRow(object sender, DataGridRowEventArgs e)
         {
+         
             e.Row.Header = (e.Row.GetIndex() + 1).ToString();
         }
 
@@ -61,7 +60,7 @@ namespace InsuranceSystemDemo.Views
                     var result = MessageBoxDisplayer.ShowDataGridCellEditingSaveChanges();
                     if (result == MessageBoxResult.Yes)
                     {
-                        SaveChanges(e.Row.Item); 
+                        SaveChanges(e.Row.Item);
                     }
                     else
                     {
@@ -74,7 +73,6 @@ namespace InsuranceSystemDemo.Views
                 _isProcessingEdit = false;
             }
         }
-
 
         private void SaveChanges(object editedItem)
         {
@@ -105,7 +103,7 @@ namespace InsuranceSystemDemo.Views
         {
             if (_originalItem is Klient originalKlient && currentItem is Klient editedKlient)
             {
-              
+                
                 editedKlient.IdKlientu = originalKlient.IdKlientu;
                 editedKlient.Jmeno = originalKlient.Jmeno;
                 editedKlient.Prijmeni = originalKlient.Prijmeni;
@@ -116,7 +114,7 @@ namespace InsuranceSystemDemo.Views
             }
             else if (_originalItem is Adresa originalAdresa && currentItem is Adresa editedAdresa)
             {
-               
+             
                 editedAdresa.IdAdresa = originalAdresa.IdAdresa;
                 editedAdresa.Ulice = originalAdresa.Ulice;
                 editedAdresa.Mesto = originalAdresa.Mesto;
@@ -125,11 +123,8 @@ namespace InsuranceSystemDemo.Views
                 editedAdresa.PSC = originalAdresa.PSC;
             }
 
-     
-     ((DashboardViewModel)DataContext).SwitchToCurrentTable();
+            ((DashboardViewModel)DataContext).SwitchToCurrentTable();
         }
-
-
 
         private object CloneItem(object item)
         {

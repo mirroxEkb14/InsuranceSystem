@@ -59,9 +59,11 @@
           ItemsSource="{Binding CurrentTableData}"
           SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
           RowEditEnding="MainDataGrid_RowEditEnding"
-          BeginningEdit="MainDataGrid_BeginningEdit">
-
+          BeginningEdit="MainDataGrid_BeginningEdit"
+          AutoGeneratingColumn="MainDataGrid_AutoGeneratingColumn"
+          LoadingRow="MainDataGrid_LoadingRow">
         </DataGrid>
+
 
         <!-- Action Buttons -->
         <StackPanel Orientation="Horizontal" Grid.Row="3" HorizontalAlignment="Center" Margin="10">
