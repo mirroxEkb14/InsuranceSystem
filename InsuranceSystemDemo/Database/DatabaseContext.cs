@@ -5,15 +5,12 @@ namespace InsuranceSystemDemo.Database;
 
 public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbContext(options)
 {
-    public DbSet<ActivePolicies> ActivePolicies { get; set; }
     public DbSet<Adresa> Adresy { get; set; }
-    public DbSet<ClientContacts> ClientContacts { get; set; }
     public DbSet<Dokument> Dokumenty { get; set; }
     public DbSet<Klient> Klienti { get; set; }
     public DbSet<LogAkce> Logy { get; set; }
     public DbSet<PojistnaSmlouva> PojistneSmlouvy { get; set; }
     public DbSet<TypPojistky> TypyPojistek { get; set; }
-    public DbSet<UploadedDocuments> UploadedDocuments { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Zamestnanec> Zamestnanci { get; set; }
 
@@ -93,9 +90,6 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
                 .OnDelete(DeleteBehavior.Cascade); 
         });
 
-        modelBuilder.Entity<ActivePolicies>().HasNoKey();
-        modelBuilder.Entity<ClientContacts>().HasNoKey();
-        modelBuilder.Entity<UploadedDocuments>().HasNoKey();
         modelBuilder.Entity<Adresa>().HasKey(a => a.IdAdresa);
         modelBuilder.Entity<LogAkce>().HasNoKey();
 
