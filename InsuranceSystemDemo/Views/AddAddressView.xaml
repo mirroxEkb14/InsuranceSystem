@@ -1,0 +1,47 @@
+﻿<Window x:Class="InsuranceSystemDemo.Views.AddAddressView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:InsuranceSystemDemo.ViewModels"
+        mc:Ignorable="d"
+        Title="Add Address" Height="240" Width="400"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.DataContext>
+        <vm:AddAddressViewModel />
+    </Window.DataContext>
+
+    <Grid Margin="10" >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Input Fields -->
+        <Label Content="Street:" Grid.Row="0" />
+        <TextBox Text="{Binding Ulice}" Grid.Row="0" Margin="100,0,0,0" VerticalContentAlignment="Center" />
+        <Label Content="City:" Grid.Row="1" />
+        <TextBox Text="{Binding Mesto}" Grid.Row="1" Margin="100,0,0,0" VerticalContentAlignment="Center" />
+        <Label Content="Country:" Grid.Row="2" />
+        <TextBox Text="{Binding Stat}" Grid.Row="2" Margin="100,0,0,0" VerticalContentAlignment="Center" />
+        <Label Content="House Number:" Grid.Row="3" />
+        <TextBox Text="{Binding CisloPopisne}" Grid.Row="3" Margin="100,0,0,0" VerticalContentAlignment="Center" />
+        <Label Content="Postal Code:" Grid.Row="4" />
+        <TextBox Text="{Binding Psc}" Grid.Row="4" Margin="100,0,0,0" VerticalContentAlignment="Center" />
+
+        <!-- Error Message -->
+        <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" Grid.Row="5" />
+
+        <!-- Buttons -->
+        <StackPanel Orientation="Horizontal" Grid.Row="6" HorizontalAlignment="Center" Margin="0,10,0,0">
+            <Button Content="Save" Width="100" Margin="10,0" Command="{Binding SaveCommand}" />
+            <Button Content="Cancel" Width="100" Margin="10,0" Command="{Binding CancelCommand}" />
+        </StackPanel>
+    </Grid>
+</Window>

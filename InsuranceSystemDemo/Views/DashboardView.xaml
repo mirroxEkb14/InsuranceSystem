@@ -33,16 +33,14 @@
         <Menu Grid.Row="0" VerticalAlignment="Top">
             <MenuItem Header="Tables">
                 <MenuItem Header="Klienti" Command="{Binding SwitchToKlientiCommand}" />
-                <MenuItem Header="Policies" Command="{Binding SwitchToPoliciesCommand}" />
-                <MenuItem Header="Claims" Command="{Binding SwitchToClaimsCommand}" />
-                <MenuItem Header="Payments" Command="{Binding SwitchToPaymentsCommand}" />
+                <MenuItem Header="Adresy" Command="{Binding SwitchToAdresyCommand}" />
             </MenuItem>
         </Menu>
 
         <!-- Search Bar -->
         <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="10">
             <Label Content="Search:" VerticalAlignment="Center" />
-            <TextBox x:Name="SearchTextBox" Width="200" Margin="10,0" Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox x:Name="SearchTextBox" Width="200" Margin="10,0" VerticalContentAlignment="Center" Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" />
             <Button Content="Clear" Width="60" Command="{Binding ClearSearchCommand}" />
         </StackPanel>
 

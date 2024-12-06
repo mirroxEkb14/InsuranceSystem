@@ -48,7 +48,8 @@ public partial class DashboardViewModel : ObservableObject
             case MessageContainer.KlientiTableName:
                 SwitchToKlienti();
                 break;
-            case MessageContainer.PoliciesTableName:
+            case MessageContainer.AdresyTableName:
+                SwitchToAdresy();
                 break;
             default:
                 CurrentTableData = [];
@@ -68,21 +69,12 @@ public partial class DashboardViewModel : ObservableObject
     }
 
     [RelayCommand]
-    public void SwitchToPolicies()
+    public void SwitchToAdresy()
     {
-        
-    }
+        CurrentTableName = MessageContainer.AdresyTableName;
+        var addresses = _context.Adresy.ToList();
+        CurrentTableData = new ObservableCollection<object>(addresses);
 
-    [RelayCommand]
-    public void SwitchToClaims()
-    {
-        
-    }
-
-    [RelayCommand]
-    public void SwitchToPayments()
-    {
-        
     }
     #endregion
 
@@ -108,7 +100,8 @@ public partial class DashboardViewModel : ObservableObject
             case MessageContainer.KlientiTableName:
                 SearchKlienti(searchTerm);
                 break;
-            case MessageContainer.PoliciesTableName:
+            case MessageContainer.AdresyTableName:
+                SearchAdresy(searchTerm);
                 break;
             default:
                 SwitchToCurrentTable();
@@ -131,6 +124,19 @@ public partial class DashboardViewModel : ObservableObject
             .ToList();
         CurrentTableData = new ObservableCollection<object>(filteredClients);
     }
+
+    private void SearchAdresy(string searchTerm)
+    {
+        var filteredAddresses = _context.Adresy
+            .Where(a =>
+                (a.Ulice != null && EF.Functions.Like(a.Ulice.ToLower(), $"%{searchTerm}%")) ||
+                (a.Mesto != null && EF.Functions.Like(a.Mesto.ToLower(), $"%{searchTerm}%")) ||
+                (a.Stat != null && EF.Functions.Like(a.Stat.ToLower(), $"%{searchTerm}%")) ||
+                (a.CisloPopisne != null && EF.Functions.Like(a.CisloPopisne.ToLower(), $"%{searchTerm}%")) ||
+                (a.PSC != null && EF.Functions.Like(a.PSC.ToLower(), $"%{searchTerm}%")))
+            .ToList();
+        CurrentTableData = new ObservableCollection<object>(filteredAddresses);
+    }
     #endregion
 
     #region Button Commands
@@ -142,6 +148,9 @@ public partial class DashboardViewModel : ObservableObject
         {
             case MessageContainer.KlientiTableName:
                 addView = new AddClientView();
+                break;
+            case MessageContainer.AdresyTableName:
+                addView = new AddAddressView();
                 break;
             default:
                 MessageBoxDisplayer.ShowInfo(MessageContainer.AddFunctionalityNotSupported);

@@ -39,27 +39,27 @@
 
             <!-- Input Fields -->
             <Label Content="Username:" Grid.Row="1" HorizontalAlignment="Left" Margin="10,5" />
-            <TextBox Text="{Binding Username}" Grid.Row="1" HorizontalAlignment="Left" Margin="120,5,10,5" Width="150" />
+            <TextBox Text="{Binding Username}" Grid.Row="1" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="120,5,10,5" Width="150" />
 
             <Label Content="First Name:" Grid.Row="2" HorizontalAlignment="Left" Margin="10,5" />
-            <TextBox Text="{Binding FirstName}" Grid.Row="2" HorizontalAlignment="Left" Margin="120,5,10,5" Width="150" />
+            <TextBox Text="{Binding FirstName}" Grid.Row="2" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="120,5,10,5" Width="150" />
 
             <Label Content="Last Name:" Grid.Row="3" HorizontalAlignment="Left" Margin="10,5" />
-            <TextBox Text="{Binding LastName}" Grid.Row="3" HorizontalAlignment="Left" Margin="120,5,10,5" Width="150" />
+            <TextBox Text="{Binding LastName}" Grid.Row="3" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="120,5,10,5" Width="150" />
 
             <Label Content="Email:" Grid.Row="4" HorizontalAlignment="Left" Margin="10,5" />
-            <TextBox Text="{Binding Email}" Grid.Row="4" HorizontalAlignment="Left" Margin="120,5,10,5" Width="150" />
+            <TextBox Text="{Binding Email}" Grid.Row="4" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="120,5,10,5" Width="150" />
 
             <Label Content="Phone:" Grid.Row="5" HorizontalAlignment="Left" Margin="10,5" />
-            <TextBox Text="{Binding Phone}" Grid.Row="5" HorizontalAlignment="Left" Margin="120,5,10,5" Width="150" />
+            <TextBox Text="{Binding Phone}" Grid.Row="5" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="120,5,10,5" Width="150" />
 
             <Label Content="Password:" Grid.Row="6" HorizontalAlignment="Left" Margin="10,5" />
             <controls:BindablePasswordBox Password="{Binding Password, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
-                                          Grid.Row="6" HorizontalAlignment="Left" Margin="120,5,10,5" Width="150" />
+                                          Grid.Row="6" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="120,5,10,5" Width="150" />
 
             <Label Content="Confirm Password:" Grid.Row="7" HorizontalAlignment="Left" Margin="10,5" />
             <controls:BindablePasswordBox Password="{Binding ConfirmPassword, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
-                                          Grid.Row="7" HorizontalAlignment="Left" Margin="120,5,10,5" Width="150" />
+                                          Grid.Row="7" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="120,5,10,5" Width="150" />
 
             <!-- Error Message -->
             <TextBlock Text="{Binding ErrorMessage}"
