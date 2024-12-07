@@ -87,35 +87,63 @@ public partial class DashboardView : Window
             else if (editedItem is Adresa adresa)
             {
                 context.Database.ExecuteSqlRaw(
-                    "BEGIN UpdateAdresa(:p_ID_ADRESA, :p_ULICE, :p_MESTO, :p_STAT, :p_CISLO_POPISNE, :p_PSC); END;",
+                    "BEGIN UpdateAdresa(:p_ID_ADRESA, :p_ULICE, :p_MESTO, :p_STAT, :p_CISLO_POPISНЕ, :p_PSC); END;",
                     new OracleParameter("p_ID_ADRESA", adresa.IdAdresa),
                     new OracleParameter("p_ULICE", adresa.Ulice),
-                    new OracleParameter("p_MESTO", adresa.Mesto),
+                    new OracleParameter("p_MESTО", adresa.Mesto),
                     new OracleParameter("p_STAT", adresa.Stat),
-                    new OracleParameter("p_CISLO_POPISNE", adresa.CisloPopisne),
+                    new OracleParameter("p_CISЛO_POPИСНЕ", adresa.CisloPopisne),
                     new OracleParameter("p_PSC", adresa.PSC)
                 );
             }
             else if (editedItem is Pobocka pobocka)
             {
                 context.Database.ExecuteSqlRaw(
-                    "BEGIN UpdatePobocka(:p_ID_POBOCKY, :p_NAZEV, :p_TELEFON, :p_ADRESA_ID_ADRESA); END;",
+                    "BEGIN UpdatePobocka(:p_ID_POBOCKY, :p_NAZEV, :p_TELEФОН, :p_ADRESA_ID_ADRESA); END;",
                     new OracleParameter("p_ID_POBOCKY", pobocka.IdPobocky),
                     new OracleParameter("p_NAZEV", pobocka.Nazev),
-                    new OracleParameter("p_TELEFON", pobocka.Telefon),
+                    new OracleParameter("p_TELEФОН", pobocka.Telefon),
                     new OracleParameter("p_ADRESA_ID_ADRESA", pobocka.AdresaId)
                 );
             }
+            else if (editedItem is TypPojistky typPojistky)
+            {
+                context.Database.ExecuteSqlRaw(
+                    "BEGIN UpdateTypPojistky(:p_ID_TYP, :p_DOSTUPNOST, :p_PODMINKY, :p_POPIS, :p_MAXIMALNE_KRYTI, :p_MINIMALNE_KRYTI, :p_DATIM_ZACATKU); END;",
+                    new OracleParameter("p_ID_TYP", typPojistky.IdTyp),
+                    new OracleParameter("p_DOSTUPNOST", typPojistky.Dostupnost),
+                    new OracleParameter("p_PODMINKY", typPojistky.Podminky ?? (object)DBNull.Value),
+                    new OracleParameter("p_POPIS", typPojistky.Popis ?? (object)DBNull.Value),
+                    new OracleParameter("p_MAXIMALNE_KRYTI", typPojistky.MaximalneKryti),
+                    new OracleParameter("p_MINIMALNE_KRYTI", typPojistky.MinimalneKryti),
+                    new OracleParameter("p_DATIM_ZACATKU", typPojistky.DatimZacatku)
+                );
+            }
 
-            context.SaveChanges();
             MessageBoxDisplayer.ShowInfo(MessageContainer.DataGridCellEditingChangesSaved);
         }
         catch (Exception ex)
         {
-            MessageBoxDisplayer.ShowError(MessageContainer.GetUnexpectedErrorMessage(ex.Message));
+            var errorDetails = new System.Text.StringBuilder();
+            errorDetails.AppendLine("An error occurred:");
+
+            var currentException = ex;
+            while (currentException != null)
+            {
+                errorDetails.AppendLine($"Message: {currentException.Message}");
+                errorDetails.AppendLine($"StackTrace: {currentException.StackTrace}");
+                currentException = currentException.InnerException;
+            }
+
+            MessageBox.Show(errorDetails.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            Console.WriteLine(errorDetails.ToString());
+
             ((DashboardViewModel)DataContext).SwitchToCurrentTable();
         }
     }
+
+
+
 
 
 
@@ -149,6 +177,17 @@ public partial class DashboardView : Window
             editedPobocka.AdresaId = originalPobocka.AdresaId;
             editedPobocka.Adresa = originalPobocka.Adresa;
         }
+        else if (_originalItem is TypPojistky originalTyp && currentItem is TypPojistky editedTyp)
+        {
+            editedTyp.IdTyp = originalTyp.IdTyp;
+            editedTyp.Dostupnost = originalTyp.Dostupnost;
+            editedTyp.Podminky = originalTyp.Podminky;
+            editedTyp.Popis = originalTyp.Popis;
+            editedTyp.MaximalneKryti = originalTyp.MaximalneKryti;
+            editedTyp.MinimalneKryti = originalTyp.MinimalneKryti;
+            editedTyp.DatimZacatku = originalTyp.DatimZacatku;
+        }
+
     ((DashboardViewModel)DataContext).SwitchToCurrentTable();
     }
 
@@ -191,8 +230,22 @@ public partial class DashboardView : Window
                 Adresa = pobocka.Adresa
             };
         }
+        else if (item is TypPojistky typPojistky)
+        {
+            return new TypPojistky
+            {
+                IdTyp = typPojistky.IdTyp,
+                Dostupnost = typPojistky.Dostupnost,
+                Podminky = typPojistky.Podminky,
+                Popis = typPojistky.Popis,
+                MaximalneKryti = typPojistky.MaximalneKryti,
+                MinimalneKryti = typPojistky.MinimalneKryti,
+                DatimZacatku = typPojistky.DatimZacatku
+            };
+        }
         throw new ArgumentException("Unsupported type for cloning");
     }
+
 
     #endregion
 }

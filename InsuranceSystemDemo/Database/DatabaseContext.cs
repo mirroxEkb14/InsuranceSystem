@@ -114,20 +114,25 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
                   .HasColumnName("DOSTUPNOST")
                   .HasMaxLength(1)
                   .IsRequired();
+
             entity.Property(t => t.Podminky)
                   .HasColumnName("PODMINKY")
                   .HasMaxLength(100)
                   .IsRequired();
+
             entity.Property(t => t.Popis)
                   .HasColumnName("POPIS")
                   .HasMaxLength(100);
+
             entity.Property(t => t.MaximalneKryti)
                   .HasColumnName("MAXIMALNE_KRYTI")
                   .IsRequired();
+
             entity.Property(t => t.MinimalneKryti)
                   .HasColumnName("MINIMALNE_KRYTI")
                   .IsRequired();
-            entity.Property(t => t.DatumZacatku)
+
+            entity.Property(t => t.DatimZacatku)
                   .HasColumnName("DATIM_ZACATKU")
                   .IsRequired();
         });

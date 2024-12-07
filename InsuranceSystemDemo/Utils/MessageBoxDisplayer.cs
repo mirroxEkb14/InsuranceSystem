@@ -39,4 +39,15 @@ public static class MessageBoxDisplayer
         MessageBoxButton.YesNo,
         MessageBoxImage.Question
     );
+
+
+    public static MessageBoxResult ShowInsuranceTypeDeletionConfirmation(string description)
+    {
+        return MessageBox.Show(
+            $"Are you sure you want to delete the insurance type \"{description}\"?",
+            "Confirm Deletion",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning);
+    }
+
 }

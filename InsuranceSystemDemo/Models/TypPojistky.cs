@@ -35,7 +35,7 @@ public class TypPojistky
 
     [Column("DATIM_ZACATKU")]
     [Required]
-    public DateTime DatumZacatku { get; set; }
+    public DateTime DatimZacatku { get; set; }
 
     [NotMapped]
     public string Name => string.IsNullOrWhiteSpace(Popis) ? "No Description" : Popis;

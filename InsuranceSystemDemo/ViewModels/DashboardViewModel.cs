@@ -150,6 +150,7 @@ public partial class DashboardViewModel : ObservableObject
         }
     }
 
+
     private void SearchKlienti(string searchTerm)
     {
         var filteredClients = _context.Klienti
@@ -189,21 +190,45 @@ public partial class DashboardViewModel : ObservableObject
         CurrentTableData = new ObservableCollection<object>(filteredBranches);
     }
 
+
+
     private void SearchTypyPojisty(string searchTerm)
     {
-    var filteredInsuranceTypes = _context.TypPojistky
-        .Where(t =>
-            EF.Functions.Like(t.Dostupnost, $"%{searchTerm}%") ||
-            EF.Functions.Like(t.Podminky.ToLower(), $"%{searchTerm}%") ||
-            (t.Popis != null && EF.Functions.Like(t.Popis.ToLower(), $"%{searchTerm}%")))
-        .AsEnumerable()
-        .Where(t =>
-            t.MaximalneKryti.ToString().Contains(searchTerm) ||
-            t.MinimalneKryti.ToString().Contains(searchTerm) ||
-            t.DatumZacatku.ToString("dd/MM/yyyy").Contains(searchTerm))
-        .ToList();
-        CurrentTableData = new ObservableCollection<object>(filteredInsuranceTypes);
+        try
+        {
+            var filteredInsuranceTypes = _context.TypPojistky.ToList();
+
+            var lowerTerm = searchTerm.ToLower();
+
+            filteredInsuranceTypes = filteredInsuranceTypes
+                .Where(t =>
+                    (t.Dostupnost != null && t.Dostupnost.ToLower().Contains(lowerTerm)) ||
+                    (t.Podminky != null && t.Podminky.ToLower().Contains(lowerTerm)) ||
+                    (t.Popis != null && t.Popis.ToLower().Contains(lowerTerm)) ||
+                    t.MaximalneKryti.ToString().Contains(searchTerm) ||
+                    t.MinimalneKryti.ToString().Contains(searchTerm) ||
+                    t.DatimZacatku.ToString("yyyy-MM-dd").Contains(searchTerm))
+                .ToList();
+
+            CurrentTableData = new ObservableCollection<object>(filteredInsuranceTypes);
+
+
+           
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"An error occurred during search: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
+
+
+
+
+
+
+
+
+
     #endregion
 
     #region Button Commands
@@ -250,6 +275,8 @@ public partial class DashboardViewModel : ObservableObject
             HandleAddressDeletion(selectedAddress);
         else if (SelectedItem is Pobocka selectedBranch)
             HandleBranchDeletion(selectedBranch);
+        else if (SelectedItem is TypPojistky selectedInsuranceType)
+            HandleInsuranceTypeDeletion(selectedInsuranceType);
         else
             MessageBoxDisplayer.ShowInfo(MessageContainer.DeleteFunctionalityNotSupported);
     }
@@ -334,6 +361,37 @@ public partial class DashboardViewModel : ObservableObject
             MessageBoxDisplayer.ShowError($"An error occurred: {detailedMessage}");
         }
     }
+
+    private void HandleInsuranceTypeDeletion(TypPojistky selectedInsuranceType)
+    {
+        var result = MessageBoxDisplayer.ShowInsuranceTypeDeletionConfirmation(selectedInsuranceType.Popis!);
+        if (result != MessageBoxResult.Yes)
+            return;
+
+        using var transaction = _context.Database.BeginTransaction();
+        try
+        {
+            var insuranceTypeIdParam = new Oracle.ManagedDataAccess.Client.OracleParameter("p_ID_TYP", selectedInsuranceType.IdTyp);
+            _context.Database.ExecuteSqlRaw("BEGIN DeleteTypPojistky(:p_ID_TYP); END;", insuranceTypeIdParam);
+            transaction.Commit();
+
+            MessageBoxDisplayer.ShowInfo("Insurance type deleted successfully.");
+            SwitchToCurrentTable();
+        }
+        catch (Exception ex)
+        {
+            transaction.Rollback();
+            var detailedMessage = ex.InnerException?.Message ?? ex.Message;
+            MessageBoxDisplayer.ShowError($"An error occurred: {detailedMessage}");
+        }
+    }
+
+
+
+
+
+
+
 
     #endregion
 

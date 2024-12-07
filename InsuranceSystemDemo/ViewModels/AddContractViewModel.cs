@@ -80,9 +80,23 @@ public partial class AddContractViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            ErrorMessage = $"An error occurred: {ex.Message}";
+            
+            var errorDetails = new System.Text.StringBuilder();
+            errorDetails.AppendLine("An error occurred:");
+
+            var currentException = ex;
+            while (currentException != null)
+            {
+                errorDetails.AppendLine($"Message: {currentException.Message}");
+                errorDetails.AppendLine($"StackTrace: {currentException.StackTrace}");
+                currentException = currentException.InnerException;
+            }
+
+            
+            ErrorMessage = errorDetails.ToString();
         }
     }
+
 
     [RelayCommand]
     private void Cancel() => CloseWindow();
