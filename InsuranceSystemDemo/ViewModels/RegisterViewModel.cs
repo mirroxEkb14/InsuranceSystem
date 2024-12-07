@@ -86,7 +86,7 @@ public partial class RegisterViewModel : ObservableObject
                 ErrorMessage = MessageContainer.RegisterExistingPhone;
 
             return false;
-        }
+        } 
 
         return true;
     }
@@ -106,7 +106,7 @@ public partial class RegisterViewModel : ObservableObject
             "BEGIN ADDUSER(:p_username, :p_password, :p_role, :p_first_name, :p_last_name, :p_email, :p_phone, :p_user_id); END;",
             new OracleParameter("p_username", Username),
             new OracleParameter("p_password", hashedPassword),
-            new OracleParameter("p_role", MessageContainer.UserRole), // Роль
+            new OracleParameter("p_role", MessageContainer.UserRole), 
             new OracleParameter("p_first_name", FirstName),
             new OracleParameter("p_last_name", LastName),
             new OracleParameter("p_email", Email),
