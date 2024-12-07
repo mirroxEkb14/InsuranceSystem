@@ -19,7 +19,7 @@ public class Pobocka
     [Column("ADRESA_ID_ADRESA")]
     public int AdresaId { get; set; }
 
-    // Navigation property
+   
     [ForeignKey("AdresaId")]
     public virtual Adresa? Adresa { get; set; }
 }

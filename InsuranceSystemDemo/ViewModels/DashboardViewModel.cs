@@ -31,7 +31,11 @@ public partial class DashboardViewModel : ObservableObject
     //
     // Summary:
     //     Is marked as «public», because is used in the «Dashboard.xaml.cs» code-behind to handle
-    //         the «DataGrid» cell editing.
+    //         the «DataGrid» cell editing.\
+
+   
+
+
     public void SwitchToCurrentTable()
     {
         switch (CurrentTableName)
@@ -48,11 +52,16 @@ public partial class DashboardViewModel : ObservableObject
             case MessageContainer.TypPojistkyTableName:
                 SwitchToTypPojistky();
                 break;
+            case MessageContainer.ContractsTableName:
+                SwitchToPojistnaSmlouva(); 
+                break;
             default:
                 CurrentTableData = [];
                 break;
         }
     }
+
+
 
     #region Switch Tables Commands
     [RelayCommand]
@@ -90,6 +99,18 @@ public partial class DashboardViewModel : ObservableObject
         var insuranceTypes = _context.TypPojistky.ToList();
         CurrentTableData = new ObservableCollection<object>(insuranceTypes);
     }
+
+    [RelayCommand]
+    public void SwitchToPojistnaSmlouva()
+    {
+        CurrentTableName = MessageContainer.ContractsTableName;
+        var contracts = _context.PojistnaSmlouva.ToList();
+        CurrentTableData = new ObservableCollection<object>(contracts);
+    }
+
+
+
+
     #endregion
 
     #region Search Commands
@@ -201,6 +222,9 @@ public partial class DashboardViewModel : ObservableObject
             case MessageContainer.PobockyTableName:
                 addView = new AddBranchView(_context);
                 break;
+            case MessageContainer.TypPojistkyTableName:
+                addView = new AddInsuranceTypeView(_context);
+                break;
             default:
                 MessageBoxDisplayer.ShowInfo(MessageContainer.AddFunctionalityNotSupported);
                 return;
@@ -208,6 +232,8 @@ public partial class DashboardViewModel : ObservableObject
         addView.ShowDialog();
         SwitchToCurrentTable();
     }
+
+
 
     [RelayCommand]
     public void DeleteItem()
@@ -287,8 +313,28 @@ public partial class DashboardViewModel : ObservableObject
 
     private void HandleBranchDeletion(Pobocka selectedBranch)
     {
-        throw new NotImplementedException();
+        var result = MessageBoxDisplayer.ShowBranchDeletionConfirmation(selectedBranch.Nazev!, selectedBranch.Telefon!);
+        if (result != MessageBoxResult.Yes)
+            return;
+
+        using var transaction = _context.Database.BeginTransaction();
+        try
+        {
+            var branchIdParam = new Oracle.ManagedDataAccess.Client.OracleParameter("p_ID_POBOCKY", selectedBranch.IdPobocky);
+            _context.Database.ExecuteSqlRaw("BEGIN DeletePobocka(:p_ID_POBOCKY); END;", branchIdParam);
+            transaction.Commit();
+
+            MessageBoxDisplayer.ShowInfo("Branch deleted successfully.");
+            SwitchToCurrentTable();
+        }
+        catch (Exception ex)
+        {
+            transaction.Rollback();
+            var detailedMessage = ex.InnerException?.Message ?? ex.Message;
+            MessageBoxDisplayer.ShowError($"An error occurred: {detailedMessage}");
+        }
     }
+
     #endregion
 
     #region Private Helper Methods

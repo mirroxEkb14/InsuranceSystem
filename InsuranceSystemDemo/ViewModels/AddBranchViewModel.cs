@@ -4,6 +4,8 @@ using CommunityToolkit.Mvvm.Input;
 using InsuranceSystemDemo.Database;
 using InsuranceSystemDemo.Models;
 using InsuranceSystemDemo.Utils;
+using Microsoft.EntityFrameworkCore;
+using Oracle.ManagedDataAccess.Client;
 using System.Collections.ObjectModel;
 using System.Windows;
 #endregion
@@ -25,7 +27,6 @@ public partial class AddBranchViewModel : ObservableObject
         _context = context;
         LoadAvailableAddresses();
     }
-
     [RelayCommand]
     private void Save()
     {
@@ -36,14 +37,13 @@ public partial class AddBranchViewModel : ObservableObject
 
         try
         {
-            var newBranch = new Pobocka
-            {
-                Nazev = BranchName!,
-                Telefon = Phone!,
-                AdresaId = SelectedAddress!.IdAdresa
-            };
-            //_context.Pobocky.Add(newBranch);
-            //_context.SaveChanges();
+            
+            _context.Database.ExecuteSqlRaw(
+                "BEGIN AddPobocka(:p_NAZEV, :p_TELEFON, :p_ADRESA_ID_ADRESA); END;",
+                new OracleParameter("p_NAZEV", BranchName!),
+                new OracleParameter("p_TELEFON", Phone!),
+                new OracleParameter("p_ADRESA_ID_ADRESA", SelectedAddress!.IdAdresa)
+            );
 
             MessageBoxDisplayer.ShowInfo(MessageContainer.AddBranchSuccess);
             CloseWindow();
@@ -53,6 +53,7 @@ public partial class AddBranchViewModel : ObservableObject
             ErrorMessage = MessageContainer.GetUnexpectedErrorMessage(ex.Message);
         }
     }
+
 
     [RelayCommand]
     private void Cancel() =>

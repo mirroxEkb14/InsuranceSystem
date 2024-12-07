@@ -13,10 +13,13 @@ public static class MessageContainer
     public const string AdminRole = "Admin";
     public const string UserRole = "User";
 
+
     public const string KlientiTableName = "Klienti";
     public const string AdresyTableName = "Adresy";
     public const string PobockyTableName = "Pobocky";
     public const string TypPojistkyTableName = "TypPojistky";
+    public const string ContractsTableName = "PojistnaSmlouva";
+
 
     public const string AddFunctionalityNotSupported = "Add functionality is not supported for this table.";
 
@@ -84,4 +87,18 @@ public static class MessageContainer
 
     public static string GetDeleteAddressConfirmation(string street, string city) =>
         string.Format(DeleteAddressConfirmation, street, city);
+
+
+    public static string GetDeleteBranchConfirmation(string branchName, string phone) =>
+    $"Are you sure you want to delete the branch \"{branchName}\" with phone number {phone}?";
+
+
+
+
+
+   
+
+
+
+
 }

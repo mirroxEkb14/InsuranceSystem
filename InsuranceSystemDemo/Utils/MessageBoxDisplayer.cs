@@ -30,4 +30,13 @@ public static class MessageBoxDisplayer
             "Delete Address",
             MessageBoxButton.YesNo,
             MessageBoxImage.Question);
+
+
+    public static MessageBoxResult ShowBranchDeletionConfirmation(string branchName, string phone) =>
+    MessageBox.Show(
+        MessageContainer.GetDeleteBranchConfirmation(branchName, phone),
+        "Delete Branch",
+        MessageBoxButton.YesNo,
+        MessageBoxImage.Question
+    );
 }

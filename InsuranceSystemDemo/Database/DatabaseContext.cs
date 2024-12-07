@@ -12,6 +12,9 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
     public DbSet<Pobocka> Pobocky { get; set; }
     public DbSet<TypPojistky> TypPojistky { get; set; }
 
+    public DbSet<PojistnaSmlouva> PojistnaSmlouva { get; set; }
+
+
 
     //
     // Summary:
@@ -130,6 +133,63 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
         });
 
         modelBuilder.Entity<Adresa>().HasKey(a => a.IdAdresa);
+
+
+
+        modelBuilder.Entity<PojistnaSmlouva>(entity =>
+        {
+            entity.ToTable("POJISTNASMOLOUVA");
+            entity.HasKey(p => p.IdPojistky);
+
+            entity.Property(p => p.PojistnaCastka)
+                .HasColumnName("POJISTNA_CASTKA")
+                .HasColumnType("decimal(10,2)")
+                .IsRequired();
+
+            entity.Property(p => p.DatumZacatkuPlatnosti)
+                .HasColumnName("DATUM_ZACATKU_PLAINOSTI")
+                .IsRequired();
+
+            entity.Property(p => p.DatumUkonceniPlatnosti)
+                .HasColumnName("DATUM_UKONCENI_PLAINOSTI")
+                .IsRequired();
+
+            entity.Property(p => p.DataVystaveni)
+                .HasColumnName("DATA_VYSTAVENI")
+                .IsRequired();
+
+            entity.Property(p => p.Cena)
+                .HasColumnName("CENA")
+                .HasColumnType("decimal(10,2)")
+                .IsRequired();
+
+            entity.Property(p => p.KlientId)
+                .HasColumnName("KLIENT_ID_KLIENTU")
+                .IsRequired();
+
+            entity.Property(p => p.PobockyId)
+                .HasColumnName("POBOCKY_ID_POBOCKY")
+                .IsRequired();
+
+            entity.Property(p => p.TypPojistkyId)
+                .HasColumnName("TYPOJISTKY_ID_TYP")
+                .IsRequired();
+
+            entity.HasOne(p => p.Klient)
+                .WithMany()
+                .HasForeignKey(p => p.KlientId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(p => p.Pobocka)
+                .WithMany()
+                .HasForeignKey(p => p.PobockyId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(p => p.TypPojistky)
+                .WithMany()
+                .HasForeignKey(p => p.TypPojistkyId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
 
         base.OnModelCreating(modelBuilder);
     }
