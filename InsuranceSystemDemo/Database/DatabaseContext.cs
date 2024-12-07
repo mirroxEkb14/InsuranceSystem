@@ -143,7 +143,7 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
 
         modelBuilder.Entity<PojistnaSmlouva>(entity =>
         {
-            entity.ToTable("POJISTNASMOLOUVA");
+            entity.ToTable("POJISTNASMLOUVA");
             entity.HasKey(p => p.IdPojistky);
 
             entity.Property(p => p.PojistnaCastka)
@@ -152,11 +152,11 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
                 .IsRequired();
 
             entity.Property(p => p.DatumZacatkuPlatnosti)
-                .HasColumnName("DATUM_ZACATKU_PLAINOSTI")
+                .HasColumnName("DATUM_ZACATKU_PLATNOSTI") 
                 .IsRequired();
 
             entity.Property(p => p.DatumUkonceniPlatnosti)
-                .HasColumnName("DATUM_UKONCENI_PLAINOSTI")
+                .HasColumnName("DATUM_UKONCENI_PLATNOSTI") 
                 .IsRequired();
 
             entity.Property(p => p.DataVystaveni)
@@ -177,7 +177,7 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
                 .IsRequired();
 
             entity.Property(p => p.TypPojistkyId)
-                .HasColumnName("TYPOJISTKY_ID_TYP")
+                .HasColumnName("TYPPOJISTKY_ID_TYP") 
                 .IsRequired();
 
             entity.HasOne(p => p.Klient)
@@ -195,6 +195,7 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
                 .HasForeignKey(p => p.TypPojistkyId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
+
 
         base.OnModelCreating(modelBuilder);
     }

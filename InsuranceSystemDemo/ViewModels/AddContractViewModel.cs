@@ -2,8 +2,11 @@
 using CommunityToolkit.Mvvm.Input;
 using InsuranceSystemDemo.Database;
 using InsuranceSystemDemo.Models;
+using Microsoft.EntityFrameworkCore;
+using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 using System.Windows;
 
@@ -60,27 +63,23 @@ public partial class AddContractViewModel : ObservableObject
 
         try
         {
-            var newContract = new PojistnaSmlouva
-            {
-                PojistnaCastka = PojistnaCastka,
-                DatumZacatkuPlatnosti = DatumZacatkuPlatnosti,
-                DatumUkonceniPlatnosti = DatumUkonceniPlatnosti,
-                DataVystaveni = DataVystaveni,
-                Cena = Cena,
-                KlientId = SelectedClient!.IdKlientu,
-                PobockyId = SelectedBranch!.IdPobocky,
-                TypPojistkyId = SelectedPolicyType!.IdTyp
-            };
-
-            _context.PojistnaSmlouva.Add(newContract);
-            _context.SaveChanges();
+            _context.Database.ExecuteSqlRaw(
+                "BEGIN AddPojistnaMlouva(:p_POJISTNA_CASTKA, :p_DATUM_ZACATKU_PLATNOSTI, :p_DATUM_UKONCENI_PLATNOSTI, :p_DATA_VYSTAVENI, :p_CENA, :p_KLIENT_ID_KLIENTU, :p_POBOCKY_ID_POBOCKY, :p_TYPPOJISTKY_ID_TYP); END;",
+                new OracleParameter("p_POJISTNA_CASTKA", PojistnaCastka),
+                new OracleParameter("p_DATUM_ZACATKU_PLATNOSTI", DatumZacatkuPlatnosti),
+                new OracleParameter("p_DATUM_UKONCENI_PLATNOSTI", DatumUkonceniPlatnosti),
+                new OracleParameter("p_DATA_VYSTAVENI", DataVystaveni),
+                new OracleParameter("p_CENA", Cena),
+                new OracleParameter("p_KLIENT_ID_KLIENTU", SelectedClient?.IdKlientu ?? (object)DBNull.Value),
+                new OracleParameter("p_POBOCKY_ID_POBOCKY", SelectedBranch?.IdPobocky ?? (object)DBNull.Value),
+                new OracleParameter("p_TYPPOJISTKY_ID_TYP", SelectedPolicyType?.IdTyp ?? (object)DBNull.Value)
+            );
 
             MessageBox.Show("Contract added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             CloseWindow();
         }
         catch (Exception ex)
         {
-            
             var errorDetails = new System.Text.StringBuilder();
             errorDetails.AppendLine("An error occurred:");
 
@@ -92,10 +91,12 @@ public partial class AddContractViewModel : ObservableObject
                 currentException = currentException.InnerException;
             }
 
-            
+            MessageBox.Show(errorDetails.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
             ErrorMessage = errorDetails.ToString();
         }
     }
+
 
 
     [RelayCommand]

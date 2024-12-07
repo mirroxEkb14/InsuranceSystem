@@ -50,4 +50,12 @@ public static class MessageBoxDisplayer
             MessageBoxImage.Warning);
     }
 
+    public static MessageBoxResult ShowContractDeletionConfirmation(string contractId)
+    {
+        return MessageBox.Show($"Are you sure you want to delete contract with ID {contractId}?",
+                               "Delete Confirmation",
+                               MessageBoxButton.YesNo,
+                               MessageBoxImage.Warning);
+    }
+
 }

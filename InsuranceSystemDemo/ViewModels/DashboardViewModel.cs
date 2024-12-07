@@ -55,8 +55,9 @@ public partial class DashboardViewModel : ObservableObject
             case MessageContainer.ContractsTableName:
                 SwitchToPojistnaSmlouva(); 
                 break;
+
             default:
-                CurrentTableData = [];
+                CurrentTableData = new ObservableCollection<object>();
                 break;
         }
     }
@@ -105,8 +106,11 @@ public partial class DashboardViewModel : ObservableObject
     {
         CurrentTableName = MessageContainer.ContractsTableName;
         var contracts = _context.PojistnaSmlouva.ToList();
+
         CurrentTableData = new ObservableCollection<object>(contracts);
     }
+
+
 
 
 
@@ -144,6 +148,11 @@ public partial class DashboardViewModel : ObservableObject
             case MessageContainer.TypPojistkyTableName:
                 SearchTypyPojisty(searchTerm);
                 break;
+            case MessageContainer.ContractsTableName:
+                SearchContracts(searchTerm);
+                break;
+
+
             default:
                 SwitchToCurrentTable();
                 break;
@@ -220,8 +229,37 @@ public partial class DashboardViewModel : ObservableObject
             MessageBox.Show($"An error occurred during search: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
+    private void SearchContracts(string searchTerm)
+    {
+        try
+        {
+            
+            var filteredContracts = _context.PojistnaSmlouva.ToList();
 
+           
+            var lowerTerm = searchTerm.ToLower();
 
+            
+            filteredContracts = filteredContracts
+                .Where(c =>
+                    c.PojistnaCastka.ToString().Contains(searchTerm) || 
+                    c.Cena.ToString().Contains(searchTerm) || 
+                    c.KlientId.ToString().Contains(searchTerm) || 
+                    c.PobockyId.ToString().Contains(searchTerm) || 
+                    c.TypPojistkyId.ToString().Contains(searchTerm) || 
+                    c.DatumZacatkuPlatnosti.ToString("d", System.Globalization.CultureInfo.InvariantCulture).Contains(searchTerm) || 
+                    c.DatumUkonceniPlatnosti.ToString("d", System.Globalization.CultureInfo.InvariantCulture).Contains(searchTerm) || 
+                    c.DataVystaveni.ToString("d", System.Globalization.CultureInfo.InvariantCulture).Contains(searchTerm)) 
+                .ToList();
+
+           
+            CurrentTableData = new ObservableCollection<object>(filteredContracts);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"An error occurred during search: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
 
 
 
@@ -250,6 +288,10 @@ public partial class DashboardViewModel : ObservableObject
             case MessageContainer.TypPojistkyTableName:
                 addView = new AddInsuranceTypeView(_context);
                 break;
+            case MessageContainer.ContractsTableName:
+                addView = new AddContractView(_context);
+                break;
+
             default:
                 MessageBoxDisplayer.ShowInfo(MessageContainer.AddFunctionalityNotSupported);
                 return;
@@ -277,9 +319,12 @@ public partial class DashboardViewModel : ObservableObject
             HandleBranchDeletion(selectedBranch);
         else if (SelectedItem is TypPojistky selectedInsuranceType)
             HandleInsuranceTypeDeletion(selectedInsuranceType);
+        else if (SelectedItem is PojistnaSmlouva selectedContract)
+            HandleContractDeletion(selectedContract);
         else
             MessageBoxDisplayer.ShowInfo(MessageContainer.DeleteFunctionalityNotSupported);
     }
+
 
     [RelayCommand]
     public void Logout()
@@ -386,6 +431,29 @@ public partial class DashboardViewModel : ObservableObject
         }
     }
 
+    private void HandleContractDeletion(PojistnaSmlouva selectedContract)
+    {
+        var result = MessageBoxDisplayer.ShowContractDeletionConfirmation(selectedContract.IdPojistky.ToString());
+        if (result != MessageBoxResult.Yes)
+            return;
+
+        using var transaction = _context.Database.BeginTransaction();
+        try
+        {
+            var contractIdParam = new Oracle.ManagedDataAccess.Client.OracleParameter("p_ID_POJISTKY", selectedContract.IdPojistky);
+            _context.Database.ExecuteSqlRaw("BEGIN DeletePojistnaMlouva(:p_ID_POJISTKY); END;", contractIdParam);
+            transaction.Commit();
+
+            MessageBoxDisplayer.ShowInfo("Contract deleted successfully.");
+            SwitchToCurrentTable();
+        }
+        catch (Exception ex)
+        {
+            transaction.Rollback();
+            var detailedMessage = ex.InnerException?.Message ?? ex.Message;
+            MessageBoxDisplayer.ShowError($"An error occurred: {detailedMessage}");
+        }
+    }
 
 
 

@@ -36,8 +36,10 @@
                 <MenuItem Header="Adresy" Command="{Binding SwitchToAdresyCommand}" />
                 <MenuItem Header="Pobocky" Command="{Binding SwitchToPobockyCommand}" />
                 <MenuItem Header="TypPojistky" Command="{Binding SwitchToTypPojistkyCommand}" />
+                <MenuItem Header="PojistnaSmlouva" Command="{Binding SwitchToPojistnaSmlouvaCommand}" />
             </MenuItem>
         </Menu>
+
 
         <!-- Search Bar -->
         <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="10">

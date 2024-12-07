@@ -27,9 +27,12 @@ public partial class DashboardView : Window
 
     private void MainDataGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
     {
-        if (e.PropertyName == "IdTyp" || e.PropertyName == "IdPobocky" ||  e.PropertyName == "AdresaId" || e.PropertyName == "IdKlientu" || e.PropertyName == "Adresa" || e.PropertyName == "IdAdresa")
+        if (e.PropertyName.Contains("Id", StringComparison.OrdinalIgnoreCase))
+        {
             e.Cancel = true;
+        }
     }
+
 
     private void MainDataGrid_LoadingRow(object sender, DataGridRowEventArgs e) =>
         e.Row.Header = (e.Row.GetIndex() + 1).ToString();
@@ -119,6 +122,21 @@ public partial class DashboardView : Window
                     new OracleParameter("p_DATIM_ZACATKU", typPojistky.DatimZacatku)
                 );
             }
+            else if (editedItem is PojistnaSmlouva contract)
+            {
+                context.Database.ExecuteSqlRaw(
+                    "BEGIN UpdatePojistnaMlouva(:p_ID_POJISTKY, :p_POJISTNA_CASTKA, :p_DATUM_ZACATKU_PLATNOSTI, :p_DATUM_UKONCENI_PLATNOSTI, :p_DATA_VYSTAVENI, :p_CENA, :p_KLIENT_ID_KLIENTU, :p_POBOCKY_ID_POBOCKY, :p_TYPPOJISTKY_ID_TYP); END;",
+                    new OracleParameter("p_ID_POJISTKY", contract.IdPojistky),
+                    new OracleParameter("p_POJISTNA_CASTKA", contract.PojistnaCastka),
+                    new OracleParameter("p_DATUM_ZACATKU_PLATNOSTI", contract.DatumZacatkuPlatnosti),
+                    new OracleParameter("p_DATUM_UKONCENI_PLATNOSTI", contract.DatumUkonceniPlatnosti),
+                    new OracleParameter("p_DATA_VYSTAVENI", contract.DataVystaveni),
+                    new OracleParameter("p_CENA", contract.Cena),
+                    new OracleParameter("p_KLIENT_ID_KLIENTU", contract.KlientId),
+                    new OracleParameter("p_POBOCKY_ID_POBOCKY", contract.PobockyId),
+                    new OracleParameter("p_TYPPOJISTKY_ID_TYP", contract.TypPojistkyId)
+                );
+            }
 
             MessageBoxDisplayer.ShowInfo(MessageContainer.DataGridCellEditingChangesSaved);
         }
@@ -141,6 +159,7 @@ public partial class DashboardView : Window
             ((DashboardViewModel)DataContext).SwitchToCurrentTable();
         }
     }
+
 
 
 
@@ -187,8 +206,20 @@ public partial class DashboardView : Window
             editedTyp.MinimalneKryti = originalTyp.MinimalneKryti;
             editedTyp.DatimZacatku = originalTyp.DatimZacatku;
         }
+        else if (_originalItem is PojistnaSmlouva originalContract && currentItem is PojistnaSmlouva editedContract)
+        {
+            editedContract.IdPojistky = originalContract.IdPojistky;
+            editedContract.PojistnaCastka = originalContract.PojistnaCastka;
+            editedContract.DatumZacatkuPlatnosti = originalContract.DatumZacatkuPlatnosti;
+            editedContract.DatumUkonceniPlatnosti = originalContract.DatumUkonceniPlatnosti;
+            editedContract.DataVystaveni = originalContract.DataVystaveni;
+            editedContract.Cena = originalContract.Cena;
+            editedContract.KlientId = originalContract.KlientId;
+            editedContract.PobockyId = originalContract.PobockyId;
+            editedContract.TypPojistkyId = originalContract.TypPojistkyId;
+        }
 
-    ((DashboardViewModel)DataContext).SwitchToCurrentTable();
+     ((DashboardViewModel)DataContext).SwitchToCurrentTable();
     }
 
 
@@ -243,8 +274,24 @@ public partial class DashboardView : Window
                 DatimZacatku = typPojistky.DatimZacatku
             };
         }
+        else if (item is PojistnaSmlouva contract)
+        {
+            return new PojistnaSmlouva
+            {
+                IdPojistky = contract.IdPojistky,
+                PojistnaCastka = contract.PojistnaCastka,
+                DatumZacatkuPlatnosti = contract.DatumZacatkuPlatnosti,
+                DatumUkonceniPlatnosti = contract.DatumUkonceniPlatnosti,
+                DataVystaveni = contract.DataVystaveni,
+                Cena = contract.Cena,
+                KlientId = contract.KlientId,
+                PobockyId = contract.PobockyId,
+                TypPojistkyId = contract.TypPojistkyId
+            };
+        }
         throw new ArgumentException("Unsupported type for cloning");
     }
+
 
 
     #endregion
