@@ -22,4 +22,6 @@ public class Pobocka
    
     [ForeignKey("AdresaId")]
     public virtual Adresa? Adresa { get; set; }
+
+    public virtual ICollection<Zamestnanec> Zamestnanci { get; set; } = new List<Zamestnanec>();
 }

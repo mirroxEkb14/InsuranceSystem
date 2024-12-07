@@ -36,7 +36,9 @@
                 <MenuItem Header="Adresy" Command="{Binding SwitchToAdresyCommand}" />
                 <MenuItem Header="Pobocky" Command="{Binding SwitchToPobockyCommand}" />
                 <MenuItem Header="TypPojistky" Command="{Binding SwitchToTypPojistkyCommand}" />
-                <MenuItem Header="PojistnaSmlouva" Command="{Binding SwitchToPojistnaSmlouvaCommand}" />
+                <MenuItem Header="PojistnaSmlouva" Command="{Binding SwitchToPojistnaSmlouvaCommand}"/>
+                <MenuItem Header="Zamestnanec" Command="{Binding SwitchToZamestnanecCommand}" />
+
             </MenuItem>
         </Menu>
 

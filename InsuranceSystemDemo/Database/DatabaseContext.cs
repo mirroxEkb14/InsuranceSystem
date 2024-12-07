@@ -14,6 +14,9 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
 
     public DbSet<PojistnaSmlouva> PojistnaSmlouva { get; set; }
 
+   
+
+
 
 
     //
@@ -195,6 +198,63 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
                 .HasForeignKey(p => p.TypPojistkyId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
+
+
+        modelBuilder.Entity<Zamestnanec>(entity =>
+        {
+            entity.ToTable("ZAMESTNANEC");
+
+            entity.HasKey(z => z.IdZamestnance);
+
+            entity.Property(z => z.Role)
+                .HasColumnName("ROLE")
+                .HasMaxLength(4000)
+                .IsRequired();
+
+            entity.Property(z => z.PobockyIdPobocky)
+                .HasColumnName("POBOCKY_ID_POBOCKY")
+                .IsRequired();
+
+            entity.Property(z => z.Jmeno)
+                .HasColumnName("JMENO")
+                .HasMaxLength(4000)
+                .IsRequired();
+
+            entity.Property(z => z.Prijmeni)
+                .HasColumnName("PRIJMENI")
+                .HasMaxLength(4000)
+                .IsRequired();
+
+            entity.Property(z => z.Email)
+                .HasColumnName("EMAIL")
+                .HasMaxLength(50);
+
+            entity.Property(z => z.Telefon)
+                .HasColumnName("TELEFON")
+                .IsRequired();
+
+            entity.Property(z => z.AdresaIdAdresa)
+                .HasColumnName("ADRESA_ID_ADRESA")
+                .IsRequired();
+
+            entity.Property(z => z.Popis)
+                .HasColumnName("POPIS");
+
+           
+            entity.HasOne(z => z.Pobocka)
+                .WithMany(p => p.Zamestnanci)
+                .HasForeignKey(z => z.PobockyIdPobocky)
+                .OnDelete(DeleteBehavior.Cascade); 
+
+           
+            entity.HasOne(z => z.Adresa)
+                .WithMany()
+                .HasForeignKey(z => z.AdresaIdAdresa)
+                .OnDelete(DeleteBehavior.Cascade); 
+        });
+
+
+
 
 
         base.OnModelCreating(modelBuilder);

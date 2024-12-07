@@ -6,6 +6,7 @@ using InsuranceSystemDemo.Models;
 using InsuranceSystemDemo.Utils;
 using InsuranceSystemDemo.Views;
 using Microsoft.EntityFrameworkCore;
+using Oracle.ManagedDataAccess.Client;
 using System.Collections.ObjectModel;
 using System.Windows;
 #endregion
@@ -54,6 +55,9 @@ public partial class DashboardViewModel : ObservableObject
                 break;
             case MessageContainer.ContractsTableName:
                 SwitchToPojistnaSmlouva(); 
+                break;
+            case MessageContainer.ZamestnanecTableName:
+                SwitchToZamestnanec();
                 break;
 
             default:
@@ -110,6 +114,20 @@ public partial class DashboardViewModel : ObservableObject
         CurrentTableData = new ObservableCollection<object>(contracts);
     }
 
+    [RelayCommand]
+    public void SwitchToZamestnanec()
+    {
+        CurrentTableName = MessageContainer.ZamestnanecTableName;
+
+        
+        var zamestnanci = _context.Zamestnanci
+            .Include(z => z.Pobocka) 
+            .Include(z => z.Adresa)  
+            .ToList();
+
+       
+        CurrentTableData = new ObservableCollection<object>(zamestnanci);
+    }
 
 
 
@@ -151,7 +169,9 @@ public partial class DashboardViewModel : ObservableObject
             case MessageContainer.ContractsTableName:
                 SearchContracts(searchTerm);
                 break;
-
+            case MessageContainer.ZamestnanecTableName:
+                SearchZamestnanci(searchTerm);
+                break;
 
             default:
                 SwitchToCurrentTable();
@@ -261,6 +281,22 @@ public partial class DashboardViewModel : ObservableObject
         }
     }
 
+    private void SearchZamestnanci(string searchTerm)
+    {
+        var results = _context.Zamestnanci
+            .Where(z =>
+                z.Jmeno.ToLower().Contains(searchTerm) ||
+                z.Prijmeni.ToLower().Contains(searchTerm) ||
+                z.Role.ToLower().Contains(searchTerm) ||
+                (z.Email != null && z.Email.ToLower().Contains(searchTerm)) ||
+                z.Telefon.ToString().Contains(searchTerm))
+            .ToList();
+
+        CurrentTableData = new ObservableCollection<object>(results);
+    }
+
+
+
 
 
 
@@ -291,14 +327,18 @@ public partial class DashboardViewModel : ObservableObject
             case MessageContainer.ContractsTableName:
                 addView = new AddContractView(_context);
                 break;
-
+            case MessageContainer.ZamestnanecTableName: 
+                addView = new AddZamestnanecView(); 
+                break;
             default:
                 MessageBoxDisplayer.ShowInfo(MessageContainer.AddFunctionalityNotSupported);
                 return;
         }
-        addView.ShowDialog();
-        SwitchToCurrentTable();
+
+        addView.ShowDialog(); 
+        SwitchToCurrentTable(); 
     }
+
 
 
 
@@ -321,9 +361,12 @@ public partial class DashboardViewModel : ObservableObject
             HandleInsuranceTypeDeletion(selectedInsuranceType);
         else if (SelectedItem is PojistnaSmlouva selectedContract)
             HandleContractDeletion(selectedContract);
+        else if (SelectedItem is Zamestnanec selectedZamestnanec) 
+            HandleZamestnanecDeletion(selectedZamestnanec);
         else
             MessageBoxDisplayer.ShowInfo(MessageContainer.DeleteFunctionalityNotSupported);
     }
+
 
 
     [RelayCommand]
@@ -454,6 +497,40 @@ public partial class DashboardViewModel : ObservableObject
             MessageBoxDisplayer.ShowError($"An error occurred: {detailedMessage}");
         }
     }
+
+
+    private void HandleZamestnanecDeletion(Zamestnanec zamestnanec)
+    {
+        var result = MessageBox.Show(
+            $"Are you sure you want to delete Zamestnanec '{zamestnanec.Jmeno} {zamestnanec.Prijmeni}'?",
+            "Confirm Deletion",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning
+        );
+
+        if (result != MessageBoxResult.Yes)
+            return;
+
+        try
+        {
+            using var context = new DatabaseContext(DatabaseContextGetter.GetDatabaseContextOptions());
+
+            context.Database.ExecuteSqlRaw(
+                "BEGIN DELETEZAMESTNANEC(:p_id_zamestnance); END;",
+                new OracleParameter("p_id_zamestnance", zamestnanec.IdZamestnance)
+            );
+
+            MessageBox.Show("Zamestnanec was successfully deleted.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+
+           
+            SwitchToCurrentTable();
+        }
+        catch (Exception ex)
+        {
+            MessageBoxDisplayer.ShowError(MessageContainer.GetUnexpectedErrorMessage(ex.Message));
+        }
+    }
+
 
 
 

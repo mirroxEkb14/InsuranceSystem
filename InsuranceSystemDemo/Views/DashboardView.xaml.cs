@@ -27,11 +27,24 @@ public partial class DashboardView : Window
 
     private void MainDataGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
     {
-        if (e.PropertyName.Contains("Id", StringComparison.OrdinalIgnoreCase))
+        
+        if (DataContext is DashboardViewModel viewModel)
         {
-            e.Cancel = true;
+           
+            if (e.PropertyName.Contains("Id", StringComparison.OrdinalIgnoreCase))
+            {
+                e.Cancel = true;
+                return;
+            }
+
+            
+            if (viewModel.CurrentTableName == MessageContainer.ZamestnanecTableName && e.PropertyName == "Jmeno")
+            {
+                e.Column.Width = 150;
+            }
         }
     }
+
 
 
     private void MainDataGrid_LoadingRow(object sender, DataGridRowEventArgs e) =>
@@ -137,6 +150,21 @@ public partial class DashboardView : Window
                     new OracleParameter("p_TYPPOJISTKY_ID_TYP", contract.TypPojistkyId)
                 );
             }
+            else if (editedItem is Zamestnanec zamestnanec) 
+            {
+                context.Database.ExecuteSqlRaw(
+                    "BEGIN UPDATEZAMESTNANEC(:p_id_zamestnance, :p_role, :p_pobocky_id, :p_jmeno, :p_prijmeni, :p_email, :p_telefon, :p_adresa_id, :p_popis); END;",
+                    new OracleParameter("p_id_zamestnance", zamestnanec.IdZamestnance),
+                    new OracleParameter("p_role", zamestnanec.Role),
+                    new OracleParameter("p_pobocky_id", zamestnanec.PobockyIdPobocky),
+                    new OracleParameter("p_jmeno", zamestnanec.Jmeno),
+                    new OracleParameter("p_prijmeni", zamestnanec.Prijmeni),
+                    new OracleParameter("p_email", zamestnanec.Email ?? (object)DBNull.Value),
+                    new OracleParameter("p_telefon", zamestnanec.Telefon),
+                    new OracleParameter("p_adresa_id", zamestnanec.AdresaIdAdresa),
+                    new OracleParameter("p_popis", zamestnanec.Popis ?? (object)DBNull.Value)
+                );
+            }
 
             MessageBoxDisplayer.ShowInfo(MessageContainer.DataGridCellEditingChangesSaved);
         }
@@ -159,6 +187,7 @@ public partial class DashboardView : Window
             ((DashboardViewModel)DataContext).SwitchToCurrentTable();
         }
     }
+
 
 
 
@@ -218,9 +247,22 @@ public partial class DashboardView : Window
             editedContract.PobockyId = originalContract.PobockyId;
             editedContract.TypPojistkyId = originalContract.TypPojistkyId;
         }
+        else if (_originalItem is Zamestnanec originalZamestnanec && currentItem is Zamestnanec editedZamestnanec) // Новый блок
+        {
+            editedZamestnanec.IdZamestnance = originalZamestnanec.IdZamestnance;
+            editedZamestnanec.Role = originalZamestnanec.Role;
+            editedZamestnanec.PobockyIdPobocky = originalZamestnanec.PobockyIdPobocky;
+            editedZamestnanec.Jmeno = originalZamestnanec.Jmeno;
+            editedZamestnanec.Prijmeni = originalZamestnanec.Prijmeni;
+            editedZamestnanec.Email = originalZamestnanec.Email;
+            editedZamestnanec.Telefon = originalZamestnanec.Telefon;
+            editedZamestnanec.AdresaIdAdresa = originalZamestnanec.AdresaIdAdresa;
+            editedZamestnanec.Popis = originalZamestnanec.Popis;
+        }
 
-     ((DashboardViewModel)DataContext).SwitchToCurrentTable();
+    ((DashboardViewModel)DataContext).SwitchToCurrentTable();
     }
+
 
 
     private static object CloneItem(object item)
@@ -289,8 +331,25 @@ public partial class DashboardView : Window
                 TypPojistkyId = contract.TypPojistkyId
             };
         }
+        else if (item is Zamestnanec zamestnanec) 
+        {
+            return new Zamestnanec
+            {
+                IdZamestnance = zamestnanec.IdZamestnance,
+                Role = zamestnanec.Role,
+                PobockyIdPobocky = zamestnanec.PobockyIdPobocky,
+                Jmeno = zamestnanec.Jmeno,
+                Prijmeni = zamestnanec.Prijmeni,
+                Email = zamestnanec.Email,
+                Telefon = zamestnanec.Telefon,
+                AdresaIdAdresa = zamestnanec.AdresaIdAdresa,
+                Popis = zamestnanec.Popis
+            };
+        }
+
         throw new ArgumentException("Unsupported type for cloning");
     }
+
 
 
 
