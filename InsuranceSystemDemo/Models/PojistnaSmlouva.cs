@@ -22,14 +22,14 @@ public class PojistnaSmlouva
     [Column("CENA")]
     [DataType("decimal(10,2)")]
     public decimal Cena { get; set; }
+
+    // Navigation properties
     [Column("KLIENT_ID_KLIENTU")]
     public int KlientId { get; set; }
     [Column("POBOCKY_ID_POBOCKY")]
     public int PobockyId { get; set; }
     [Column("TYPOJISTKY_ID_TYP")]
     public int TypPojistkyId { get; set; }
-
-    // Navigation properties
     [ForeignKey("KlientId")]
     public virtual Klient? Klient { get; set; }
     [ForeignKey("PobockyId")]

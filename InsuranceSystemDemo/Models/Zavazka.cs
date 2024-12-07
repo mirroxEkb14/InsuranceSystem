@@ -19,6 +19,8 @@ public class Zavazka
     [Column("DATA_SPLATNISTI")]
     [Required]
     public DateTime DataSplatnisti { get; set; }
+
+    // Navigation property
     [Column("POHLEDAVKA_ID_POHLEDAVKY")]
     [Required]
     public int IdPohledavky { get; set; }

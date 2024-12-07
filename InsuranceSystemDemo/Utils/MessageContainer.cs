@@ -16,6 +16,7 @@ public static class MessageContainer
     public const string KlientiTableName = "Klienti";
     public const string AdresyTableName = "Adresy";
     public const string PobockyTableName = "Pobocky";
+    public const string TypPojistkyTableName = "TypPojistky";
 
     public const string AddFunctionalityNotSupported = "Add functionality is not supported for this table.";
 

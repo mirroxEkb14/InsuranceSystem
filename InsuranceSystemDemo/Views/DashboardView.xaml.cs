@@ -25,7 +25,7 @@ public partial class DashboardView : Window
 
     private void MainDataGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
     {
-        if (e.PropertyName == "IdPobocky" ||  e.PropertyName == "AdresaId" || e.PropertyName == "IdKlientu" || e.PropertyName == "Adresa" || e.PropertyName == "IdAdresa")
+        if (e.PropertyName == "IdTyp" || e.PropertyName == "IdPobocky" ||  e.PropertyName == "AdresaId" || e.PropertyName == "IdKlientu" || e.PropertyName == "Adresa" || e.PropertyName == "IdAdresa")
             e.Cancel = true;
     }
 

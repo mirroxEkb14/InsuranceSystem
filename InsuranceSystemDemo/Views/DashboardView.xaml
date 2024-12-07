@@ -35,6 +35,7 @@
                 <MenuItem Header="Klienti" Command="{Binding SwitchToKlientiCommand}" />
                 <MenuItem Header="Adresy" Command="{Binding SwitchToAdresyCommand}" />
                 <MenuItem Header="Pobocky" Command="{Binding SwitchToPobockyCommand}" />
+                <MenuItem Header="TypPojistky" Command="{Binding SwitchToTypPojistkyCommand}" />
             </MenuItem>
         </Menu>
 

@@ -6,10 +6,12 @@ namespace InsuranceSystemDemo.Models;
 [Table("KARTA")]
 public class Karta
 {
+    // Navigation property
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
     [Column("ID_PLATBY")]
     public int IdPlatby { get; set; }
+
     [Column("CISLO_KARTY")]
     public int CisloKarty { get; set; }
     [Column("CISLO_UCTU")]

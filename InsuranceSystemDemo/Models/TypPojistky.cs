@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace InsuranceSystemDemo.Models;
 
-[Table("TYPOJISTKY")]
+[Table("TYPPOJISTKY")]
 public class TypPojistky
 {
     [Key]
@@ -27,7 +27,7 @@ public class TypPojistky
     [Column("MINIMALNE_KRYTI")]
     [Required]
     public decimal MinimalneKryti { get; set; }
-    [Column("DATUM_ZACATKU")]
+    [Column("DATIM_ZACATKU")]
     [Required]
     public DateTime DatumZacatku { get; set; }
 }

@@ -17,6 +17,8 @@ public class Pohledavka
     public DateTime DatumZacatku { get; set; }
     [Column("DATUM_KONCE")]
     public DateTime DatumKonce { get; set; }
+
+    // Navigation properties
     [Column("POJISTNASMOULVA_ID_POJISTKY")]
     public int PojistnaSmlouvaId { get; set; }
     [ForeignKey("PojistnaSmlouvaId")]

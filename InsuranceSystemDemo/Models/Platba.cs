@@ -18,6 +18,8 @@ public class Platba
     public int KlientId { get; set; }
     [Column("TYP_PLATBY")]
     public string? TypPlatby { get; set; }
+
+    // Navigation properties
     [Column("POJISTNASMLOUVA_ID")]
     public int PojistnaSmlouvaId { get; set; }
     [ForeignKey("KlientId")]

@@ -23,6 +23,7 @@ public class Klient
     [Column("DATUM_NAROZENI")]
     public DateTime? DatumNarozeni { get; set; }
 
+    // Navigation property
     [ForeignKey("AdresaId")]
     public Adresa? Adresa { get; set; }
 }

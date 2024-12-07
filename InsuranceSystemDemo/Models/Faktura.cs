@@ -6,10 +6,12 @@ namespace InsuranceSystemDemo.Models;
 [Table("FAKTURA")]
 public class Faktura
 {
+    // Navigation propertн
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
     [Column("ID_PLATBY")]
     public int IdPlatby { get; set; }
+
     [Column("CISLO_UCTU")]
     public int CisloUctu { get; set; }
     [Column("DATUM_SPLATNOSTI")]

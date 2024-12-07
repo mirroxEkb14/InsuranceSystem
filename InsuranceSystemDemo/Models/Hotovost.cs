@@ -6,10 +6,12 @@ namespace InsuranceSystemDemo.Models;
 [Table("HOTOVOST")]
 public class Hotovost
 {
+    // Navigation property
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
     [Column("ID_PLATBY")]
     public int IdPlatby { get; set; }
+
     [Column("PRIJATO")]
     public decimal Prijato { get; set; }
     [Column("VRACENO")]

@@ -45,6 +45,9 @@ public partial class DashboardViewModel : ObservableObject
             case MessageContainer.PobockyTableName:
                 SwitchToPobocky();
                 break;
+            case MessageContainer.TypPojistkyTableName:
+                SwitchToTypPojistky();
+                break;
             default:
                 CurrentTableData = [];
                 break;
@@ -79,6 +82,14 @@ public partial class DashboardViewModel : ObservableObject
             .ToList();
         CurrentTableData = new ObservableCollection<object>(pobocky);
     }
+
+    [RelayCommand]
+    public void SwitchToTypPojistky()
+    {
+        CurrentTableName = MessageContainer.TypPojistkyTableName;
+        var insuranceTypes = _context.TypPojistky.ToList();
+        CurrentTableData = new ObservableCollection<object>(insuranceTypes);
+    }
     #endregion
 
     #region Search Commands
@@ -108,6 +119,9 @@ public partial class DashboardViewModel : ObservableObject
                 break;
             case MessageContainer.PobockyTableName:
                 SearchPobocky(searchTerm);
+                break;
+            case MessageContainer.TypPojistkyTableName:
+                SearchTypyPojisty(searchTerm);
                 break;
             default:
                 SwitchToCurrentTable();
@@ -152,6 +166,22 @@ public partial class DashboardViewModel : ObservableObject
                 (p.Telefon != null && EF.Functions.Like(p.Telefon.ToLower(), $"%{searchTerm}%")))
             .ToList();
         CurrentTableData = new ObservableCollection<object>(filteredBranches);
+    }
+
+    private void SearchTypyPojisty(string searchTerm)
+    {
+    var filteredInsuranceTypes = _context.TypPojistky
+        .Where(t =>
+            EF.Functions.Like(t.Dostupnost, $"%{searchTerm}%") ||
+            EF.Functions.Like(t.Podminky.ToLower(), $"%{searchTerm}%") ||
+            (t.Popis != null && EF.Functions.Like(t.Popis.ToLower(), $"%{searchTerm}%")))
+        .AsEnumerable()
+        .Where(t =>
+            t.MaximalneKryti.ToString().Contains(searchTerm) ||
+            t.MinimalneKryti.ToString().Contains(searchTerm) ||
+            t.DatumZacatku.ToString("dd/MM/yyyy").Contains(searchTerm))
+        .ToList();
+        CurrentTableData = new ObservableCollection<object>(filteredInsuranceTypes);
     }
     #endregion
 
