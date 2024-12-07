@@ -1,7 +1,6 @@
 ﻿#region Imports
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using InsuranceSystemDemo.Controls;
 using InsuranceSystemDemo.Database;
 using InsuranceSystemDemo.Models;
 using InsuranceSystemDemo.Utils;
@@ -9,9 +8,6 @@ using InsuranceSystemDemo.Views;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 using System.Windows;
-using System.Windows.Controls;
-
-
 #endregion
 
 namespace InsuranceSystemDemo.ViewModels;
@@ -21,10 +17,7 @@ public partial class DashboardViewModel : ObservableObject
     [ObservableProperty] private ObservableCollection<object>? _currentTableData;
     [ObservableProperty] private string? _searchQuery;
     [ObservableProperty] private string _currentTableName;
-
-    [ObservableProperty]
-    private object? selectedItem;
-
+    [ObservableProperty] private object? selectedItem;
 
     private readonly DatabaseContext _context;
 
@@ -34,8 +27,6 @@ public partial class DashboardViewModel : ObservableObject
         CurrentTableName = MessageContainer.KlientiTableName;
         SwitchToKlientiCommand.Execute(null);
     }
-
-
 
     //
     // Summary:
@@ -50,6 +41,9 @@ public partial class DashboardViewModel : ObservableObject
                 break;
             case MessageContainer.AdresyTableName:
                 SwitchToAdresy();
+                break;
+            case MessageContainer.PobockyTableName:
+                SwitchToPobocky();
                 break;
             default:
                 CurrentTableData = [];
@@ -74,7 +68,16 @@ public partial class DashboardViewModel : ObservableObject
         CurrentTableName = MessageContainer.AdresyTableName;
         var addresses = _context.Adresy.ToList();
         CurrentTableData = new ObservableCollection<object>(addresses);
+    }
 
+    [RelayCommand]
+    public void SwitchToPobocky()
+    {
+        CurrentTableName = MessageContainer.PobockyTableName;
+        var pobocky = _context.Pobocky
+            .Include(p => p.Adresa)
+            .ToList();
+        CurrentTableData = new ObservableCollection<object>(pobocky);
     }
     #endregion
 
@@ -102,6 +105,9 @@ public partial class DashboardViewModel : ObservableObject
                 break;
             case MessageContainer.AdresyTableName:
                 SearchAdresy(searchTerm);
+                break;
+            case MessageContainer.PobockyTableName:
+                SearchPobocky(searchTerm);
                 break;
             default:
                 SwitchToCurrentTable();
@@ -137,6 +143,16 @@ public partial class DashboardViewModel : ObservableObject
             .ToList();
         CurrentTableData = new ObservableCollection<object>(filteredAddresses);
     }
+
+    private void SearchPobocky(string searchTerm)
+    {
+        var filteredBranches = _context.Pobocky
+            .Where(p =>
+                (p.Nazev != null && EF.Functions.Like(p.Nazev.ToLower(), $"%{searchTerm}%")) ||
+                (p.Telefon != null && EF.Functions.Like(p.Telefon.ToLower(), $"%{searchTerm}%")))
+            .ToList();
+        CurrentTableData = new ObservableCollection<object>(filteredBranches);
+    }
     #endregion
 
     #region Button Commands
@@ -152,6 +168,9 @@ public partial class DashboardViewModel : ObservableObject
             case MessageContainer.AdresyTableName:
                 addView = new AddAddressView();
                 break;
+            case MessageContainer.PobockyTableName:
+                addView = new AddBranchView(_context);
+                break;
             default:
                 MessageBoxDisplayer.ShowInfo(MessageContainer.AddFunctionalityNotSupported);
                 return;
@@ -165,101 +184,80 @@ public partial class DashboardViewModel : ObservableObject
     {
         if (SelectedItem == null)
         {
-            MessageBox.Show("Please select an item to delete.");
+            MessageBoxDisplayer.ShowError(MessageContainer.DeleteItemNotSelected);
             return;
         }
 
         if (SelectedItem is Klient selectedClient)
-        {
-            var confirmationMessage = $"Are you sure you want to delete the client {selectedClient.Jmeno} {selectedClient.Prijmeni}?";
-
-            var result = MessageBox.Show(
-                confirmationMessage,
-                "Confirm Deletion",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Warning
-            );
-
-            if (result != MessageBoxResult.Yes)
-            {
-                return;
-            }
-
-            using (var transaction = _context.Database.BeginTransaction())
-            {
-                try
-                {
-                    var clientIdParam = new Oracle.ManagedDataAccess.Client.OracleParameter("p_id", selectedClient.IdKlientu);
-
-                    _context.Database.ExecuteSqlRaw("BEGIN DELETE_CLIENT(:p_id); END;", clientIdParam);
-
-                    transaction.Commit();
-
-                    MessageBox.Show($"Client {selectedClient.Jmeno} {selectedClient.Prijmeni} was successfully deleted.");
-                    SwitchToCurrentTable();
-                }
-                catch (Exception ex)
-                {
-                    transaction.Rollback();
-                    var detailedMessage = ex.InnerException?.Message ?? ex.Message;
-                    MessageBox.Show($"An error occurred while deleting the client: {detailedMessage}");
-                }
-            }
-        }
+            HandleClientDeletion(selectedClient);
         else if (SelectedItem is Adresa selectedAddress)
-        {
-            var confirmationMessage = $"Are you sure you want to delete the address at {selectedAddress.Ulice}, {selectedAddress.Mesto}?";
-
-            var result = MessageBox.Show(
-                confirmationMessage,
-                "Confirm Deletion",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Warning
-            );
-
-            if (result != MessageBoxResult.Yes)
-            {
-                return;
-            }
-
-            using (var transaction = _context.Database.BeginTransaction())
-            {
-                try
-                {
-                    var addressIdParam = new Oracle.ManagedDataAccess.Client.OracleParameter("p_id_adresa", selectedAddress.IdAdresa);
-
-                    _context.Database.ExecuteSqlRaw("BEGIN DELETE_ADDRESS(:p_id_adresa); END;", addressIdParam);
-
-                    transaction.Commit();
-
-                    MessageBox.Show($"Address at {selectedAddress.Ulice}, {selectedAddress.Mesto} was successfully deleted.");
-                    SwitchToCurrentTable();
-                }
-                catch (Exception ex)
-                {
-                    transaction.Rollback();
-                    var detailedMessage = ex.InnerException?.Message ?? ex.Message;
-                    MessageBox.Show($"An error occurred while deleting the address: {detailedMessage}");
-                }
-            }
-        }
+            HandleAddressDeletion(selectedAddress);
+        else if (SelectedItem is Pobocka selectedBranch)
+            HandleBranchDeletion(selectedBranch);
         else
-        {
-            MessageBox.Show("Deletion is only supported for clients and addresses.");
-        }
+            MessageBoxDisplayer.ShowInfo(MessageContainer.DeleteFunctionalityNotSupported);
     }
-
-
-
-
-
-
 
     [RelayCommand]
     public void Logout()
     {
         new LoginView().Show();
         CloseRegisterWindow();
+    }
+    #endregion
+
+    #region Tables Deletion Methods
+    private void HandleClientDeletion(Klient selectedClient)
+    {
+        var result = MessageBoxDisplayer.ShowClientDeletionConfirmation(selectedClient.Jmeno!, selectedClient.Prijmeni!);
+        if (result != MessageBoxResult.Yes)
+            return;
+
+        using var transaction = _context.Database.BeginTransaction();
+        try
+        {
+            var clientIdParam = new Oracle.ManagedDataAccess.Client.OracleParameter("p_id", selectedClient.IdKlientu);
+            _context.Database.ExecuteSqlRaw("BEGIN DELETE_CLIENT(:p_id); END;", clientIdParam);
+            transaction.Commit();
+
+            MessageBoxDisplayer.ShowInfo(MessageContainer.DeleteClientSuccess);
+            SwitchToCurrentTable();
+        }
+        catch (Exception ex)
+        {
+            transaction.Rollback();
+            var detailedMessage = ex.InnerException?.Message ?? ex.Message;
+            MessageBoxDisplayer.ShowError(MessageContainer.GetUnexpectedErrorMessage(detailedMessage));
+        }
+    }
+
+    private void HandleAddressDeletion(Adresa selectedAddress)
+    {
+        var result = MessageBoxDisplayer.ShowAddressDeletionConfirmation(selectedAddress.Ulice!, selectedAddress.Mesto!);
+        if (result != MessageBoxResult.Yes)
+            return;
+
+        using var transaction = _context.Database.BeginTransaction();
+        try
+        {
+            var addressIdParam = new Oracle.ManagedDataAccess.Client.OracleParameter("p_id_adresa", selectedAddress.IdAdresa);
+            _context.Database.ExecuteSqlRaw("BEGIN DELETE_ADDRESS(:p_id_adresa); END;", addressIdParam);
+            transaction.Commit();
+
+            MessageBoxDisplayer.ShowInfo(MessageContainer.DeleteAddressSuccess);
+            SwitchToCurrentTable();
+        }
+        catch (Exception ex)
+        {
+            transaction.Rollback();
+            var detailedMessage = ex.InnerException?.Message ?? ex.Message;
+            MessageBoxDisplayer.ShowError(MessageContainer.GetUnexpectedErrorMessage(detailedMessage));
+        }
+    }
+
+    private void HandleBranchDeletion(Pobocka selectedBranch)
+    {
+        throw new NotImplementedException();
     }
     #endregion
 

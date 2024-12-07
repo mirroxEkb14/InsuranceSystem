@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:InsuranceSystemDemo.Views"
         xmlns:vm="clr-namespace:InsuranceSystemDemo.ViewModels"
         mc:Ignorable="d"
+        ResizeMode="NoResize"
         Title="Add Client" Height="600" Width="400">
     <Window.DataContext>
         <vm:AddClientViewModel />

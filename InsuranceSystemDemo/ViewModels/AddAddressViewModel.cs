@@ -1,9 +1,7 @@
 ﻿#region Imports
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using InsuranceSystemDemo.Controls;
 using InsuranceSystemDemo.Database;
-using InsuranceSystemDemo.Models;
 using InsuranceSystemDemo.Utils;
 using Microsoft.EntityFrameworkCore;
 using Oracle.ManagedDataAccess.Client;
@@ -32,11 +30,9 @@ public partial class AddAddressViewModel : ObservableObject
         try
         {
             using var context = new DatabaseContext(DatabaseContextGetter.GetDatabaseContextOptions());
-
-            
             var newAddressId = AddAddressUsingProcedure(context);
 
-            MessageBoxDisplayer.ShowInfo($"Address successfully added");
+            MessageBoxDisplayer.ShowInfo(MessageContainer.AddAddressSuccess);
             Cancel();
         }
         catch (Exception ex)
@@ -96,13 +92,11 @@ public partial class AddAddressViewModel : ObservableObject
 
     private int AddAddressUsingProcedure(DatabaseContext context)
     {
-        // Параметр для возврата ID нового адреса
         var addressIdParam = new OracleParameter("p_id_adresa", OracleDbType.Int32)
         {
             Direction = System.Data.ParameterDirection.Output
         };
 
-        // Выполнение процедуры
         context.Database.ExecuteSqlRaw(
             "BEGIN ADD_ADDRESS(:p_ulice, :p_mesto, :p_stat, :p_cislo_popisne, :p_psc, :p_id_adresa); END;",
             new OracleParameter("p_ulice", Ulice),
@@ -113,13 +107,10 @@ public partial class AddAddressViewModel : ObservableObject
             addressIdParam
         );
 
-        // Преобразование возвращённого значения в int
         if (addressIdParam.Value is Oracle.ManagedDataAccess.Types.OracleDecimal oracleDecimal)
-        {
             return oracleDecimal.ToInt32();
-        }
 
-        throw new Exception("Failed to retrieve the new address ID.");
+        throw new Exception(MessageContainer.AddAddressFailure);
     }
     #endregion
 }

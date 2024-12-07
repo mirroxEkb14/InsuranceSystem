@@ -9,11 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\abstract_elements_like_shields.png" />
     <None Remove="Resources\a_photorealistic_serene_and_professional_horizontal_background.png" />
     <None Remove="Resources\calming_tones_and_abstract_elements_symboliz.png" />
     <None Remove="Resources\insurance_company_the_image_sho.png" />
     <None Remove="Resources\symbolic_element_of_safety.png" />
     <None Remove="Resources\symbolic_umbrella_covering_a_f.png" />
+    <None Remove="Resources\symbols_of_safety_protection.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,6 +28,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Resources\abstract_elements_like_shields.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\a_photorealistic_serene_and_professional_horizontal_background.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -39,6 +44,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\symbolic_umbrella_covering_a_f.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\symbols_of_safety_protection.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

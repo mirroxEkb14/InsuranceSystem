@@ -1,14 +1,12 @@
-﻿using System.Data;
+﻿#region Imports
+using System.Data;
 using CommunityToolkit.Mvvm.ComponentModel;
-using InsuranceSystemDemo.Controls;
 using InsuranceSystemDemo.Database;
 using InsuranceSystemDemo.Utils;
-using System.Diagnostics.Metrics;
-using System.IO;
 using Microsoft.EntityFrameworkCore;
 using Oracle.ManagedDataAccess.Client;
 using Oracle.ManagedDataAccess.Types;
-using System.Windows;
+#endregion
 
 namespace InsuranceSystemDemo.ViewModels;
 

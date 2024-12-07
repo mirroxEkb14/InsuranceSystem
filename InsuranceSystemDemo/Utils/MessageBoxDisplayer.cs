@@ -1,7 +1,6 @@
-﻿using InsuranceSystemDemo.Utils;
-using System.Windows;
+﻿using System.Windows;
 
-namespace InsuranceSystemDemo.Controls;
+namespace InsuranceSystemDemo.Utils;
 
 //
 // Summary:
@@ -17,6 +16,18 @@ public static class MessageBoxDisplayer
     public static MessageBoxResult ShowDataGridCellEditingSaveChanges() =>
         MessageBox.Show(MessageContainer.DataGridCellEditingSaveChanges,
             "Save Changes",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Question);
+
+    public static MessageBoxResult ShowClientDeletionConfirmation(string firstName, string lastName) =>
+        MessageBox.Show(MessageContainer.GetDeleteClientConfirmation(firstName, lastName),
+            "Delete Client",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Question);
+
+    public static MessageBoxResult ShowAddressDeletionConfirmation(string street, string city) =>
+        MessageBox.Show(MessageContainer.GetDeleteAddressConfirmation(street, city),
+            "Delete Address",
             MessageBoxButton.YesNo,
             MessageBoxImage.Question);
 }

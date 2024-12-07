@@ -22,7 +22,7 @@ public class Klient
     public int? AdresaId { get; set; }
     [Column("DATUM_NAROZENI")]
     public DateTime? DatumNarozeni { get; set; }
-    [ForeignKey("AdresaId")]
 
+    [ForeignKey("AdresaId")]
     public Adresa? Adresa { get; set; }
 }

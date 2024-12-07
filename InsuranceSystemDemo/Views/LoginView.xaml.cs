@@ -1,6 +1,8 @@
-﻿using System.Windows;
+﻿#region Imports
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
+#endregion
 
 namespace InsuranceSystemDemo.Views;
 

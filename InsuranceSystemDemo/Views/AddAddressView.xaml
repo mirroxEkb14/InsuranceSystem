@@ -5,14 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:InsuranceSystemDemo.ViewModels"
         mc:Ignorable="d"
-        Title="Add Address" Height="240" Width="400"
+        Title="Add Address" Height="320" Width="400"
+        ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen">
 
     <Window.DataContext>
         <vm:AddAddressViewModel />
     </Window.DataContext>
 
-    <Grid Margin="10" >
+    <Window.Background>
+        <ImageBrush ImageSource="/Resources/symbols_of_safety_protection.png" Stretch="UniformToFill" Opacity="0.7" />
+    </Window.Background>
+
+    <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -22,24 +27,32 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
 
         <!-- Input Fields -->
-        <Label Content="Street:" Grid.Row="0" />
-        <TextBox Text="{Binding Ulice}" Grid.Row="0" Margin="100,0,0,0" VerticalContentAlignment="Center" />
-        <Label Content="City:" Grid.Row="1" />
-        <TextBox Text="{Binding Mesto}" Grid.Row="1" Margin="100,0,0,0" VerticalContentAlignment="Center" />
-        <Label Content="Country:" Grid.Row="2" />
-        <TextBox Text="{Binding Stat}" Grid.Row="2" Margin="100,0,0,0" VerticalContentAlignment="Center" />
-        <Label Content="House Number:" Grid.Row="3" />
-        <TextBox Text="{Binding CisloPopisne}" Grid.Row="3" Margin="100,0,0,0" VerticalContentAlignment="Center" />
-        <Label Content="Postal Code:" Grid.Row="4" />
-        <TextBox Text="{Binding Psc}" Grid.Row="4" Margin="100,0,0,0" VerticalContentAlignment="Center" />
+        <Label Content="Street:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="0,5" />
+        <TextBox Text="{Binding Ulice}" Grid.Row="0" Grid.Column="1" Margin="5,5" VerticalContentAlignment="Center" />
+
+        <Label Content="City:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0,5" />
+        <TextBox Text="{Binding Mesto}" Grid.Row="1" Grid.Column="1" Margin="5,5" VerticalContentAlignment="Center" />
+
+        <Label Content="Country:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Margin="0,5" />
+        <TextBox Text="{Binding Stat}" Grid.Row="2" Grid.Column="1" Margin="5,5" VerticalContentAlignment="Center" />
+
+        <Label Content="House Number:" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Margin="0,5" />
+        <TextBox Text="{Binding CisloPopisne}" Grid.Row="3" Grid.Column="1" Margin="5,5" VerticalContentAlignment="Center" />
+
+        <Label Content="Postal Code:" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Margin="0,5" />
+        <TextBox Text="{Binding Psc}" Grid.Row="4" Grid.Column="1" Margin="5,5" VerticalContentAlignment="Center" />
 
         <!-- Error Message -->
-        <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" Grid.Row="5" />
+        <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" Grid.Row="5" Grid.ColumnSpan="2" TextAlignment="Center" Margin="0,10" />
 
         <!-- Buttons -->
-        <StackPanel Orientation="Horizontal" Grid.Row="6" HorizontalAlignment="Center" Margin="0,10,0,0">
+        <StackPanel Orientation="Horizontal" Grid.Row="6" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="0,10">
             <Button Content="Save" Width="100" Margin="10,0" Command="{Binding SaveCommand}" />
             <Button Content="Cancel" Width="100" Margin="10,0" Command="{Binding CancelCommand}" />
         </StackPanel>

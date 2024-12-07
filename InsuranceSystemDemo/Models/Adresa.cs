@@ -19,4 +19,7 @@ public class Adresa
     public string? CisloPopisne { get; set; }
     [Column("PSC")]
     public string? PSC { get; set; }
+
+    [NotMapped]
+    public string FullAddress => $"{Ulice}, {Mesto}, {Stat}";
 }

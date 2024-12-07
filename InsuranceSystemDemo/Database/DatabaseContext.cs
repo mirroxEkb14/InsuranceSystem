@@ -6,12 +6,9 @@ namespace InsuranceSystemDemo.Database;
 public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbContext(options)
 {
     public DbSet<Adresa> Adresy { get; set; }
-    public DbSet<Dokument> Dokumenty { get; set; }
-    public DbSet<Klient> Klienti { get; set; }
-    public DbSet<LogAkce> Logy { get; set; }
-    public DbSet<PojistnaSmlouva> PojistneSmlouvy { get; set; }
-    public DbSet<TypPojistky> TypyPojistek { get; set; }
+    public DbSet<Pobocka> Pobocky { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<Klient> Klienti { get; set; }
     public DbSet<Zamestnanec> Zamestnanci { get; set; }
 
     //
@@ -58,7 +55,7 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
             entity.ToTable("ADRESA");
         });
 
-       
+
         modelBuilder.Entity<Klient>(entity =>
         {
             entity.ToTable("KLIENT");
@@ -82,16 +79,37 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
             entity.Property(k => k.DatumNarozeni)
                 .HasColumnName("DATUM_NAROZENI");
 
-            
+
             entity
                 .HasOne(k => k.Adresa)
                 .WithMany()
                 .HasForeignKey(k => k.AdresaId)
-                .OnDelete(DeleteBehavior.Cascade); 
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Pobocka>(entity =>
+        {
+            entity.ToTable("POBOCKY");
+
+            entity.HasKey(p => p.IdPobocky);
+
+            entity.Property(p => p.Nazev)
+                .HasColumnName("NAZEV")
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.Property(p => p.Telefon)
+                .HasColumnName("TELEFON")
+                .IsRequired()
+                .HasMaxLength(13);
+
+            entity.HasOne(p => p.Adresa)
+                .WithMany()
+                .HasForeignKey(p => p.AdresaId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<Adresa>().HasKey(a => a.IdAdresa);
-        modelBuilder.Entity<LogAkce>().HasNoKey();
 
         base.OnModelCreating(modelBuilder);
     }
