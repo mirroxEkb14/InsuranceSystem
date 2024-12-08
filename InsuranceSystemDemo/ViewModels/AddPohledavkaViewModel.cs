@@ -63,7 +63,7 @@ public partial class AddPohledavkaViewModel : ObservableObject
 
     #region Private Helper Methods
     private void LoadAvailablePojistneSmlouvy() =>
-        AvailablePojistneSmlouvy = new ObservableCollection<PojistnaSmlouva>(_context.PojistnaSmlouva.ToList());
+        AvailablePojistneSmlouvy = new ObservableCollection<PojistnaSmlouva>(_context.PojistneSmlouvy.ToList());
 
     private bool ValidateInputs()
     {

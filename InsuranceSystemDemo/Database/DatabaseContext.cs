@@ -11,9 +11,10 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
     public DbSet<Adresa> Adresy { get; set; }
     public DbSet<Pobocka> Pobocky { get; set; }
     public DbSet<TypPojistky> TypPojistky { get; set; }
-    public DbSet<PojistnaSmlouva> PojistnaSmlouva { get; set; }
+    public DbSet<PojistnaSmlouva> PojistneSmlouvy { get; set; }
     public DbSet<Pohledavka> Pohledavky { get; set; }
     public DbSet<Zavazek> Zavazky { get; set; }
+    public DbSet<PojistnaPlneni> PojistnePlneni { get; set; }
 
     //
     // Summary:
@@ -47,7 +48,8 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
         ConfigureContract(modelBuilder);
         ConfigureEmployee(modelBuilder);
         ConfigureDebt(modelBuilder);
-        ConfigureBackfill(modelBuilder);
+        ConfigureBankfill(modelBuilder);
+        ConfigurInsuranceFulfilment(modelBuilder);
 
         base.OnModelCreating(modelBuilder);
     }
@@ -281,7 +283,7 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
         });
     }
 
-    private static void ConfigureBackfill(ModelBuilder modelBuilder)
+    private static void ConfigureBankfill(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Zavazek>(entity =>
         {
@@ -308,5 +310,32 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
         });
     }
 
+    private static void ConfigurInsuranceFulfilment(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<PojistnaPlneni>(entity =>
+        {
+            entity.ToTable("POJISTNAPLNENI");
+            entity.HasKey(e => e.IdPlneni);
+
+            entity.Property(e => e.SumaPlneni)
+                .HasColumnName("SUMA_PLNENI")
+                .IsRequired();
+            entity.Property(e => e.PojistnaSmlouvaIdPojistky)
+                .HasColumnName("POJISTNASMLOUVA_ID_POJISTKY")
+                .IsRequired();
+            entity.Property(e => e.ZavazkyIdZavazky)
+                .HasColumnName("ZAVAZKY_ID_ZAVAZKY")
+                .IsRequired();
+
+            entity.HasOne(e => e.PojistnaSmlouva)
+                .WithMany()
+                .HasForeignKey(e => e.PojistnaSmlouvaIdPojistky)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(e => e.Zavazky)
+                .WithMany()
+                .HasForeignKey(e => e.ZavazkyIdZavazky)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+    }
     #endregion
 }

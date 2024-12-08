@@ -40,6 +40,7 @@
                 <MenuItem Header="Zamestnanec" Command="{Binding SwitchToZamestnanecCommand}" />
                 <MenuItem Header="Pohledavka" Command="{Binding SwitchToPohledavkaCommand}" />
                 <MenuItem Header="Zavazek" Command="{Binding SwitchToZavazekCommand}" />
+                <MenuItem Header="PojistnaPlneni" Command="{Binding SwitchToPojistnaPlneniCommand}" />
             </MenuItem>
         </Menu>
 

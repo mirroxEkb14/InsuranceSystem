@@ -61,6 +61,9 @@ public partial class DashboardViewModel : ObservableObject
             case MessageContainer.ZavazekTableName:
                 SwitchToZavazek();
                 break;
+            case MessageContainer.PojistnaPlneniTableName:
+                SwitchToPojistnaPlneni();
+                break;
             default:
                 CurrentTableData = [];
                 break;
@@ -108,7 +111,7 @@ public partial class DashboardViewModel : ObservableObject
     public void SwitchToPojistnaSmlouva()
     {
         CurrentTableName = MessageContainer.ContractsTableName;
-        var contracts = _context.PojistnaSmlouva.ToList();
+        var contracts = _context.PojistneSmlouvy.ToList();
         CurrentTableData = new ObservableCollection<object>(contracts);
     }
 
@@ -141,6 +144,17 @@ public partial class DashboardViewModel : ObservableObject
              .Include(z => z.Pohledavka)
              .ToList();
         CurrentTableData = new ObservableCollection<object>(zavazky);
+    }
+
+    [RelayCommand]
+    public void SwitchToPojistnaPlneni()
+    {
+        CurrentTableName = MessageContainer.PojistnaPlneniTableName;
+        var pojistnaPlneni = _context.PojistnePlneni
+            .Include(p => p.PojistnaSmlouva)
+            .Include(p => p.Zavazky)
+            .ToList();
+        CurrentTableData = new ObservableCollection<object>(pojistnaPlneni);
     }
     #endregion
 
@@ -186,6 +200,9 @@ public partial class DashboardViewModel : ObservableObject
                 break;
             case MessageContainer.ZavazekTableName:
                 SearchZavazky(searchTerm);
+                break;
+            case MessageContainer.PojistnaPlneniTableName:
+                SearchPojistnePlneni(searchTerm);
                 break;
             default:
                 SwitchToCurrentTable();
@@ -257,7 +274,7 @@ public partial class DashboardViewModel : ObservableObject
     {
         try
         {
-            var filteredContracts = _context.PojistnaSmlouva.ToList();
+            var filteredContracts = _context.PojistneSmlouvy.ToList();
             var lowerTerm = searchTerm.ToLower();
             filteredContracts = filteredContracts
                 .Where(c =>
@@ -320,6 +337,23 @@ public partial class DashboardViewModel : ObservableObject
             .ToList();
         CurrentTableData = new ObservableCollection<object>(filteredZavazky);
     }
+
+    private void SearchPojistnePlneni(string searchTerm)
+    {
+        string lowerQuery = searchTerm.ToLower();
+        var filteredPojistnePlneni = _context.PojistnePlneni
+            .Include(p => p.PojistnaSmlouva)
+            .Include(p => p.Zavazky)
+            .AsEnumerable()
+            .Where(p =>
+                p.SumaPlneni.ToString().Contains(lowerQuery) ||
+                p.PojistnaSmlouvaIdPojistky.ToString().Contains(lowerQuery) ||
+                p.ZavazkyIdZavazky.ToString().Contains(lowerQuery) ||
+                (p.PojistnaSmlouva?.IdPojistky.ToString().Contains(lowerQuery) ?? false) ||
+                (p.Zavazky?.IdZavazky.ToString().Contains(lowerQuery) ?? false))
+            .ToList();
+        CurrentTableData = new ObservableCollection<object>(filteredPojistnePlneni);
+    }
     #endregion
 
     #region Button Commands
@@ -349,6 +383,12 @@ public partial class DashboardViewModel : ObservableObject
                 break;
             case MessageContainer.PohledavkaTableName:
                 addView = new AddPohledavkaView();
+                break;
+            case MessageContainer.ZavazekTableName:
+                addView = new AddZavazekView();
+                break;
+            case MessageContainer.PojistnaPlneniTableName:
+                addView = new AddPojistnaPlneniView();
                 break;
             default:
                 MessageBoxDisplayer.ShowInfo(MessageContainer.AddFunctionalityNotSupported);
@@ -381,6 +421,10 @@ public partial class DashboardViewModel : ObservableObject
             HandleZamestnanecDeletion(selectedZamestnanec);
         else if (SelectedItem is Pohledavka selectedPohledavka)
             HandlePohledavkaDeletion(selectedPohledavka);
+        else if (SelectedItem is Zavazek selectedZavazek)
+            HandleZavazekDeletion(selectedZavazek);
+        else if (SelectedItem is PojistnaPlneni selectedPojistnaPlneni)
+            HandlePojistnaPlneniDeletion(selectedPojistnaPlneni);
         else
             MessageBoxDisplayer.ShowInfo(MessageContainer.DeleteFunctionalityNotSupported);
     }
@@ -545,9 +589,47 @@ public partial class DashboardViewModel : ObservableObject
 
         try
         {
-            // TODO: Implement deletion of the debt using DB procedure
+            // TODO
 
             MessageBoxDisplayer.ShowInfo(MessageContainer.DeleteDebtSuccess);
+            SwitchToCurrentTable();
+        }
+        catch (Exception ex)
+        {
+            MessageBoxDisplayer.ShowError(MessageContainer.GetUnexpectedErrorMessage(ex.Message));
+        }
+    }
+
+    private void HandleZavazekDeletion(Zavazek zavazek)
+    {
+        var result = MessageBoxDisplayer.ShowBankfillDeletionConfirmation(zavazek.IdZavazky.ToString());
+        if (result != MessageBoxResult.Yes)
+            return;
+
+        try
+        {
+            // TODO
+
+            MessageBoxDisplayer.ShowInfo(MessageContainer.DeleteBankfillSuccess);
+            SwitchToCurrentTable();
+        }
+        catch (Exception ex)
+        {
+            MessageBoxDisplayer.ShowError(MessageContainer.GetUnexpectedErrorMessage(ex.Message));
+        }
+    }
+
+    private void HandlePojistnaPlneniDeletion(PojistnaPlneni pojistnaPlneni)
+    {
+        var result = MessageBoxDisplayer.ShowInsuranceFulfilmentDeletionConfirmation(pojistnaPlneni.IdPlneni.ToString());
+        if (result != MessageBoxResult.Yes)
+            return;
+
+        try
+        {
+            // TODO
+
+            MessageBoxDisplayer.ShowInfo(MessageContainer.DeleteInsuranceFulfilmentSuccess);
             SwitchToCurrentTable();
         }
         catch (Exception ex)

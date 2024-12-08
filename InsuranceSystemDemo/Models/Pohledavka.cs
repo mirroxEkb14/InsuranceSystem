@@ -25,4 +25,7 @@ public class Pohledavka
     // Object property
     [ForeignKey("PojistnaSmlouvaId")]
     public virtual PojistnaSmlouva? PojistnaSmlouva { get; set; }
+
+    [NotMapped]
+    public string Name => $"Amount: {SumaPohledavky}, Dates: {DatumZacatku:dd.MM.yyyy}-{DatumKonce:dd.MM.yyyy}";
 }

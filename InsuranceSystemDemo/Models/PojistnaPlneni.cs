@@ -15,14 +15,14 @@ public class PojistnaPlneni
     public decimal SumaPlneni { get; set; }
 
     // Navigation properties
-    [Column("POJISTNASMOULVA_ID_POJISTKY")]
-    public int PojistnaSmlouvaId { get; set; }
+    [Column("POJISTNASMLOUVA_ID_POJISTKY")]
+    public int PojistnaSmlouvaIdPojistky { get; set; }
     [Column("ZAVAZKY_ID_ZAVAZKY")]
-    public int ZavazkyId { get; set; }
+    public int ZavazkyIdZavazky { get; set; }
 
     // Object properties
-    [ForeignKey("PojistnaSmlouvaId")]
+    [ForeignKey("PojistnaSmlouvaIdPojistky")]
     public virtual PojistnaSmlouva? PojistnaSmlouva { get; set; }
-    [ForeignKey("ZavazkyId")]
+    [ForeignKey("ZavazkyIdZavazky")]
     public virtual Zavazek? Zavazky { get; set; }
 }

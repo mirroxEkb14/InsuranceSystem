@@ -28,4 +28,7 @@ public class Zavazek
     // Object property
     [ForeignKey("PohledavkaIdPohledavky")]
     public virtual Pohledavka? Pohledavka { get; set; } = null!;
+
+    [NotMapped]
+    public string Name => $"Amount: {SumaZavazky}, Dates: {DataVzniku:dd.MM.yyyy}-{DataSplatnisti:dd.MM.yyyy}";
 }

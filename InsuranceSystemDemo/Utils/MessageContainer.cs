@@ -24,6 +24,7 @@ public static class MessageContainer
     public const string ZamestnanecTableName= "Zamestnanec";
     public const string PohledavkaTableName = "Pohledavka";
     public const string ZavazekTableName = "Zavazek";
+    public const string PojistnaPlneniTableName = "PojistnaPlneni";
 
     public const string AddFunctionalityNotSupported = "Add functionality is not supported for this table.";
 
@@ -36,6 +37,8 @@ public static class MessageContainer
     public const string DeleteContractSuccess = "Contract was successfully deleted.";
     public const string DeleteEmployeeSuccess = "Employee was successfully deleted.";
     public const string DeleteDebtSuccess = "Debt was successfully deleted.";
+    public const string DeleteBankfillSuccess = "Bankfill was successfully deleted.";
+    public const string DeleteInsuranceFulfilmentSuccess = "Insurance fulfilment was successfully deleted.";
 
     public const string ConnectionStringKey = "ConnectionStrings:DefaultConnection";
     public const string LoginUsernameHint = "Enter your username here...";
@@ -114,6 +117,17 @@ public static class MessageContainer
     public const string AddDebtInvalidDates = "End date must be after the start date.";
     public const string AddDebtInvalidContract = "Contract must be selected.";
     public const string AddDebtSuccess = "Debt added successfully!";
+
+    public const string AddBankfillInvalidAmount = "Bankfill amount must be greater than 0.";
+    public const string AddBankfillRequiredStart = "Start date is required.";
+    public const string AddBankfillRequiredEndDate = "End date must be after the start date.";
+    public const string AddBankfillRequiredDebt = "Debt must be selected";
+    public const string AddBankfillSuccess = "Bankfill added successfully!";
+
+    public const string AddInsuranceFulfilmentInvalidAmount = "Insurance fulfilment amount must be greater than 0.";
+    public const string AddInsuranceFulfilmentRequiredContract = "Contract must be selected.";
+    public const string AddInsuranceFulfilmentRequiredDebt = "Debt must be selected.";
+    public const string AddInsuranceFulfilmentSuccess = "Insurance fulfilment added successfully!";
 
     public static string GetUnexpectedErrorMessage(string errorMessage = "no message available") =>
         string.Format(UnexpectedErrorMessage, errorMessage);

@@ -73,4 +73,22 @@ public static class MessageBoxDisplayer
             MessageBoxButton.YesNo,
             MessageBoxImage.Warning);
     }
+
+    public static MessageBoxResult ShowBankfillDeletionConfirmation(string bankfillId)
+    {
+        return MessageBox.Show(
+            $"Are you sure you want to delete the bankfill with ID {bankfillId}?",
+            "Delete Confirmation",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning);
+    }
+
+    public static MessageBoxResult ShowInsuranceFulfilmentDeletionConfirmation(string insuranceFulfilmentId)
+    {
+        return MessageBox.Show(
+            $"Are you sure you want to delete the insurance fulfilment with ID {insuranceFulfilmentId}?",
+            "Delete Confirmation",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning);
+    }
 }

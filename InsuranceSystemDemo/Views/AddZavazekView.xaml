@@ -1,0 +1,73 @@
+﻿<Window x:Class="InsuranceSystemDemo.Views.AddZavazekView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:InsuranceSystemDemo.ViewModels"
+        Title="Add Bankfill" Height="310" Width="500"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen">
+
+    <!-- The «DataContext» is handled in the code-behind, as the DB context is passed to a parameterized
+    constructor of the «AddBancfillViewModel» class. -->
+    
+    <Window.Background>
+        <ImageBrush ImageSource="/Resources/rolling_green_hills_with_scattered_tall.png" Stretch="UniformToFill" Opacity="0.8" />
+    </Window.Background>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Add Bankfill" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,20" />
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- Suma Zavazky -->
+            <TextBlock Text="Suma Zavazky:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"
+                       FontWeight="Bold" Margin="0,0,10,0" />
+            <TextBox Text="{Binding SumaZavazky}" Grid.Row="0" Grid.Column="1" Margin="0,5" />
+
+            <!-- Data Vzniku -->
+            <TextBlock Text="Data Vzniku:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"
+                       FontWeight="Bold" Margin="0,0,10,0" />
+            <DatePicker SelectedDate="{Binding DataVzniku}" Grid.Row="1" Grid.Column="1" Margin="0,5" />
+
+            <!-- Data Splatnosti -->
+            <TextBlock Text="Data Splatnosti:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center"
+                       FontWeight="Bold" Margin="0,0,10,0" />
+            <DatePicker SelectedDate="{Binding DataSplatnisti}" Grid.Row="2" Grid.Column="1" Margin="0,5" />
+
+            <!-- Pohledavka -->
+            <TextBlock Text="Pohledavka:" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center"
+                       FontWeight="Bold" Margin="0,0,10,0" />
+            <ComboBox ItemsSource="{Binding AvailablePohledavky}" 
+                      DisplayMemberPath="Name" 
+                      SelectedItem="{Binding SelectedPohledavka}" 
+                      Grid.Row="3" Grid.Column="1" Margin="0,5" />
+
+            <!-- Error Message -->
+            <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" Grid.Row="4" Grid.ColumnSpan="2"
+                       FontWeight="Bold" TextAlignment="Center" Margin="0,10" />
+        </Grid>
+
+        <!-- Buttons -->
+        <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Center" Margin="10">
+            <Button Content="Save" Command="{Binding SaveCommand}" Width="100" Height="25" Margin="10,0" />
+            <Button Content="Cancel" Command="{Binding CancelCommand}" Width="100" Height="25" Margin="10,0" />
+        </StackPanel>
+    </Grid>
+</Window>

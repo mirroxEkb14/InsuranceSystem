@@ -15,7 +15,10 @@
     <None Remove="Resources\family_standing_in_a_lush_green_field.png" />
     <None Remove="Resources\family_standing_near_their_home_under_a_protective_dome.png" />
     <None Remove="Resources\insurance_company_the_image_sho.png" />
+    <None Remove="Resources\peaceful_countryside_with_a_modern.png" />
+    <None Remove="Resources\rolling_green_hills_with_scattered_tall.png" />
     <None Remove="Resources\safety_and_protection.png" />
+    <None Remove="Resources\secure_vault_or_padlock_floating_in_a_harmonious.png" />
     <None Remove="Resources\serene_landscape_with_a.png" />
     <None Remove="Resources\symbolic_element_of_safety.png" />
     <None Remove="Resources\symbolic_umbrella_covering_a_f.png" />
@@ -50,7 +53,16 @@
     <Resource Include="Resources\insurance_company_the_image_sho.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\peaceful_countryside_with_a_modern.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\rolling_green_hills_with_scattered_tall.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\safety_and_protection.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\secure_vault_or_padlock_floating_in_a_harmonious.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\serene_landscape_with_a.png">
