@@ -143,6 +143,9 @@ public static class MessageContainer
     public const string AddCashPaymentInvalidAmountAccepted = "Payment amount accepted must be greater than 0.";
     public const string AddCashPaymentInvalidAmountReturned = "Payment amount returned must be greater than or equal to 0.";
     public const string AddCashPaymentSuccess = "Cash payment added successfully!";
+    public static string AddDebtErrorRetrievingID => "Error retrieving the new debt ID.";
+
+
 
     public static string GetUnexpectedErrorMessage(string errorMessage = "no message available") =>
         string.Format(UnexpectedErrorMessage, errorMessage);

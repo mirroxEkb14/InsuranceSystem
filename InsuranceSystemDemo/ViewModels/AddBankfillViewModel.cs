@@ -4,7 +4,11 @@ using CommunityToolkit.Mvvm.Input;
 using InsuranceSystemDemo.Database;
 using InsuranceSystemDemo.Models;
 using InsuranceSystemDemo.Utils;
+using Microsoft.EntityFrameworkCore;
+using Oracle.ManagedDataAccess.Client;
+using Oracle.ManagedDataAccess.Types;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Windows;
 #endregion
 
@@ -28,7 +32,7 @@ public partial class AddBankfillViewModel : ObservableObject
     }
 
     [RelayCommand]
-    public void Save()
+    private void Save()
     {
         ErrorMessage = null;
 
@@ -37,12 +41,27 @@ public partial class AddBankfillViewModel : ObservableObject
 
         try
         {
-            var newZavazek = CreateBankfill();
+            var idParam = new OracleParameter("p_id_zavazky", OracleDbType.Decimal)
+            {
+                Direction = ParameterDirection.Output
+            };
 
-            // TODO
+            _context.Database.ExecuteSqlRaw(
+                "BEGIN ADD_ZAVAZKY(:p_id_zavazky, :p_suma_zavazky, :p_data_vzniku, :p_data_splatnosti, :p_pohledavka_id_pohledavky); END;",
+                idParam,
+                new OracleParameter("p_suma_zavazky", SumaZavazky),
+                new OracleParameter("p_data_vzniku", DataVzniku),
+                new OracleParameter("p_data_splatnosti", DataSplatnisti),
+                new OracleParameter("p_pohledavka_id_pohledavky", SelectedPohledavka?.IdPohledavky)
+            );
 
-            MessageBoxDisplayer.ShowInfo(MessageContainer.AddBankfillSuccess);
-            Cancel();
+            if (idParam.Value is OracleDecimal oracleDecimal)
+            {
+                var newId = oracleDecimal.ToInt32();
+                MessageBoxDisplayer.ShowInfo($"{MessageContainer.AddBankfillSuccess} ID: {newId}");
+            }
+
+            CloseWindow();
         }
         catch (Exception ex)
         {
@@ -96,13 +115,11 @@ public partial class AddBankfillViewModel : ObservableObject
         return true;
     }
 
-    private Zavazek CreateBankfill() =>
-        new()
-        {
-            SumaZavazky = SumaZavazky,
-            DataVzniku = DataVzniku.Value,
-            DataSplatnisti = DataSplatnisti.Value,
-            PohledavkaIdPohledavky = SelectedPohledavka?.IdPohledavky ?? 0
-        };
+    private void CloseWindow()
+    {
+        Application.Current.Windows
+            .OfType<Window>()
+            .SingleOrDefault(w => w.DataContext == this)?.Close();
+    }
     #endregion
 }

@@ -65,14 +65,16 @@ public static class MessageBoxDisplayer
             MessageBoxImage.Warning);
     }
 
-    public static MessageBoxResult ShowDebtDeletionConfirmation(string debtId)
+    public static MessageBoxResult ShowDebtDeletionConfirmation(string amount)
     {
         return MessageBox.Show(
-            $"Are you sure you want to delete the debt with ID {debtId}?",
+            $"Are you sure you want to delete the debt with an amount of {amount}?",
             "Delete Confirmation",
             MessageBoxButton.YesNo,
-            MessageBoxImage.Warning);
+            MessageBoxImage.Warning
+        );
     }
+
 
     public static MessageBoxResult ShowBankfillDeletionConfirmation(string bankfillId)
     {
