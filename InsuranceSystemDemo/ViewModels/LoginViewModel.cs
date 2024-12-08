@@ -106,24 +106,27 @@ public partial class LoginViewModel : ObservableObject
     {
         Application.Current.Dispatcher.Invoke(() =>
         {
+            Window nextWindow;
+
             if (user.Role == MessageContainer.AdminRole)
             {
-                var dashboardView = new DashboardView();
-                dashboardView.Show();
+                nextWindow = new DashboardView(); 
             }
             else if (user.Role == MessageContainer.UserRole)
             {
-                var dashboardView = new DashboardView();
-                dashboardView.Show();
+                nextWindow = new UserDashboardView(user.Username); 
             }
             else
             {
                 MessageBoxDisplayer.ShowError(MessageContainer.LoginInvalidUserRoleMessage);
                 return;
             }
+
+            nextWindow.Show();
             CloseCurrentWindow();
         });
     }
+
 
     private void CloseCurrentWindow()
     {

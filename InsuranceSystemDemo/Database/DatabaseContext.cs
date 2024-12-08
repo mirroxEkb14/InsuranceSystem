@@ -68,15 +68,43 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
         modelBuilder.Entity<User>(entity =>
         {
             entity.ToTable("USERS_ROLE");
-            entity.HasKey(e => e.Id);
+
+            entity.HasKey(e => e.Id); 
+
             entity.Property(e => e.Username)
-                .HasColumnName("USERNAME")
-                .IsRequired();
+                .HasColumnName("USERNAME") 
+                .IsRequired()
+                .HasMaxLength(50); 
+
             entity.Property(e => e.Password)
-                .HasColumnName("PASSWORD")
-                .IsRequired();
+                .HasColumnName("PASSWORD") 
+                .IsRequired()
+                .HasMaxLength(255);
+
             entity.Property(e => e.Role)
-                .HasColumnName("ROLE");
+                .HasColumnName("ROLE") 
+                .HasMaxLength(50);
+
+            entity.Property(e => e.FirstName)
+                .HasColumnName("FIRST_NAME") 
+                .HasMaxLength(50);
+
+            entity.Property(e => e.LastName)
+                .HasColumnName("LAST_NAME") 
+                .HasMaxLength(50);
+
+            entity.Property(e => e.Email)
+                .HasColumnName("EMAIL")
+                .HasMaxLength(100);
+
+            entity.Property(e => e.Phone)
+                .HasColumnName("PHONE") 
+                .HasMaxLength(20);
+
+            
+            entity.Property(e => e.Photo)
+                .HasColumnName("PHOTO") 
+                .HasColumnType("BLOB");
         });
     }
 

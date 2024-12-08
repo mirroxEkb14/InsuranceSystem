@@ -34,4 +34,8 @@ public class User
     [Column("PHONE")]
     [StringLength(20)]
     public string? Phone { get; set; }
+
+
+    [Column("PHOTO")]
+    public byte[]? Photo { get; set; }
 }

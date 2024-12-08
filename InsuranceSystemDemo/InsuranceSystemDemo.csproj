@@ -18,6 +18,8 @@
     <None Remove="Resources\family_standing_near_their_home_under_a_protective_dome.png" />
     <None Remove="Resources\harmonious_balance_of_nature_and_security_element.png" />
     <None Remove="Resources\insurance_company_the_image_sho.png" />
+    <None Remove="Resources\loh.png" />
+    <None Remove="Resources\loh.webp" />
     <None Remove="Resources\peaceful_countryside_with_a_modern.png" />
     <None Remove="Resources\rolling_green_hills_with_scattered_tall.png" />
     <None Remove="Resources\safety_and_protection.png" />
@@ -64,6 +66,12 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\insurance_company_the_image_sho.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\loh.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\loh.webp">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\peaceful_countryside_with_a_modern.png">

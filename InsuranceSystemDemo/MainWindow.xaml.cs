@@ -13,12 +13,7 @@ public partial class MainWindow : Window
     }
 
     #region Animation Methods
-    //
-    // Summary:
-    //     Adjusts the delay time.
-    //     Stops the timer to prevent multiple triggers.
-    //     Opens the «LoginWindow».
-    //     Close the «MainWindow».
+    
     private void StartTransitionTimer()
     {
         var timer = new DispatcherTimer
