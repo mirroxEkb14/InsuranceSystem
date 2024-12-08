@@ -15,6 +15,7 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
     public DbSet<Pohledavka> Pohledavky { get; set; }
     public DbSet<Zavazek> Zavazky { get; set; }
     public DbSet<PojistnaPlneni> PojistnePlneni { get; set; }
+    public DbSet<Platba> Platby { get; set; }
 
     //
     // Summary:
@@ -50,6 +51,7 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
         ConfigureDebt(modelBuilder);
         ConfigureBankfill(modelBuilder);
         ConfigurInsuranceFulfilment(modelBuilder);
+        ConfigurPayment(modelBuilder);
 
         base.OnModelCreating(modelBuilder);
     }
@@ -334,6 +336,41 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
             entity.HasOne(e => e.Zavazky)
                 .WithMany()
                 .HasForeignKey(e => e.ZavazkyIdZavazky)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+    }
+
+    private static void ConfigurPayment(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Platba>(entity =>
+        {
+            entity.ToTable("PLATBA");
+            entity.HasKey(e => e.IdPlatby);
+
+            entity.Property(e => e.DatumPlatby)
+                .HasColumnName("DATUM_PLATBY")
+                .IsRequired();
+            entity.Property(e => e.SumaPlatby)
+                .HasColumnName("SUMA_PLATBY")
+                .HasPrecision(10, 2)
+                .IsRequired();
+            entity.Property(e => e.KlientIdKlientu)
+                .HasColumnName("KLIENT_ID_KLIENTU")
+                .IsRequired();
+            entity.Property(e => e.TypPlatby)
+                .HasColumnName("TYP_PLATBY")
+                .HasMaxLength(100);
+            entity.Property(e => e.PojistnaSmlouvaIdPojistky)
+                .HasColumnName("POJISTNASMLOUVA_ID_POJISTKY")
+                .IsRequired();
+
+            entity.HasOne(e => e.Klient)
+                .WithMany()
+                .HasForeignKey(e => e.KlientIdKlientu)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(e => e.PojistnaSmlouva)
+                .WithMany()
+                .HasForeignKey(e => e.PojistnaSmlouvaIdPojistky)
                 .OnDelete(DeleteBehavior.Cascade);
         });
     }

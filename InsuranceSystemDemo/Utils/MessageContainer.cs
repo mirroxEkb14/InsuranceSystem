@@ -25,6 +25,7 @@ public static class MessageContainer
     public const string PohledavkaTableName = "Pohledavka";
     public const string ZavazekTableName = "Zavazek";
     public const string PojistnaPlneniTableName = "PojistnaPlneni";
+    public const string PlatbaTableName = "Platba";
 
     public const string AddFunctionalityNotSupported = "Add functionality is not supported for this table.";
 
@@ -39,6 +40,7 @@ public static class MessageContainer
     public const string DeleteDebtSuccess = "Debt was successfully deleted.";
     public const string DeleteBankfillSuccess = "Bankfill was successfully deleted.";
     public const string DeleteInsuranceFulfilmentSuccess = "Insurance fulfilment was successfully deleted.";
+    public const string DeletePaymentSuccess = "Payment was successfully deleted.";
 
     public const string ConnectionStringKey = "ConnectionStrings:DefaultConnection";
     public const string LoginUsernameHint = "Enter your username here...";
@@ -128,6 +130,12 @@ public static class MessageContainer
     public const string AddInsuranceFulfilmentRequiredContract = "Contract must be selected.";
     public const string AddInsuranceFulfilmentRequiredDebt = "Debt must be selected.";
     public const string AddInsuranceFulfilmentSuccess = "Insurance fulfilment added successfully!";
+
+    public const string AddPaymentDateRequired = "Payment date is required.";
+    public const string AddPaymentInvalidAmount = "Payment amount must be greater than 0.";
+    public const string AddPaymentInvalidClient = "Client must be selected.";
+    public const string AddPaymentInvalidPolicy = "Policy must be selected.";
+    public const string AddPaymentSuccess = "Payment added successfully!";
 
     public static string GetUnexpectedErrorMessage(string errorMessage = "no message available") =>
         string.Format(UnexpectedErrorMessage, errorMessage);

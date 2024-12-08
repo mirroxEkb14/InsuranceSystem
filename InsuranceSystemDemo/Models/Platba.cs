@@ -14,18 +14,18 @@ public class Platba
     public DateTime DatumPlatby { get; set; }
     [Column("SUMA_PLATBY")]
     public decimal SumaPlatby { get; set; }
-    [Column("KLIENT_ID_KLIENTU")]
-    public int KlientId { get; set; }
     [Column("TYP_PLATBY")]
     public string? TypPlatby { get; set; }
 
     // Navigation properties
-    [Column("POJISTNASMLOUVA_ID")]
+    [Column("KLIENT_ID_KLIENTU")]
+    public int KlientIdKlientu { get; set; }
+    [Column("POJISTNASMLOUVA_ID_POJISTKY")]
+    public int PojistnaSmlouvaIdPojistky { get; set; }
 
     // Object properties
-    public int PojistnaSmlouvaId { get; set; }
-    [ForeignKey("KlientId")]
+    [ForeignKey("KlientIdKlientu")]
     public virtual Klient? Klient { get; set; }
-    [ForeignKey("PojistnaSmlouvaId")]
+    [ForeignKey("PojistnaSmlouvaIdPojistky")]
     public virtual PojistnaSmlouva? PojistnaSmlouva { get; set; }
 }

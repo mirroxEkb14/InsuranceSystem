@@ -12,6 +12,7 @@
     <None Remove="Resources\abstract_elements_like_shields.png" />
     <None Remove="Resources\a_photorealistic_serene_and_professional_horizontal_background.png" />
     <None Remove="Resources\calming_tones_and_abstract_elements_symboliz.png" />
+    <None Remove="Resources\calm_river_gently_winding_through_a_lush.png" />
     <None Remove="Resources\family_standing_in_a_lush_green_field.png" />
     <None Remove="Resources\family_standing_near_their_home_under_a_protective_dome.png" />
     <None Remove="Resources\insurance_company_the_image_sho.png" />
@@ -42,6 +43,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\calming_tones_and_abstract_elements_symboliz.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\calm_river_gently_winding_through_a_lush.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\family_standing_in_a_lush_green_field.png">

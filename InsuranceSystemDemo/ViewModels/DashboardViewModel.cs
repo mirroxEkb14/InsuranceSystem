@@ -8,6 +8,7 @@ using InsuranceSystemDemo.Views;
 using Microsoft.EntityFrameworkCore;
 using Oracle.ManagedDataAccess.Client;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 #endregion
 
@@ -63,6 +64,9 @@ public partial class DashboardViewModel : ObservableObject
                 break;
             case MessageContainer.PojistnaPlneniTableName:
                 SwitchToPojistnaPlneni();
+                break;
+            case MessageContainer.PlatbaTableName:
+                SwitchToPlatba();
                 break;
             default:
                 CurrentTableData = [];
@@ -156,6 +160,17 @@ public partial class DashboardViewModel : ObservableObject
             .ToList();
         CurrentTableData = new ObservableCollection<object>(pojistnaPlneni);
     }
+
+    [RelayCommand]
+    public void SwitchToPlatba()
+    {
+        CurrentTableName = MessageContainer.PlatbaTableName;
+        var platby = _context.Platby
+            .Include(p => p.Klient)
+            .Include(p => p.PojistnaSmlouva)
+            .ToList();
+        CurrentTableData = new ObservableCollection<object>(platby);
+    }
     #endregion
 
     #region Search Commands
@@ -203,6 +218,9 @@ public partial class DashboardViewModel : ObservableObject
                 break;
             case MessageContainer.PojistnaPlneniTableName:
                 SearchPojistnePlneni(searchTerm);
+                break;
+            case MessageContainer.PlatbaTableName:
+                SearchPlatby(searchTerm);
                 break;
             default:
                 SwitchToCurrentTable();
@@ -354,6 +372,21 @@ public partial class DashboardViewModel : ObservableObject
             .ToList();
         CurrentTableData = new ObservableCollection<object>(filteredPojistnePlneni);
     }
+
+    private void SearchPlatby(string searchTerm)
+    {
+        var lowerQuery = searchTerm.ToLower();
+        var filteredPlatby = _context.Platby
+            .Include(p => p.Klient)
+            .Include(p => p.PojistnaSmlouva)
+            .AsEnumerable()
+            .Where(p =>
+                p.SumaPlatby.ToString().ToLower().Contains(lowerQuery) ||
+                p.DatumPlatby.ToString("dd.MM.yyyy").ToLower().Contains(lowerQuery) ||
+                (p.TypPlatby != null && p.TypPlatby.ToString().ToLower().Contains(lowerQuery)))
+            .ToList();
+        CurrentTableData = new ObservableCollection<object>(filteredPlatby);
+    }
     #endregion
 
     #region Button Commands
@@ -390,6 +423,9 @@ public partial class DashboardViewModel : ObservableObject
             case MessageContainer.PojistnaPlneniTableName:
                 addView = new AddPojistnaPlneniView();
                 break;
+            case MessageContainer.PlatbaTableName:
+                addView = new AddPlatbaView();
+                break;
             default:
                 MessageBoxDisplayer.ShowInfo(MessageContainer.AddFunctionalityNotSupported);
                 return;
@@ -425,6 +461,8 @@ public partial class DashboardViewModel : ObservableObject
             HandleZavazekDeletion(selectedZavazek);
         else if (SelectedItem is PojistnaPlneni selectedPojistnaPlneni)
             HandlePojistnaPlneniDeletion(selectedPojistnaPlneni);
+        else if (SelectedItem is Platba selectedPlatba)
+            HandlePlatbaDeletion(selectedPlatba);
         else
             MessageBoxDisplayer.ShowInfo(MessageContainer.DeleteFunctionalityNotSupported);
     }
@@ -630,6 +668,25 @@ public partial class DashboardViewModel : ObservableObject
             // TODO
 
             MessageBoxDisplayer.ShowInfo(MessageContainer.DeleteInsuranceFulfilmentSuccess);
+            SwitchToCurrentTable();
+        }
+        catch (Exception ex)
+        {
+            MessageBoxDisplayer.ShowError(MessageContainer.GetUnexpectedErrorMessage(ex.Message));
+        }
+    }
+
+    private void HandlePlatbaDeletion(Platba platba)
+    {
+        var result = MessageBoxDisplayer.ShowPaymentDeletionConfirmation(platba.IdPlatby.ToString());
+        if (result != MessageBoxResult.Yes)
+            return;
+
+        try
+        {
+            // TODO
+
+            MessageBoxDisplayer.ShowInfo(MessageContainer.DeletePaymentSuccess);
             SwitchToCurrentTable();
         }
         catch (Exception ex)

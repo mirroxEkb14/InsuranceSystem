@@ -91,4 +91,13 @@ public static class MessageBoxDisplayer
             MessageBoxButton.YesNo,
             MessageBoxImage.Warning);
     }
+
+    public static MessageBoxResult ShowPaymentDeletionConfirmation(string paymentId)
+    {
+        return MessageBox.Show(
+            $"Are you sure you want to delete the payment with ID {paymentId}?",
+            "Delete Confirmation",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning);
+    }
 }
