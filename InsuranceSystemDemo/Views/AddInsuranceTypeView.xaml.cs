@@ -1,15 +1,16 @@
-﻿using System.Windows;
+﻿#region Imports
+using System.Windows;
 using InsuranceSystemDemo.Database;
 using InsuranceSystemDemo.ViewModels;
+#endregion
 
-namespace InsuranceSystemDemo.Views
+namespace InsuranceSystemDemo.Views;
+
+public partial class AddInsuranceTypeView : Window
 {
-    public partial class AddInsuranceTypeView : Window
+    public AddInsuranceTypeView(DatabaseContext context)
     {
-        public AddInsuranceTypeView(DatabaseContext context)
-        {
-            InitializeComponent();
-            DataContext = new AddInsuranceTypeViewModel(context);
-        }
+        InitializeComponent();
+        DataContext = new AddInsuranceTypeViewModel(context);
     }
 }

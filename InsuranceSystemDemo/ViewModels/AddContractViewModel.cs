@@ -1,50 +1,39 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿#region Imports
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using InsuranceSystemDemo.Database;
 using InsuranceSystemDemo.Models;
+using InsuranceSystemDemo.Utils;
 using Microsoft.EntityFrameworkCore;
 using Oracle.ManagedDataAccess.Client;
-using System;
 using System.Collections.ObjectModel;
 using System.Data;
-using System.Linq;
 using System.Windows;
+using System.Text;
+#endregion
 
 namespace InsuranceSystemDemo.ViewModels;
 
 public partial class AddContractViewModel : ObservableObject
 {
-    private readonly DatabaseContext _context;
+    [ObservableProperty] private decimal _pojistnaCastka;
+    [ObservableProperty] private DateTime _datumZacatkuPlatnosti;
+    [ObservableProperty] private DateTime _datumUkonceniPlatnosti;
+    [ObservableProperty] private DateTime _dataVystaveni;
+    [ObservableProperty] private decimal _cena;
+    [ObservableProperty] private ObservableCollection<Klient>? _availableClients;
+    [ObservableProperty] private ObservableCollection<Pobocka>? _availableBranches;
+    [ObservableProperty] private ObservableCollection<TypPojistky>? _availablePolicyTypes;
+    [ObservableProperty] private Klient? _selectedClient;
+    [ObservableProperty] private Pobocka? _selectedBranch;
+    [ObservableProperty] private TypPojistky? _selectedPolicyType;
+    [ObservableProperty] private string? _errorMessage;
 
-    [ObservableProperty]
-    private decimal _pojistnaCastka;
-    [ObservableProperty]
-    private DateTime _datumZacatkuPlatnosti;
-    [ObservableProperty]
-    private DateTime _datumUkonceniPlatnosti;
-    [ObservableProperty]
-    private DateTime _dataVystaveni;
-    [ObservableProperty]
-    private decimal _cena;
-    [ObservableProperty]
-    private ObservableCollection<Klient>? _availableClients;
-    [ObservableProperty]
-    private ObservableCollection<Pobocka>? _availableBranches;
-    [ObservableProperty]
-    private ObservableCollection<TypPojistky>? _availablePolicyTypes;
-    [ObservableProperty]
-    private Klient? _selectedClient;
-    [ObservableProperty]
-    private Pobocka? _selectedBranch;
-    [ObservableProperty]
-    private TypPojistky? _selectedPolicyType;
-    [ObservableProperty]
-    private string? _errorMessage;
+    private readonly DatabaseContext _context;
 
     public AddContractViewModel(DatabaseContext context)
     {
         _context = context;
-
        
         DatumZacatkuPlatnosti = DateTime.Now;
         DatumUkonceniPlatnosti = DateTime.Now.AddYears(1); 
@@ -75,33 +64,19 @@ public partial class AddContractViewModel : ObservableObject
                 new OracleParameter("p_TYPPOJISTKY_ID_TYP", SelectedPolicyType?.IdTyp ?? (object)DBNull.Value)
             );
 
-            MessageBox.Show("Contract added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBoxDisplayer.ShowInfo(MessageContainer.AddContractSuccess);
             CloseWindow();
         }
         catch (Exception ex)
         {
-            var errorDetails = new System.Text.StringBuilder();
-            errorDetails.AppendLine("An error occurred:");
-
-            var currentException = ex;
-            while (currentException != null)
-            {
-                errorDetails.AppendLine($"Message: {currentException.Message}");
-                errorDetails.AppendLine($"StackTrace: {currentException.StackTrace}");
-                currentException = currentException.InnerException;
-            }
-
-            MessageBox.Show(errorDetails.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
-            ErrorMessage = errorDetails.ToString();
+            HandleSaveException(ex);
         }
     }
-
-
 
     [RelayCommand]
     private void Cancel() => CloseWindow();
 
+    #region Private Helper Methods
     private void CloseWindow()
     {
         foreach (Window window in Application.Current.Windows)
@@ -122,13 +97,11 @@ public partial class AddContractViewModel : ObservableObject
             .ThenBy(k => k.Prijmeni) 
             .ToList()
         );
-
         AvailableBranches = new ObservableCollection<Pobocka>(
             _context.Pobocky
             .OrderBy(p => p.Nazev) 
             .ToList()
         );
-
         AvailablePolicyTypes = new ObservableCollection<TypPojistky>(
             _context.TypPojistky
             .OrderBy(t => t.Popis) 
@@ -136,40 +109,51 @@ public partial class AddContractViewModel : ObservableObject
         );
 
     }
-
-
     private bool ValidateInputs()
     {
         if (PojistnaCastka <= 0)
         {
-            ErrorMessage = "Insurance amount must be greater than zero.";
+            ErrorMessage = MessageContainer.AddContractInvalidAmount;
             return false;
         }
-
         if (DatumUkonceniPlatnosti <= DatumZacatkuPlatnosti)
         {
-            ErrorMessage = "End date must be after the start date.";
+            ErrorMessage = MessageContainer.AddContractInvalidDates;
             return false;
         }
-
         if (SelectedClient == null)
         {
-            ErrorMessage = "Client must be selected.";
+            ErrorMessage = MessageContainer.AddContractInvalidClient;
             return false;
         }
-
         if (SelectedBranch == null)
         {
-            ErrorMessage = "Branch must be selected.";
+            ErrorMessage = MessageContainer.AddContractInvalidBranch;
             return false;
         }
-
         if (SelectedPolicyType == null)
         {
-            ErrorMessage = "Policy type must be selected.";
+            ErrorMessage = MessageContainer.AddContractInvalidPolicyType;
             return false;
         }
-
         return true;
     }
+
+    private void HandleSaveException(Exception ex)
+    {
+        var errorDetails = new StringBuilder();
+        errorDetails.AppendLine("An error occurred:");
+
+        var currentException = ex;
+        while (currentException != null)
+        {
+            errorDetails.AppendLine($"Message: {currentException.Message}");
+            errorDetails.AppendLine($"StackTrace: {currentException.StackTrace}");
+            currentException = currentException.InnerException;
+        }
+
+        MessageBox.Show(errorDetails.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        ErrorMessage = errorDetails.ToString();
+    }
+    #endregion
 }

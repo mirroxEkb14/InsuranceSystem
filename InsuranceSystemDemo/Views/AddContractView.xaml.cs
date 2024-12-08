@@ -1,6 +1,8 @@
-﻿using InsuranceSystemDemo.ViewModels;
+﻿#region Imports
+using InsuranceSystemDemo.ViewModels;
 using InsuranceSystemDemo.Database;
 using System.Windows;
+#endregion
 
 namespace InsuranceSystemDemo.Views;
 

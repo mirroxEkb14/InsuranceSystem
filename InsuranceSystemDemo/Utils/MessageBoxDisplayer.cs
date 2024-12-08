@@ -31,7 +31,6 @@ public static class MessageBoxDisplayer
             MessageBoxButton.YesNo,
             MessageBoxImage.Question);
 
-
     public static MessageBoxResult ShowBranchDeletionConfirmation(string branchName, string phone) =>
     MessageBox.Show(
         MessageContainer.GetDeleteBranchConfirmation(branchName, phone),
@@ -39,8 +38,6 @@ public static class MessageBoxDisplayer
         MessageBoxButton.YesNo,
         MessageBoxImage.Question
     );
-
-
     public static MessageBoxResult ShowInsuranceTypeDeletionConfirmation(string description)
     {
         return MessageBox.Show(
@@ -57,5 +54,4 @@ public static class MessageBoxDisplayer
                                MessageBoxButton.YesNo,
                                MessageBoxImage.Warning);
     }
-
 }

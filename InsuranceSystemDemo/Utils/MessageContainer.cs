@@ -9,10 +9,10 @@ public static class MessageContainer
     private const string UnexpectedErrorMessage = "An unexpected error occurred: {0}";
     private const string DeleteClientConfirmation = "Are you sure you want to delete the client {0} {1}?";
     private const string DeleteAddressConfirmation = "Are you sure you want to delete the address at {0} {1}?";
+    private const string DeleteBranchConfirmation = "Are you sure you want to delete the branch {0} with phone number {1}?";
 
     public const string AdminRole = "Admin";
     public const string UserRole = "User";
-
 
     public const string KlientiTableName = "Klienti";
     public const string AdresyTableName = "Adresy";
@@ -20,8 +20,6 @@ public static class MessageContainer
     public const string TypPojistkyTableName = "TypPojistky";
     public const string ContractsTableName = "PojistnaSmlouva";
     public const string ZamestnanecTableName= "Zamestnanec";
-
-
 
     public const string AddFunctionalityNotSupported = "Add functionality is not supported for this table.";
 
@@ -81,6 +79,28 @@ public static class MessageContainer
     public const string AddBranchRequiredAddress = "Address is required.";
     public const string AddBranchSuccess = "Branch added successfully!";
 
+    public const string AddInsuranceTypeRequiredAvailability = "Availability is required.";
+    public const string AddInsuranceTypeRequiredConditions = "Conditions are required.";
+    public const string AddInsuranceTypeInvalidMaxCoverage = "Maximum coverage must be greater than zero.";
+    public const string AddInsuranceTypeInvalidMinCoverage = "Minimum coverage must be greater than zero.";
+    public const string AddInsuranceTypeInvalidCoverage = "Minimum coverage cannot exceed maximum coverage.";
+    public const string AddInsuranceTypeSuccess = "Insurance type added successfully!";
+
+    public const string AddContractInvalidAmount = "Insurance amount must be greater than 0.";
+    public const string AddContractInvalidDates = "End date must be after the start date.";
+    public const string AddContractInvalidClient = "Client must be selected.";
+    public const string AddContractInvalidBranch = "Branch must be selected.";
+    public const string AddContractInvalidPolicyType = "Policy type must be selected.";
+    public const string AddContractSuccess = "Contract added successfully!";
+
+    public const string AddEmployeeErrorRetrievingID = "Failed to retrieve the ID of the new Zamestnanec.";
+    public const string AddEmployeeInvalidRole = "Role must be selected.";
+    public const string AddEmployeeInvalidName = "First Name must be entered.";
+    public const string AddEmployeeInvalidSurname = "Last Name must be entered.";
+    public const string AddEmployeeInvalidPhone = "Phone number must be entered.";
+    public const string AddEmployeeInvalidBranch = "Branch must be selected.";
+    public const string AddEmployeeInvalidAddress = "Address must be selected.";
+
     public static string GetUnexpectedErrorMessage(string errorMessage = "no message available") =>
         string.Format(UnexpectedErrorMessage, errorMessage);
 
@@ -90,17 +110,6 @@ public static class MessageContainer
     public static string GetDeleteAddressConfirmation(string street, string city) =>
         string.Format(DeleteAddressConfirmation, street, city);
 
-
     public static string GetDeleteBranchConfirmation(string branchName, string phone) =>
-    $"Are you sure you want to delete the branch \"{branchName}\" with phone number {phone}?";
-
-
-
-
-
-   
-
-
-
-
+        string.Format(DeleteBranchConfirmation, branchName, phone);
 }

@@ -2,6 +2,14 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Add Contract" Height="500" Width="600" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+
+    <!-- The «DataContext» is handled in the code-behind, as the DB context is passed to a parameterized
+    constructor of the «AddContractViewModel» class. -->
+    
+    <Window.Background>
+        <ImageBrush ImageSource="/Resources/family_standing_near_their_home_under_a_protective_dome.png" Stretch="UniformToFill" Opacity="0.6" />
+    </Window.Background>
+
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -21,7 +29,9 @@
                 <ColumnDefinition Width="2*" />
                 <ColumnDefinition Width="3*" />
             </Grid.ColumnDefinitions>
+            
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -33,55 +43,59 @@
             </Grid.RowDefinitions>
 
             <!-- Insurance Amount -->
-            <TextBlock Text="Insurance Amount:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" />
+            <TextBlock Text="Insurance Amount:" Grid.Row="0" Grid.Column="0" FontWeight="Bold" VerticalAlignment="Center" />
             <TextBox Text="{Binding PojistnaCastka, UpdateSourceTrigger=PropertyChanged}" 
                      Grid.Row="0" Grid.Column="1" Margin="5" />
 
             <!-- Start Date -->
-            <TextBlock Text="Start Date:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" />
+            <TextBlock Text="Start Date:" Grid.Row="1" Grid.Column="0" FontWeight="Bold" VerticalAlignment="Center" />
             <DatePicker SelectedDate="{Binding DatumZacatkuPlatnosti, UpdateSourceTrigger=PropertyChanged}" 
                         Grid.Row="1" Grid.Column="1" Margin="5" />
 
             <!-- End Date -->
-            <TextBlock Text="End Date:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" />
+            <TextBlock Text="End Date:" Grid.Row="2" Grid.Column="0" FontWeight="Bold" VerticalAlignment="Center" />
             <DatePicker SelectedDate="{Binding DatumUkonceniPlatnosti, UpdateSourceTrigger=PropertyChanged}" 
                         Grid.Row="2" Grid.Column="1" Margin="5" />
 
             <!-- Issue Date -->
-            <TextBlock Text="Issue Date:" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" />
+            <TextBlock Text="Issue Date:" Grid.Row="3" Grid.Column="0" FontWeight="Bold" VerticalAlignment="Center" />
             <DatePicker SelectedDate="{Binding DataVystaveni, UpdateSourceTrigger=PropertyChanged}" 
                         Grid.Row="3" Grid.Column="1" Margin="5" />
 
             <!-- Price -->
-            <TextBlock Text="Price:" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" />
+            <TextBlock Text="Price:" Grid.Row="4" Grid.Column="0" FontWeight="Bold" VerticalAlignment="Center" />
             <TextBox Text="{Binding Cena, UpdateSourceTrigger=PropertyChanged}" 
                      Grid.Row="4" Grid.Column="1" Margin="5" />
 
             <!-- Client -->
-            <TextBlock Text="Client:" Grid.Row="5" Grid.Column="0" VerticalAlignment="Center" />
+            <TextBlock Text="Client:" Grid.Row="5" Grid.Column="0" FontWeight="Bold" VerticalAlignment="Center" />
             <ComboBox ItemsSource="{Binding AvailableClients}" 
                       DisplayMemberPath="FullName" 
                       SelectedItem="{Binding SelectedClient}" 
                       Grid.Row="5" Grid.Column="1" Margin="5" />
 
             <!-- Branch -->
-            <TextBlock Text="Branch:" Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" />
+            <TextBlock Text="Branch:" Grid.Row="6" Grid.Column="0" FontWeight="Bold" VerticalAlignment="Center" />
             <ComboBox ItemsSource="{Binding AvailableBranches}" 
                       DisplayMemberPath="Nazev" 
                       SelectedItem="{Binding SelectedBranch}" 
                       Grid.Row="6" Grid.Column="1" Margin="5" />
 
             <!-- Policy Type -->
-            <TextBlock Text="Policy Type:" Grid.Row="7" Grid.Column="0" VerticalAlignment="Center" />
+            <TextBlock Text="Policy Type:" Grid.Row="7" Grid.Column="0" FontWeight="Bold" VerticalAlignment="Center" />
             <ComboBox ItemsSource="{Binding AvailablePolicyTypes}" 
                       DisplayMemberPath="Name" 
                       SelectedItem="{Binding SelectedPolicyType}" 
                       Grid.Row="7" Grid.Column="1" Margin="5" />
+
+            <!-- Error Message -->
+            <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" Grid.Row="8" Grid.ColumnSpan="2"
+                       FontWeight="Bold" TextAlignment="Center" Margin="0,10" />
         </Grid>
 
         <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Center" Margin="10">
-            <Button Content="Save" Command="{Binding SaveCommand}" Width="100" Margin="5" />
-            <Button Content="Cancel" Command="{Binding CancelCommand}" Width="100" Margin="5" />
+            <Button Content="Save" Command="{Binding SaveCommand}" Width="100" Height="25" Margin="5" />
+            <Button Content="Cancel" Command="{Binding CancelCommand}" Width="100" Height="25" Margin="5" />
         </StackPanel>
     </Grid>
 </Window>

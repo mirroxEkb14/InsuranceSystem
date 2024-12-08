@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿#region Improts
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using InsuranceSystemDemo.Database;
 using InsuranceSystemDemo.Models;
@@ -6,12 +7,12 @@ using InsuranceSystemDemo.Utils;
 using Oracle.ManagedDataAccess.Client;
 using System.Collections.ObjectModel;
 using System.Data;
-using System.Linq;
-using System.Windows.Controls.Primitives;
-using System.Windows.Controls;
 using System.Windows;
 using Microsoft.EntityFrameworkCore;
 using Oracle.ManagedDataAccess.Types;
+#endregion
+
+namespace InsuranceSystemDemo.ViewModels;
 
 public partial class AddZamestnanecViewModel : ObservableObject
 {
@@ -21,12 +22,12 @@ public partial class AddZamestnanecViewModel : ObservableObject
     [ObservableProperty] private string? _email;
     [ObservableProperty] private long _telefon;
     [ObservableProperty] private string? _popis;
+    [ObservableProperty] private Pobocka? _selectedPobocka;
+    [ObservableProperty] private Adresa? _selectedAdresa;
+    [ObservableProperty] private string? _errorMessage;
 
     public ObservableCollection<Pobocka> PobockyList { get; set; }
     public ObservableCollection<Adresa> AdresyList { get; set; }
-
-    [ObservableProperty] private Pobocka? _selectedPobocka;
-    [ObservableProperty] private Adresa? _selectedAdresa;
 
     private readonly Action _onClose;
 
@@ -34,7 +35,6 @@ public partial class AddZamestnanecViewModel : ObservableObject
     {
         _onClose = onClose;
 
-        // Загрузка данных для выпадающих списков
         using var context = new DatabaseContext(DatabaseContextGetter.GetDatabaseContextOptions());
         PobockyList = new ObservableCollection<Pobocka>(context.Pobocky.ToList());
         AdresyList = new ObservableCollection<Adresa>(context.Adresy.ToList());
@@ -45,11 +45,8 @@ public partial class AddZamestnanecViewModel : ObservableObject
     {
         try
         {
-            if (SelectedPobocka == null || SelectedAdresa == null)
-            {
-                MessageBox.Show("Please select a branch and an address.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            if (!ValidateInputs())
                 return;
-            }
 
             var context = new DatabaseContext(DatabaseContextGetter.GetDatabaseContextOptions());
             var newId = AddZamestnanecToDatabase(context);
@@ -57,8 +54,48 @@ public partial class AddZamestnanecViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBoxDisplayer.ShowError(ex.Message);
         }
+    }
+
+    [RelayCommand]
+    public void Cancel() =>
+        _onClose.Invoke();
+
+    #region Private Helper Methods
+    private bool ValidateInputs()
+    {
+        if (string.IsNullOrWhiteSpace(Role))
+        {
+            ErrorMessage = MessageContainer.AddEmployeeInvalidRole;
+            return false;
+        }
+        if (string.IsNullOrWhiteSpace(Jmeno))
+        {
+            ErrorMessage = MessageContainer.AddEmployeeInvalidName;
+            return false;
+        }
+        if (string.IsNullOrWhiteSpace(Prijmeni))
+        {
+            ErrorMessage = MessageContainer.AddEmployeeInvalidSurname;
+            return false;
+        }
+        if (Telefon == 0)
+        {
+            ErrorMessage = MessageContainer.AddEmployeeInvalidPhone;
+            return false;
+        }
+        if (SelectedPobocka == null)
+        {
+            ErrorMessage = MessageContainer.AddEmployeeInvalidBranch;
+            return false;
+        }
+        if (SelectedAdresa == null)
+        {
+            ErrorMessage = MessageContainer.AddEmployeeInvalidAddress;
+            return false;
+        }
+        return true;
     }
 
     private int AddZamestnanecToDatabase(DatabaseContext context)
@@ -81,19 +118,10 @@ public partial class AddZamestnanecViewModel : ObservableObject
             idParam
         );
 
-        // Преобразование OracleDecimal в int
         if (idParam.Value is OracleDecimal oracleDecimal)
-        {
             return oracleDecimal.ToInt32();
-        }
 
-        throw new Exception("Failed to retrieve the ID of the new Zamestnanec.");
+        throw new Exception(MessageContainer.AddEmployeeErrorRetrievingID);
     }
-
-
-    [RelayCommand]
-    public void Cancel()
-    {
-        _onClose.Invoke();
-    }
+    #endregion
 }

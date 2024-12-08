@@ -1,43 +1,27 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿#region Imports
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using InsuranceSystemDemo.Database;
-using InsuranceSystemDemo.Models;
+using InsuranceSystemDemo.Utils;
 using Microsoft.EntityFrameworkCore;
 using Oracle.ManagedDataAccess.Client;
-using System;
 using System.Windows;
+using System.Text;
+#endregion
 
 namespace InsuranceSystemDemo.ViewModels;
 
-public partial class AddInsuranceTypeViewModel : ObservableObject
+public partial class AddInsuranceTypeViewModel(DatabaseContext context) : ObservableObject
 {
-    private readonly DatabaseContext _context;
+    [ObservableProperty] private string? _dostupnost;
+    [ObservableProperty] private string? _podminky;
+    [ObservableProperty] private string? _popis;
+    [ObservableProperty] private decimal _maximalneKryti;
+    [ObservableProperty] private decimal _minimalneKryti;
+    [ObservableProperty] private DateTime _datimZacatku = DateTime.Now;
+    [ObservableProperty] private string? _errorMessage;
 
-    [ObservableProperty]
-    private string? _dostupnost;
-
-    [ObservableProperty]
-    private string? _podminky;
-
-    [ObservableProperty]
-    private string? _popis;
-
-    [ObservableProperty]
-    private decimal _maximalneKryti;
-
-    [ObservableProperty]
-    private decimal _minimalneKryti;
-
-    [ObservableProperty]
-    private DateTime _datimZacatku = DateTime.Now;
-
-    [ObservableProperty]
-    private string? _errorMessage;
-
-    public AddInsuranceTypeViewModel(DatabaseContext context)
-    {
-        _context = context;
-    }
+    private readonly DatabaseContext _context = context;
 
     [RelayCommand]
     private void Save()
@@ -49,7 +33,6 @@ public partial class AddInsuranceTypeViewModel : ObservableObject
 
         try
         {
-            
             _context.Database.ExecuteSqlRaw(
                 "BEGIN AddTypPojistky(:p_DOSTUPNOST, :p_PODMINKY, :p_POPIS, :p_MAXIMALNE_KRYTI, :p_MINIMALNE_KRYTI, :p_DATIM_ZACATKU); END;",
                 new OracleParameter("p_DOSTUPNOST", Dostupnost),
@@ -59,36 +42,19 @@ public partial class AddInsuranceTypeViewModel : ObservableObject
                 new OracleParameter("p_MINIMALNE_KRYTI", MinimalneKryti),
                 new OracleParameter("p_DATIM_ZACATKU", DatimZacatku)
             );
-
-           
-            MessageBox.Show("Insurance type added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBoxDisplayer.ShowInfo(MessageContainer.AddInsuranceTypeSuccess);
             CloseWindow();
         }
         catch (Exception ex)
         {
-            
-            var errorDetails = new System.Text.StringBuilder();
-            errorDetails.AppendLine("An error occurred:");
-
-            var currentException = ex;
-            while (currentException != null)
-            {
-                errorDetails.AppendLine($"Message: {currentException.Message}");
-                errorDetails.AppendLine($"StackTrace: {currentException.StackTrace}");
-                currentException = currentException.InnerException;
-            }
-
-          
-            MessageBox.Show(errorDetails.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
-           
-            ErrorMessage = errorDetails.ToString();
+            HandleSaveException(ex);
         }
     }
 
     [RelayCommand]
     private void Cancel() => CloseWindow();
 
+    #region Private Helper Methods
     private void CloseWindow()
     {
         foreach (Window window in Application.Current.Windows)
@@ -105,34 +71,46 @@ public partial class AddInsuranceTypeViewModel : ObservableObject
     {
         if (string.IsNullOrWhiteSpace(Dostupnost))
         {
-            ErrorMessage = "Availability is required.";
+            ErrorMessage = MessageContainer.AddInsuranceTypeRequiredAvailability;
             return false;
         }
-
         if (string.IsNullOrWhiteSpace(Podminky))
         {
-            ErrorMessage = "Conditions are required.";
+            ErrorMessage = MessageContainer.AddInsuranceTypeRequiredConditions;
             return false;
         }
-
         if (MaximalneKryti <= 0)
         {
-            ErrorMessage = "Maximum coverage must be greater than zero.";
+            ErrorMessage = MessageContainer.AddInsuranceTypeInvalidMaxCoverage;
             return false;
         }
-
         if (MinimalneKryti <= 0)
         {
-            ErrorMessage = "Minimum coverage must be greater than zero.";
+            ErrorMessage = MessageContainer.AddInsuranceTypeInvalidMinCoverage;
             return false;
         }
-
         if (MinimalneKryti > MaximalneKryti)
         {
-            ErrorMessage = "Minimum coverage cannot exceed maximum coverage.";
+            ErrorMessage = MessageContainer.AddInsuranceTypeInvalidCoverage;
             return false;
         }
-
         return true;
     }
+
+    private void HandleSaveException(Exception ex)
+    {
+        var errorDetails = new StringBuilder();
+        errorDetails.AppendLine("An error occurred:");
+
+        var currentException = ex;
+        while (currentException != null)
+        {
+            errorDetails.AppendLine($"Message: {currentException.Message}");
+            errorDetails.AppendLine($"StackTrace: {currentException.StackTrace}");
+            currentException = currentException.InnerException;
+        }
+        MessageBoxDisplayer.ShowError(errorDetails.ToString());
+        ErrorMessage = errorDetails.ToString();
+    }
+    #endregion
 }

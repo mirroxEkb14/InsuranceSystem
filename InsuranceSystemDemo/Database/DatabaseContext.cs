@@ -11,13 +11,8 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
     public DbSet<Adresa> Adresy { get; set; }
     public DbSet<Pobocka> Pobocky { get; set; }
     public DbSet<TypPojistky> TypPojistky { get; set; }
-
     public DbSet<PojistnaSmlouva> PojistnaSmlouva { get; set; }
-
-   
-
-
-
+    public DbSet<Pohledavka> Pohledavky { get; set; }
 
     //
     // Summary:
@@ -62,7 +57,6 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
             entity.HasKey(a => a.IdAdresa); 
             entity.ToTable("ADRESA");
         });
-
 
         modelBuilder.Entity<Klient>(entity =>
         {
@@ -117,32 +111,25 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
                   .HasColumnName("DOSTUPNOST")
                   .HasMaxLength(1)
                   .IsRequired();
-
             entity.Property(t => t.Podminky)
                   .HasColumnName("PODMINKY")
                   .HasMaxLength(100)
                   .IsRequired();
-
             entity.Property(t => t.Popis)
                   .HasColumnName("POPIS")
                   .HasMaxLength(100);
-
             entity.Property(t => t.MaximalneKryti)
                   .HasColumnName("MAXIMALNE_KRYTI")
                   .IsRequired();
-
             entity.Property(t => t.MinimalneKryti)
                   .HasColumnName("MINIMALNE_KRYTI")
                   .IsRequired();
-
             entity.Property(t => t.DatimZacatku)
                   .HasColumnName("DATIM_ZACATKU")
                   .IsRequired();
         });
 
         modelBuilder.Entity<Adresa>().HasKey(a => a.IdAdresa);
-
-
 
         modelBuilder.Entity<PojistnaSmlouva>(entity =>
         {
@@ -153,32 +140,25 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
                 .HasColumnName("POJISTNA_CASTKA")
                 .HasColumnType("decimal(10,2)")
                 .IsRequired();
-
             entity.Property(p => p.DatumZacatkuPlatnosti)
                 .HasColumnName("DATUM_ZACATKU_PLATNOSTI") 
                 .IsRequired();
-
             entity.Property(p => p.DatumUkonceniPlatnosti)
                 .HasColumnName("DATUM_UKONCENI_PLATNOSTI") 
                 .IsRequired();
-
             entity.Property(p => p.DataVystaveni)
                 .HasColumnName("DATA_VYSTAVENI")
                 .IsRequired();
-
             entity.Property(p => p.Cena)
                 .HasColumnName("CENA")
                 .HasColumnType("decimal(10,2)")
                 .IsRequired();
-
             entity.Property(p => p.KlientId)
                 .HasColumnName("KLIENT_ID_KLIENTU")
                 .IsRequired();
-
             entity.Property(p => p.PobockyId)
                 .HasColumnName("POBOCKY_ID_POBOCKY")
                 .IsRequired();
-
             entity.Property(p => p.TypPojistkyId)
                 .HasColumnName("TYPPOJISTKY_ID_TYP") 
                 .IsRequired();
@@ -187,75 +167,81 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
                 .WithMany()
                 .HasForeignKey(p => p.KlientId)
                 .OnDelete(DeleteBehavior.Cascade);
-
             entity.HasOne(p => p.Pobocka)
                 .WithMany()
                 .HasForeignKey(p => p.PobockyId)
                 .OnDelete(DeleteBehavior.Cascade);
-
             entity.HasOne(p => p.TypPojistky)
                 .WithMany()
                 .HasForeignKey(p => p.TypPojistkyId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-
         modelBuilder.Entity<Zamestnanec>(entity =>
         {
             entity.ToTable("ZAMESTNANEC");
-
             entity.HasKey(z => z.IdZamestnance);
 
             entity.Property(z => z.Role)
                 .HasColumnName("ROLE")
                 .HasMaxLength(4000)
                 .IsRequired();
-
             entity.Property(z => z.PobockyIdPobocky)
                 .HasColumnName("POBOCKY_ID_POBOCKY")
                 .IsRequired();
-
             entity.Property(z => z.Jmeno)
                 .HasColumnName("JMENO")
                 .HasMaxLength(4000)
                 .IsRequired();
-
             entity.Property(z => z.Prijmeni)
                 .HasColumnName("PRIJMENI")
                 .HasMaxLength(4000)
                 .IsRequired();
-
             entity.Property(z => z.Email)
                 .HasColumnName("EMAIL")
                 .HasMaxLength(50);
-
             entity.Property(z => z.Telefon)
                 .HasColumnName("TELEFON")
                 .IsRequired();
-
             entity.Property(z => z.AdresaIdAdresa)
                 .HasColumnName("ADRESA_ID_ADRESA")
                 .IsRequired();
-
             entity.Property(z => z.Popis)
                 .HasColumnName("POPIS");
-
            
             entity.HasOne(z => z.Pobocka)
                 .WithMany(p => p.Zamestnanci)
                 .HasForeignKey(z => z.PobockyIdPobocky)
                 .OnDelete(DeleteBehavior.Cascade); 
-
-           
             entity.HasOne(z => z.Adresa)
                 .WithMany()
                 .HasForeignKey(z => z.AdresaIdAdresa)
                 .OnDelete(DeleteBehavior.Cascade); 
         });
 
+        modelBuilder.Entity<Pohledavka>(entity =>
+        {
+            entity.ToTable("POHLEDAVKA");
+            entity.HasKey(p => p.IdPohledavky);
 
+            entity.Property(p => p.SumaPohledavky)
+                  .HasColumnName("SUMA_POHLEDAVKY")
+                  .IsRequired();
+            entity.Property(p => p.DatumZacatku)
+                  .HasColumnName("DATUM_ZACATKU")
+                  .IsRequired();
+            entity.Property(p => p.DatumKonce)
+                  .HasColumnName("DATUM_KONCE")
+                  .IsRequired();
+            entity.Property(p => p.PojistnaSmlouvaId)
+                  .HasColumnName("POJISTNASMOULVA_ID_POJISTKY")
+                  .IsRequired();
 
-
+            entity.HasOne(p => p.PojistnaSmlouva)
+                  .WithMany() // .WithMany(s => s.Pohledavky)
+                  .HasForeignKey(p => p.PojistnaSmlouvaId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
 
         base.OnModelCreating(modelBuilder);
     }

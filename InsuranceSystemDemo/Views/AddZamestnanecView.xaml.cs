@@ -1,15 +1,13 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using InsuranceSystemDemo.ViewModels;
 
-namespace InsuranceSystemDemo.Views
+namespace InsuranceSystemDemo.Views;
+
+public partial class AddZamestnanecView : Window
 {
-    public partial class AddZamestnanecView : Window
+    public AddZamestnanecView()
     {
-        public AddZamestnanecView()
-        {
-            InitializeComponent();
-            DataContext = new AddZamestnanecViewModel(Close);
-        }
+        InitializeComponent();
+        DataContext = new AddZamestnanecViewModel(Close);
     }
 }
