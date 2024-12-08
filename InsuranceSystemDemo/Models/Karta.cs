@@ -12,8 +12,12 @@ public class Karta
     [Column("ID_PLATBY")]
     public int IdPlatby { get; set; }
 
+    // Object property
+    [ForeignKey("IdPlatby")]
+    public virtual Platba? Platba { get; set; } = null!;
+
     [Column("CISLO_KARTY")]
-    public int CisloKarty { get; set; }
+    public decimal CisloKarty { get; set; }
     [Column("CISLO_UCTU")]
-    public int CisloUctu { get; set; }
+    public decimal CisloUctu { get; set; }
 }

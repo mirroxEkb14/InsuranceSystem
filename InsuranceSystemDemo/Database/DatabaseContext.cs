@@ -17,6 +17,8 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
     public DbSet<PojistnaPlneni> PojistnePlneni { get; set; }
     public DbSet<Platba> Platby { get; set; }
     public DbSet<Hotovost> Hotovosti { get; set; }
+    public DbSet<Karta> Karty { get; set; }
+    public DbSet<Faktura> Faktury { get; set; }
 
     //
     // Summary:
@@ -54,6 +56,8 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
         ConfigureInsuranceFulfilment(modelBuilder);
         ConfigurePayment(modelBuilder);
         ConfigureCash(modelBuilder);
+        ConfigureCard(modelBuilder);
+        ConfigureBill(modelBuilder);
 
         base.OnModelCreating(modelBuilder);
     }
@@ -392,6 +396,54 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
                 .IsRequired();
             entity.Property(e => e.Vraceno)
                 .HasColumnName("VRACENO")
+                .IsRequired();
+
+            entity.HasOne(e => e.Platba)
+                .WithMany()
+                .HasForeignKey(e => e.IdPlatby)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+    }
+
+    private static void ConfigureCard(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Karta>(entity =>
+        {
+            entity.ToTable("KARTA");
+            entity.HasKey(e => e.IdPlatby);
+
+            entity.Property(e => e.IdPlatby)
+                .HasColumnName("ID_PLATBY")
+                .IsRequired();
+            entity.Property(e => e.CisloKarty)
+                .HasColumnName("CISLO_KARTY")
+                .IsRequired();
+            entity.Property(e => e.CisloUctu)
+                .HasColumnName("CISLO_UCTU")
+                .IsRequired();
+
+            entity.HasOne(e => e.Platba)
+                .WithMany()
+                .HasForeignKey(e => e.IdPlatby)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+    }
+
+    private static void ConfigureBill(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Faktura>(entity =>
+        {
+            entity.ToTable("FAKTURA");
+            entity.HasKey(e => e.IdPlatby);
+
+            entity.Property(e => e.IdPlatby)
+                .HasColumnName("ID_PLATBY")
+                .IsRequired();
+            entity.Property(e => e.CisloUctu)
+                .HasColumnName("CISLO_UCTU")
+                .IsRequired();
+            entity.Property(e => e.DatumSplatnosti)
+                .HasColumnName("DATUM_SPLATNOSTI")
                 .IsRequired();
 
             entity.HasOne(e => e.Platba)

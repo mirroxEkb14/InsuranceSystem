@@ -12,8 +12,12 @@ public class Faktura
     [Column("ID_PLATBY")]
     public int IdPlatby { get; set; }
 
+    // Object property
+    [ForeignKey("IdPlatby")]
+    public virtual Platba? Platba { get; set; } = null!;
+
     [Column("CISLO_UCTU")]
-    public int CisloUctu { get; set; }
+    public decimal CisloUctu { get; set; }
     [Column("DATUM_SPLATNOSTI")]
     public DateTime DatumSplatnosti { get; set; }
 }

@@ -16,6 +16,7 @@
     <None Remove="Resources\calm_river_gently_winding_through_a_lush.png" />
     <None Remove="Resources\family_standing_in_a_lush_green_field.png" />
     <None Remove="Resources\family_standing_near_their_home_under_a_protective_dome.png" />
+    <None Remove="Resources\harmonious_balance_of_nature_and_security_element.png" />
     <None Remove="Resources\insurance_company_the_image_sho.png" />
     <None Remove="Resources\peaceful_countryside_with_a_modern.png" />
     <None Remove="Resources\rolling_green_hills_with_scattered_tall.png" />
@@ -25,6 +26,7 @@
     <None Remove="Resources\symbolic_element_of_safety.png" />
     <None Remove="Resources\symbolic_umbrella_covering_a_f.png" />
     <None Remove="Resources\symbols_of_safety_protection.png" />
+    <None Remove="Resources\tranquil_meadow_with_a_gently_winding_river.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -58,6 +60,9 @@
     <Resource Include="Resources\family_standing_near_their_home_under_a_protective_dome.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\harmonious_balance_of_nature_and_security_element.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\insurance_company_the_image_sho.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -83,6 +88,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\symbols_of_safety_protection.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\tranquil_meadow_with_a_gently_winding_river.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

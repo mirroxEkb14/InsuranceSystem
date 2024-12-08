@@ -72,6 +72,12 @@ public partial class DashboardViewModel : ObservableObject
             case MessageContainer.HotovostTableName:
                 SwitchToHotovost();
                 break;
+            case MessageContainer.KartaTableName:
+                SwitchToKarta();
+                break;
+            case MessageContainer.FakturaTableName:
+                SwitchToFaktura();
+                break;
             default:
                 CurrentTableData = [];
                 break;
@@ -185,6 +191,26 @@ public partial class DashboardViewModel : ObservableObject
             .ToList();
         CurrentTableData = new ObservableCollection<object>(hotovosti);
     }
+
+    [RelayCommand]
+    public void SwitchToKarta()
+    {
+        CurrentTableName = MessageContainer.KartaTableName;
+        var karty = _context.Karty
+            .Include(k => k.Platba)
+            .ToList();
+        CurrentTableData = new ObservableCollection<object>(karty);
+    }
+
+    [RelayCommand]
+    public void SwitchToFaktura()
+    {
+        CurrentTableName = MessageContainer.FakturaTableName;
+        var faktury = _context.Faktury
+            .Include(f => f.Platba)
+            .ToList();
+        CurrentTableData = new ObservableCollection<object>(faktury);
+    }
     #endregion
 
     #region Search Commands
@@ -238,6 +264,12 @@ public partial class DashboardViewModel : ObservableObject
                 break;
             case MessageContainer.HotovostTableName:
                 SearchHotovosti(searchTerm);
+                break;
+            case MessageContainer.KartaTableName:
+                SearchKarty(searchTerm);
+                break;
+            case MessageContainer.FakturaTableName:
+                SearchFaktury(searchTerm);
                 break;
             default:
                 SwitchToCurrentTable();
@@ -414,6 +446,28 @@ public partial class DashboardViewModel : ObservableObject
             .ToList();
         CurrentTableData = new ObservableCollection<object>(filteredHotovosti);
     }
+
+    private void SearchKarty(string searchTerm)
+    {
+        var lowerQuery = searchTerm.ToLower();
+        var filteredKarty = _context.Karty
+            .Where(k => k.CisloKarty.ToString().Contains(lowerQuery) ||
+                        k.CisloUctu.ToString().Contains(lowerQuery))
+            .ToList();
+        CurrentTableData = new ObservableCollection<object>(filteredKarty);
+    }
+
+    private void SearchFaktury(string searchTerm)
+    {
+        var lowerQuery = searchTerm.ToLower();
+        var filteredFaktury = _context.Faktury
+            .Include(f => f.Platba)
+            .AsEnumerable()
+            .Where(f => f.CisloUctu.ToString().Contains(lowerQuery) ||
+                        f.DatumSplatnosti.ToString("dd.MM.yyyy").ToLower().Contains(lowerQuery))
+            .ToList();
+        CurrentTableData = new ObservableCollection<object>(filteredFaktury);
+    }
     #endregion
 
     #region Button Commands
@@ -456,6 +510,12 @@ public partial class DashboardViewModel : ObservableObject
             case MessageContainer.HotovostTableName:
                 addView = new AddHotovostView();
                 break;
+            case MessageContainer.KartaTableName:
+                addView = new AddKartaView();
+                break;
+            case MessageContainer.FakturaTableName:
+                addView = new AddFakturaView();
+                break;
             default:
                 MessageBoxDisplayer.ShowInfo(MessageContainer.AddFunctionalityNotSupported);
                 return;
@@ -495,6 +555,10 @@ public partial class DashboardViewModel : ObservableObject
             HandlePlatbaDeletion(selectedPlatba);
         else if (SelectedItem is Hotovost selectedHotovost)
             HandleHotovostDeletion(selectedHotovost);
+        else if (SelectedItem is Karta selectedKarta)
+            HandleKartaDeletion(selectedKarta);
+        else if (SelectedItem is Faktura selectedFaktura)
+            HandleFakturaDeletion(selectedFaktura);
         else
             MessageBoxDisplayer.ShowInfo(MessageContainer.DeleteFunctionalityNotSupported);
     }
@@ -738,6 +802,44 @@ public partial class DashboardViewModel : ObservableObject
             // TODO
 
             MessageBoxDisplayer.ShowInfo(MessageContainer.DeleteCashPaymentSuccess);
+            SwitchToCurrentTable();
+        }
+        catch (Exception ex)
+        {
+            MessageBoxDisplayer.ShowError(MessageContainer.GetUnexpectedErrorMessage(ex.Message));
+        }
+    }
+
+    private void HandleKartaDeletion(Karta karta)
+    {
+        var result = MessageBoxDisplayer.ShowCardDeletionConfirmation();
+        if (result != MessageBoxResult.Yes)
+            return;
+
+        try
+        {
+            // TODO
+
+            MessageBoxDisplayer.ShowInfo(MessageContainer.DeleteCardPaymentSuccess);
+            SwitchToCurrentTable();
+        }
+        catch (Exception ex)
+        {
+            MessageBoxDisplayer.ShowError(MessageContainer.GetUnexpectedErrorMessage(ex.Message));
+        }
+    }
+
+    private void HandleFakturaDeletion(Faktura faktura)
+    {
+        var result = MessageBoxDisplayer.ShowBillDeletionConfirmation();
+        if (result != MessageBoxResult.Yes)
+            return;
+
+        try
+        {
+            // TODO
+
+            MessageBoxDisplayer.ShowInfo(MessageContainer.DeleteBillPaymentSuccess);
             SwitchToCurrentTable();
         }
         catch (Exception ex)

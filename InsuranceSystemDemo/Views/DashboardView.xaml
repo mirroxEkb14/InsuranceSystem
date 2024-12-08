@@ -43,6 +43,8 @@
                 <MenuItem Header="PojistnaPlneni" Command="{Binding SwitchToPojistnaPlneniCommand}" />
                 <MenuItem Header="Platba" Command="{Binding SwitchToPlatbaCommand}" />
                 <MenuItem Header="Hotovost" Command="{Binding SwitchToHotovostCommand}" />
+                <MenuItem Header="Karta" Command="{Binding SwitchToKartaCommand}" />
+                <MenuItem Header="Faktura" Command="{Binding SwitchToFakturaCommand}" />
             </MenuItem>
         </Menu>
 

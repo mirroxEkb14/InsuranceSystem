@@ -12,11 +12,11 @@ namespace InsuranceSystemDemo.ViewModels;
 
 public partial class AddHotovostViewModel : ObservableObject
 {
-    [ObservableProperty] private decimal prijato;
-    [ObservableProperty] private decimal vraceno;
-    [ObservableProperty] private ObservableCollection<Platba> availablePlatby;
-    [ObservableProperty] private Platba selectedPlatba;
-    [ObservableProperty] private string? errorMessage;
+    [ObservableProperty] private decimal _prijato;
+    [ObservableProperty] private decimal _vraceno;
+    [ObservableProperty] private ObservableCollection<Platba>? _availablePlatby;
+    [ObservableProperty] private Platba? _selectedPlatba;
+    [ObservableProperty] private string? _errorMessage;
 
     private readonly DatabaseContext _context;
 

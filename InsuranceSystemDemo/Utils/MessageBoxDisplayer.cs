@@ -109,4 +109,22 @@ public static class MessageBoxDisplayer
             MessageBoxButton.YesNo,
             MessageBoxImage.Warning);
     }
+
+    public static MessageBoxResult ShowCardDeletionConfirmation()
+    {
+        return MessageBox.Show(
+            $"Are you sure you want to delete this card payment?",
+            "Delete Confirmation",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning);
+    }
+
+    public static MessageBoxResult ShowBillDeletionConfirmation()
+    {
+        return MessageBox.Show(
+            $"Are you sure you want to delete this bill payment?",
+            "Delete Confirmation",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning);
+    }
 }

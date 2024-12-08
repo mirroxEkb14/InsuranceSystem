@@ -27,6 +27,8 @@ public static class MessageContainer
     public const string PojistnaPlneniTableName = "PojistnaPlneni";
     public const string PlatbaTableName = "Platba";
     public const string HotovostTableName = "Hotovost";
+    public const string KartaTableName = "Karta";
+    public const string FakturaTableName = "Faktura";
 
     public const string AddFunctionalityNotSupported = "Add functionality is not supported for this table.";
 
@@ -43,6 +45,8 @@ public static class MessageContainer
     public const string DeleteInsuranceFulfilmentSuccess = "Insurance fulfilment was successfully deleted.";
     public const string DeletePaymentSuccess = "Payment was successfully deleted.";
     public const string DeleteCashPaymentSuccess = "Cash payment was successfully deleted.";
+    public const string DeleteCardPaymentSuccess = "Card payment was successfully deleted.";
+    public const string DeleteBillPaymentSuccess = "Bill payment was successfully deleted.";
 
     public const string ConnectionStringKey = "ConnectionStrings:DefaultConnection";
     public const string LoginUsernameHint = "Enter your username here...";
@@ -143,6 +147,16 @@ public static class MessageContainer
     public const string AddCashPaymentInvalidAmountAccepted = "Payment amount accepted must be greater than 0.";
     public const string AddCashPaymentInvalidAmountReturned = "Payment amount returned must be greater than or equal to 0.";
     public const string AddCashPaymentSuccess = "Cash payment added successfully!";
+
+    public const string AddKartaInvalidCardNumber = "Card number must be greater than zero.";
+    public const string AddKartaInvalidAccountNumber = "Account number must be greater than zero.";
+    public const string AddKartaInvalidRequiredPayment = "Payment must be selected.";
+    public const string AddKartaSuccess = "Card added successfully!";
+
+    public const string AddFakturaInvalidPayment = "Payment must be selected.";
+    public const string AddFakturaInvalidAccountNumber = "Account number must be greater than zero.";
+    public const string AddFakturaInvalidDate = "Date must be selected.";
+    public const string AddFakturaSuccess = "Faktura added successfully!";
 
     public static string GetUnexpectedErrorMessage(string errorMessage = "no message available") =>
         string.Format(UnexpectedErrorMessage, errorMessage);
