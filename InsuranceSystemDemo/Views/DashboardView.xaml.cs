@@ -34,7 +34,8 @@ public partial class DashboardView : Window
             if (columnName.Contains("Id", StringComparison.OrdinalIgnoreCase) ||
                 columnName.Equals("Adresa") || columnName.Equals("Zamestnanci") ||
                 columnName.Equals("Klient") || columnName.Equals("Pobocka") ||
-                columnName.Equals("TypPojistky") || columnName.Equals("PojistnaSmlouva"))
+                columnName.Equals("TypPojistky") || columnName.Equals("PojistnaSmlouva") ||
+                columnName.Equals("Pohledavka"))
             {
                 e.Cancel = true;
                 return;

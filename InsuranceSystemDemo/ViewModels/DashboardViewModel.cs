@@ -58,6 +58,9 @@ public partial class DashboardViewModel : ObservableObject
             case MessageContainer.PohledavkaTableName:
                 SwitchToPohledavka();
                 break;
+            case MessageContainer.ZavazekTableName:
+                SwitchToZavazek();
+                break;
             default:
                 CurrentTableData = [];
                 break;
@@ -129,6 +132,16 @@ public partial class DashboardViewModel : ObservableObject
             .ToList();
         CurrentTableData = new ObservableCollection<object>(pohledavky);
     }
+
+    [RelayCommand]
+    public void SwitchToZavazek()
+    {
+        CurrentTableName = MessageContainer.ZavazekTableName;
+        var zavazky = _context.Zavazky
+             .Include(z => z.Pohledavka)
+             .ToList();
+        CurrentTableData = new ObservableCollection<object>(zavazky);
+    }
     #endregion
 
     #region Search Commands
@@ -170,6 +183,9 @@ public partial class DashboardViewModel : ObservableObject
                 break;
             case MessageContainer.PohledavkaTableName:
                 SearchPohledavky(searchTerm);
+                break;
+            case MessageContainer.ZavazekTableName:
+                SearchZavazky(searchTerm);
                 break;
             default:
                 SwitchToCurrentTable();
@@ -283,11 +299,26 @@ public partial class DashboardViewModel : ObservableObject
             .AsEnumerable()
             .Where(p =>
                 p.SumaPohledavky.ToString().ToLower().Contains(lowerQuery) ||
-                p.DatumZacatku.ToString("dd.MM.yyyy h:mm:ss tt").ToLower().Contains(lowerQuery) ||
-                p.DatumKonce.ToString("dd.MM.yyyy h:mm:ss tt").ToLower().Contains(lowerQuery) ||
+                p.DatumZacatku.ToString("dd.MM.yyyy").ToLower().Contains(lowerQuery) ||
+                p.DatumKonce.ToString("dd.MM.yyyy").ToLower().Contains(lowerQuery) ||
                 p.PojistnaSmlouvaId.ToString().ToLower().Contains(lowerQuery))
             .ToList();
         CurrentTableData = new ObservableCollection<object>(filteredPohledavky);
+    }
+
+    private void SearchZavazky(string searchTerm)
+    {
+        string lowerQuery = searchTerm.ToLower();
+        var filteredZavazky = _context.Zavazky
+            .Include(z => z.Pohledavka)
+            .AsEnumerable()
+            .Where(z =>
+                z.SumaZavazky.ToString().ToLower().Contains(lowerQuery) ||
+                z.DataVzniku.ToString("dd.MM.yyyy").ToLower().Contains(lowerQuery) ||
+                z.DataSplatnisti.ToString("dd.MM.yyyy").ToLower().Contains(lowerQuery) ||
+                z.PohledavkaIdPohledavky.ToString().ToLower().Contains(lowerQuery))
+            .ToList();
+        CurrentTableData = new ObservableCollection<object>(filteredZavazky);
     }
     #endregion
 

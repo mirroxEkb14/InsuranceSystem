@@ -24,5 +24,5 @@ public class PojistnaPlneni
     [ForeignKey("PojistnaSmlouvaId")]
     public virtual PojistnaSmlouva? PojistnaSmlouva { get; set; }
     [ForeignKey("ZavazkyId")]
-    public virtual Zavazka? Zavazky { get; set; }
+    public virtual Zavazek? Zavazky { get; set; }
 }

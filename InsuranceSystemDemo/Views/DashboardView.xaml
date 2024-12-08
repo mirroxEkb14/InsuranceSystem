@@ -39,6 +39,7 @@
                 <MenuItem Header="PojistnaSmlouva" Command="{Binding SwitchToPojistnaSmlouvaCommand}"/>
                 <MenuItem Header="Zamestnanec" Command="{Binding SwitchToZamestnanecCommand}" />
                 <MenuItem Header="Pohledavka" Command="{Binding SwitchToPohledavkaCommand}" />
+                <MenuItem Header="Zavazek" Command="{Binding SwitchToZavazekCommand}" />
             </MenuItem>
         </Menu>
 

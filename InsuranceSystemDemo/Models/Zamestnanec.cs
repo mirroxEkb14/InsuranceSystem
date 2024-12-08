@@ -40,8 +40,8 @@ public class Zamestnanec
     public int PobockyIdPobocky { get; set; }
 
     // Object properties
-    [ForeignKey("PobockyIdPobocky")]
-    public virtual Pobocka Pobocka { get; set; } = null!;
     [ForeignKey("AdresaIdAdresa")]
     public virtual Adresa Adresa { get; set; } = null!;
+    [ForeignKey("PobockyIdPobocky")]
+    public virtual Pobocka Pobocka { get; set; } = null!;
 }

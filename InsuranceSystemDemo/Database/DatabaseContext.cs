@@ -13,6 +13,7 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
     public DbSet<TypPojistky> TypPojistky { get; set; }
     public DbSet<PojistnaSmlouva> PojistnaSmlouva { get; set; }
     public DbSet<Pohledavka> Pohledavky { get; set; }
+    public DbSet<Zavazek> Zavazky { get; set; }
 
     //
     // Summary:
@@ -38,6 +39,22 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
     //         valid PK when mapped to the DB table.
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        ConfigureUser(modelBuilder);
+        ConfigureAddress(modelBuilder);
+        ConfigureClient(modelBuilder);
+        ConfigureBranch(modelBuilder);
+        ConfigureInsuranceType(modelBuilder);
+        ConfigureContract(modelBuilder);
+        ConfigureEmployee(modelBuilder);
+        ConfigureDebt(modelBuilder);
+        ConfigureBackfill(modelBuilder);
+
+        base.OnModelCreating(modelBuilder);
+    }
+
+    #region Table Configuring Logic
+    private static void ConfigureUser(ModelBuilder modelBuilder)
+    {
         modelBuilder.Entity<User>(entity =>
         {
             entity.ToTable("USERS_ROLE");
@@ -51,13 +68,20 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
             entity.Property(e => e.Role)
                 .HasColumnName("ROLE");
         });
+    }
 
+    private static void ConfigureAddress(ModelBuilder modelBuilder)
+    {
         modelBuilder.Entity<Adresa>(entity =>
         {
-            entity.HasKey(a => a.IdAdresa); 
+            entity.HasKey(a => a.IdAdresa);
             entity.ToTable("ADRESA");
         });
+        modelBuilder.Entity<Adresa>().HasKey(a => a.IdAdresa);
+    }
 
+    private static void ConfigureClient(ModelBuilder modelBuilder)
+    {
         modelBuilder.Entity<Klient>(entity =>
         {
             entity.ToTable("KLIENT");
@@ -82,7 +106,10 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
                 .HasForeignKey(k => k.AdresaId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
+    }
 
+    private static void ConfigureBranch(ModelBuilder modelBuilder)
+    {
         modelBuilder.Entity<Pobocka>(entity =>
         {
             entity.ToTable("POBOCKY");
@@ -101,7 +128,10 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
                 .HasForeignKey(p => p.AdresaId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
+    }
 
+    private static void ConfigureInsuranceType(ModelBuilder modelBuilder)
+    {
         modelBuilder.Entity<TypPojistky>(entity =>
         {
             entity.ToTable("TYPPOJISTKY");
@@ -128,9 +158,10 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
                   .HasColumnName("DATIM_ZACATKU")
                   .IsRequired();
         });
+    }
 
-        modelBuilder.Entity<Adresa>().HasKey(a => a.IdAdresa);
-
+    private static void ConfigureContract(ModelBuilder modelBuilder)
+    {
         modelBuilder.Entity<PojistnaSmlouva>(entity =>
         {
             entity.ToTable("POJISTNASMLOUVA");
@@ -141,10 +172,10 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
                 .HasColumnType("decimal(10,2)")
                 .IsRequired();
             entity.Property(p => p.DatumZacatkuPlatnosti)
-                .HasColumnName("DATUM_ZACATKU_PLATNOSTI") 
+                .HasColumnName("DATUM_ZACATKU_PLATNOSTI")
                 .IsRequired();
             entity.Property(p => p.DatumUkonceniPlatnosti)
-                .HasColumnName("DATUM_UKONCENI_PLATNOSTI") 
+                .HasColumnName("DATUM_UKONCENI_PLATNOSTI")
                 .IsRequired();
             entity.Property(p => p.DataVystaveni)
                 .HasColumnName("DATA_VYSTAVENI")
@@ -160,7 +191,7 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
                 .HasColumnName("POBOCKY_ID_POBOCKY")
                 .IsRequired();
             entity.Property(p => p.TypPojistkyId)
-                .HasColumnName("TYPPOJISTKY_ID_TYP") 
+                .HasColumnName("TYPPOJISTKY_ID_TYP")
                 .IsRequired();
 
             entity.HasOne(p => p.Klient)
@@ -176,7 +207,10 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
                 .HasForeignKey(p => p.TypPojistkyId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
+    }
 
+    private static void ConfigureEmployee(ModelBuilder modelBuilder)
+    {
         modelBuilder.Entity<Zamestnanec>(entity =>
         {
             entity.ToTable("ZAMESTNANEC");
@@ -208,17 +242,20 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
                 .IsRequired();
             entity.Property(z => z.Popis)
                 .HasColumnName("POPIS");
-           
+
             entity.HasOne(z => z.Pobocka)
                 .WithMany(p => p.Zamestnanci)
                 .HasForeignKey(z => z.PobockyIdPobocky)
-                .OnDelete(DeleteBehavior.Cascade); 
+                .OnDelete(DeleteBehavior.Cascade);
             entity.HasOne(z => z.Adresa)
                 .WithMany()
                 .HasForeignKey(z => z.AdresaIdAdresa)
-                .OnDelete(DeleteBehavior.Cascade); 
+                .OnDelete(DeleteBehavior.Cascade);
         });
+    }
 
+    private static void ConfigureDebt(ModelBuilder modelBuilder)
+    {
         modelBuilder.Entity<Pohledavka>(entity =>
         {
             entity.ToTable("POHLEDAVKA");
@@ -242,7 +279,34 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
                   .HasForeignKey(p => p.PojistnaSmlouvaId)
                   .OnDelete(DeleteBehavior.Cascade);
         });
-
-        base.OnModelCreating(modelBuilder);
     }
+
+    private static void ConfigureBackfill(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Zavazek>(entity =>
+        {
+            entity.ToTable("ZAVAZKY");
+            entity.HasKey(e => e.IdZavazky);
+
+            entity.Property(e => e.SumaZavazky)
+                .HasColumnName("SUMA_ZAVAZKY")
+                .IsRequired();
+            entity.Property(e => e.DataVzniku)
+                .HasColumnName("DATA_VZNIKU")
+                .IsRequired();
+            entity.Property(e => e.DataSplatnisti)
+                .HasColumnName("DATA_SPLATNISTI")
+                .IsRequired();
+            entity.Property(e => e.PohledavkaIdPohledavky)
+                .HasColumnName("POHLEDAVKA_ID_POHLEDAVKY")
+                .IsRequired();
+
+            entity.HasOne(e => e.Pohledavka)
+                .WithMany()
+                .HasForeignKey(e => e.PohledavkaIdPohledavky)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+    }
+
+    #endregion
 }

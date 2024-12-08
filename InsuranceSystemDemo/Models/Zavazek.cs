@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 namespace InsuranceSystemDemo.Models;
 
 [Table("ZAVAZKY")]
-public class Zavazka
+public class Zavazek
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -23,5 +23,9 @@ public class Zavazka
     // Navigation property
     [Column("POHLEDAVKA_ID_POHLEDAVKY")]
     [Required]
-    public int IdPohledavky { get; set; }
+    public int PohledavkaIdPohledavky { get; set; }
+
+    // Object property
+    [ForeignKey("PohledavkaIdPohledavky")]
+    public virtual Pohledavka? Pohledavka { get; set; } = null!;
 }
