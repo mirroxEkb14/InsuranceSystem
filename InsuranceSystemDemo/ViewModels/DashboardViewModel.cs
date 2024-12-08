@@ -316,17 +316,16 @@ public partial class DashboardViewModel : ObservableObject
             case MessageContainer.ZamestnanecTableName: 
                 addView = new AddZamestnanecView(); 
                 break;
+            case MessageContainer.PohledavkaTableName:
+                addView = new AddPohledavkaView();
+                break;
             default:
                 MessageBoxDisplayer.ShowInfo(MessageContainer.AddFunctionalityNotSupported);
                 return;
         }
-
         addView.ShowDialog(); 
         SwitchToCurrentTable(); 
     }
-
-
-
 
     [RelayCommand]
     public void DeleteItem()
@@ -349,11 +348,11 @@ public partial class DashboardViewModel : ObservableObject
             HandleContractDeletion(selectedContract);
         else if (SelectedItem is Zamestnanec selectedZamestnanec) 
             HandleZamestnanecDeletion(selectedZamestnanec);
+        else if (SelectedItem is Pohledavka selectedPohledavka)
+            HandlePohledavkaDeletion(selectedPohledavka);
         else
             MessageBoxDisplayer.ShowInfo(MessageContainer.DeleteFunctionalityNotSupported);
     }
-
-
 
     [RelayCommand]
     public void Logout()
@@ -373,7 +372,7 @@ public partial class DashboardViewModel : ObservableObject
         using var transaction = _context.Database.BeginTransaction();
         try
         {
-            var clientIdParam = new Oracle.ManagedDataAccess.Client.OracleParameter("p_id", selectedClient.IdKlientu);
+            var clientIdParam = new OracleParameter("p_id", selectedClient.IdKlientu);
             _context.Database.ExecuteSqlRaw("BEGIN DELETE_CLIENT(:p_id); END;", clientIdParam);
             transaction.Commit();
 
@@ -397,7 +396,7 @@ public partial class DashboardViewModel : ObservableObject
         using var transaction = _context.Database.BeginTransaction();
         try
         {
-            var addressIdParam = new Oracle.ManagedDataAccess.Client.OracleParameter("p_id_adresa", selectedAddress.IdAdresa);
+            var addressIdParam = new OracleParameter("p_id_adresa", selectedAddress.IdAdresa);
             _context.Database.ExecuteSqlRaw("BEGIN DELETE_ADDRESS(:p_id_adresa); END;", addressIdParam);
             transaction.Commit();
 
@@ -421,18 +420,18 @@ public partial class DashboardViewModel : ObservableObject
         using var transaction = _context.Database.BeginTransaction();
         try
         {
-            var branchIdParam = new Oracle.ManagedDataAccess.Client.OracleParameter("p_ID_POBOCKY", selectedBranch.IdPobocky);
+            var branchIdParam = new OracleParameter("p_ID_POBOCKY", selectedBranch.IdPobocky);
             _context.Database.ExecuteSqlRaw("BEGIN DeletePobocka(:p_ID_POBOCKY); END;", branchIdParam);
             transaction.Commit();
 
-            MessageBoxDisplayer.ShowInfo("Branch deleted successfully.");
+            MessageBoxDisplayer.ShowInfo(MessageContainer.DeleteBranchSuccess);
             SwitchToCurrentTable();
         }
         catch (Exception ex)
         {
             transaction.Rollback();
             var detailedMessage = ex.InnerException?.Message ?? ex.Message;
-            MessageBoxDisplayer.ShowError($"An error occurred: {detailedMessage}");
+            MessageBoxDisplayer.ShowError(MessageContainer.GetUnexpectedErrorMessage(detailedMessage));
         }
     }
 
@@ -445,18 +444,18 @@ public partial class DashboardViewModel : ObservableObject
         using var transaction = _context.Database.BeginTransaction();
         try
         {
-            var insuranceTypeIdParam = new Oracle.ManagedDataAccess.Client.OracleParameter("p_ID_TYP", selectedInsuranceType.IdTyp);
+            var insuranceTypeIdParam = new OracleParameter("p_ID_TYP", selectedInsuranceType.IdTyp);
             _context.Database.ExecuteSqlRaw("BEGIN DeleteTypPojistky(:p_ID_TYP); END;", insuranceTypeIdParam);
             transaction.Commit();
 
-            MessageBoxDisplayer.ShowInfo("Insurance type deleted successfully.");
+            MessageBoxDisplayer.ShowInfo(MessageContainer.DeleteInsuranceTypeSuccess);
             SwitchToCurrentTable();
         }
         catch (Exception ex)
         {
             transaction.Rollback();
             var detailedMessage = ex.InnerException?.Message ?? ex.Message;
-            MessageBoxDisplayer.ShowError($"An error occurred: {detailedMessage}");
+            MessageBoxDisplayer.ShowError(MessageContainer.GetUnexpectedErrorMessage(detailedMessage));
         }
     }
 
@@ -469,46 +468,36 @@ public partial class DashboardViewModel : ObservableObject
         using var transaction = _context.Database.BeginTransaction();
         try
         {
-            var contractIdParam = new Oracle.ManagedDataAccess.Client.OracleParameter("p_ID_POJISTKY", selectedContract.IdPojistky);
+            var contractIdParam = new OracleParameter("p_ID_POJISTKY", selectedContract.IdPojistky);
             _context.Database.ExecuteSqlRaw("BEGIN DeletePojistnaMlouva(:p_ID_POJISTKY); END;", contractIdParam);
             transaction.Commit();
 
-            MessageBoxDisplayer.ShowInfo("Contract deleted successfully.");
+            MessageBoxDisplayer.ShowInfo(MessageContainer.DeleteContractSuccess);
             SwitchToCurrentTable();
         }
         catch (Exception ex)
         {
             transaction.Rollback();
             var detailedMessage = ex.InnerException?.Message ?? ex.Message;
-            MessageBoxDisplayer.ShowError($"An error occurred: {detailedMessage}");
+            MessageBoxDisplayer.ShowError(MessageContainer.GetUnexpectedErrorMessage(detailedMessage));
         }
     }
 
-
     private void HandleZamestnanecDeletion(Zamestnanec zamestnanec)
     {
-        var result = MessageBox.Show(
-            $"Are you sure you want to delete Zamestnanec '{zamestnanec.Jmeno} {zamestnanec.Prijmeni}'?",
-            "Confirm Deletion",
-            MessageBoxButton.YesNo,
-            MessageBoxImage.Warning
-        );
-
+        var result = MessageBoxDisplayer.ShowEmployeeDeletionConfirmation(zamestnanec.Jmeno, zamestnanec.Prijmeni);
         if (result != MessageBoxResult.Yes)
             return;
 
         try
         {
             using var context = new DatabaseContext(DatabaseContextGetter.GetDatabaseContextOptions());
-
             context.Database.ExecuteSqlRaw(
                 "BEGIN DELETEZAMESTNANEC(:p_id_zamestnance); END;",
                 new OracleParameter("p_id_zamestnance", zamestnanec.IdZamestnance)
             );
 
-            MessageBox.Show("Zamestnanec was successfully deleted.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-
-           
+            MessageBoxDisplayer.ShowInfo(MessageContainer.DeleteEmployeeSuccess);
             SwitchToCurrentTable();
         }
         catch (Exception ex)
@@ -517,13 +506,24 @@ public partial class DashboardViewModel : ObservableObject
         }
     }
 
+    private void HandlePohledavkaDeletion(Pohledavka pohledavka)
+    {
+        var result = MessageBoxDisplayer.ShowDebtDeletionConfirmation(pohledavka.IdPohledavky.ToString());
+        if (result != MessageBoxResult.Yes)
+            return;
 
+        try
+        {
+            // TODO: Implement deletion of the debt using DB procedure
 
-
-
-
-
-
+            MessageBoxDisplayer.ShowInfo(MessageContainer.DeleteDebtSuccess);
+            SwitchToCurrentTable();
+        }
+        catch (Exception ex)
+        {
+            MessageBoxDisplayer.ShowError(MessageContainer.GetUnexpectedErrorMessage(ex.Message));
+        }
+    }
     #endregion
 
     #region Private Helper Methods

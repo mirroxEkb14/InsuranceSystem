@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
+        ResizeMode="NoResize"
         Title="Add Insurance Type" Height="480" Width="500">
 
     <!-- The «DataContext» is handled in the code-behind, as the DB context is passed to a parameterized

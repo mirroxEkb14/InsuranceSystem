@@ -1,0 +1,74 @@
+﻿<Window x:Class="InsuranceSystemDemo.Views.AddPohledavkaView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:InsuranceSystemDemo.ViewModels"
+        mc:Ignorable="d"
+        Title="Add Pohledavka" Height="320" Width="500"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen">
+
+    <!-- The «DataContext» is handled in the code-behind, as the DB context is passed to a parameterized
+    constructor of the «AddPohledavkaViewModel» class. -->
+
+    <Window.Background>
+        <ImageBrush ImageSource="/Resources/family_standing_in_a_lush_green_field.png" Stretch="UniformToFill" Opacity="0.7" />
+    </Window.Background>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Title -->
+        <TextBlock Text="Add Pohledavka" FontSize="20" FontWeight="Bold" 
+                   HorizontalAlignment="Center" Margin="0,0,0,20" Grid.Row="0" Grid.ColumnSpan="2"/>
+
+        <!-- Suma Pohledavky -->
+        <Label Content="Suma Pohledavky:" Grid.Row="1" Grid.Column="0" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,0"/>
+        <TextBox Text="{Binding SumaPohledavky}" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center"
+                 Margin="0,5"/>
+
+        <!-- Datum Zacatku -->
+        <Label Content="Datum Zacatku:" Grid.Row="2" Grid.Column="0" FontWeight="Bold" VerticalAlignment="Center"
+               Margin="0,0,10,0"/>
+        <DatePicker SelectedDate="{Binding DatumZacatku}" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center"
+                    Margin="0,5"/>
+
+        <!-- Datum Konce -->
+        <Label Content="Datum Konce:" Grid.Row="3" Grid.Column="0" FontWeight="Bold" VerticalAlignment="Center"
+               Margin="0,0,10,0"/>
+        <DatePicker SelectedDate="{Binding DatumKonce}" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center"
+                    Margin="0,5"/>
+
+        <!-- Pojistna Smlouva -->
+        <Label Content="Pojistna Smlouva:" Grid.Row="4" Grid.Column="0" FontWeight="Bold" 
+               VerticalAlignment="Center" Margin="0,0,10,0"/>
+        <ComboBox ItemsSource="{Binding AvailablePojistneSmlouvy}" 
+                  DisplayMemberPath="Name" 
+                  SelectedItem="{Binding SelectedPojistnaSmlouva}" 
+                  Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" Margin="0,5"/>
+
+        <!-- Error Message -->
+        <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" FontWeight="Bold" TextAlignment="Left" 
+                   Grid.Row="5" Grid.ColumnSpan="2" Margin="0,10,0,0"/>
+
+        <!-- Buttons -->
+        <StackPanel Orientation="Horizontal" Grid.Row="6" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="0,20,0,0">
+            <Button Content="Save" Width="100" Height="25" Margin="10,0" Command="{Binding SaveCommand}"/>
+            <Button Content="Cancel" Width="100" Height="25" Margin="10,0" Command="{Binding CancelCommand}"/>
+        </StackPanel>
+    </Grid>
+</Window>

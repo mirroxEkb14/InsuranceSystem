@@ -38,4 +38,7 @@ public class PojistnaSmlouva
     public virtual Pobocka? Pobocka { get; set; }
     [ForeignKey("TypPojistkyId")]
     public virtual TypPojistky? TypPojistky { get; set; }
+
+    [NotMapped]
+    public string Name => $"Amount: {PojistnaCastka}, Dates: {DatumZacatkuPlatnosti:dd.MM.yyyy}-{DatumUkonceniPlatnosti:dd.MM.yyyy}";
 }

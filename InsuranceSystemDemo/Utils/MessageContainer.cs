@@ -30,6 +30,11 @@ public static class MessageContainer
     public const string DeleteItemNotSelected = "Please select an item to delete.";
     public const string DeleteClientSuccess = "Client was successfully deleted.";
     public const string DeleteAddressSuccess = "Address was successfully deleted.";
+    public const string DeleteBranchSuccess = "Branch was successfully deleted.";
+    public const string DeleteInsuranceTypeSuccess = "Insurance type was successfully deleted.";
+    public const string DeleteContractSuccess = "Contract was successfully deleted.";
+    public const string DeleteEmployeeSuccess = "Employee was successfully deleted.";
+    public const string DeleteDebtSuccess = "Debt was successfully deleted.";
 
     public const string ConnectionStringKey = "ConnectionStrings:DefaultConnection";
     public const string LoginUsernameHint = "Enter your username here...";
@@ -103,6 +108,11 @@ public static class MessageContainer
     public const string AddEmployeeInvalidPhone = "Phone number must be entered.";
     public const string AddEmployeeInvalidBranch = "Branch must be selected.";
     public const string AddEmployeeInvalidAddress = "Address must be selected.";
+
+    public const string AddDebtInvalidAmount = "Debt amount must be greater than 0.";
+    public const string AddDebtInvalidDates = "End date must be after the start date.";
+    public const string AddDebtInvalidContract = "Contract must be selected.";
+    public const string AddDebtSuccess = "Debt added successfully!";
 
     public static string GetUnexpectedErrorMessage(string errorMessage = "no message available") =>
         string.Format(UnexpectedErrorMessage, errorMessage);

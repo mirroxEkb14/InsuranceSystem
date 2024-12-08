@@ -49,9 +49,28 @@ public static class MessageBoxDisplayer
 
     public static MessageBoxResult ShowContractDeletionConfirmation(string contractId)
     {
-        return MessageBox.Show($"Are you sure you want to delete contract with ID {contractId}?",
-                               "Delete Confirmation",
-                               MessageBoxButton.YesNo,
-                               MessageBoxImage.Warning);
+        return MessageBox.Show(
+            $"Are you sure you want to delete contract with ID {contractId}?",
+            "Delete Confirmation",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning);
+    }
+
+    public static MessageBoxResult ShowEmployeeDeletionConfirmation(string firstName, string lastName)
+    {
+        return MessageBox.Show(
+            $"Are you sure you want to delete the employee {firstName} {lastName}?",
+            "Delete Confirmation",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning);
+    }
+
+    public static MessageBoxResult ShowDebtDeletionConfirmation(string debtId)
+    {
+        return MessageBox.Show(
+            $"Are you sure you want to delete the debt with ID {debtId}?",
+            "Delete Confirmation",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning);
     }
 }
