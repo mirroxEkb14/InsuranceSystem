@@ -147,6 +147,9 @@ public static class MessageContainer
     public const string AddCashPaymentInvalidAmountAccepted = "Payment amount accepted must be greater than 0.";
     public const string AddCashPaymentInvalidAmountReturned = "Payment amount returned must be greater than or equal to 0.";
     public const string AddCashPaymentSuccess = "Cash payment added successfully!";
+    public static string AddDebtErrorRetrievingID => "Error retrieving the new debt ID.";
+
+
 
     public const string AddKartaInvalidCardNumber = "Card number must be greater than zero.";
     public const string AddKartaInvalidAccountNumber = "Account number must be greater than zero.";

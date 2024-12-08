@@ -285,7 +285,7 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
                   .IsRequired();
 
             entity.HasOne(p => p.PojistnaSmlouva)
-                  .WithMany() // .WithMany(s => s.Pohledavky)
+                  .WithMany() 
                   .HasForeignKey(p => p.PojistnaSmlouvaId)
                   .OnDelete(DeleteBehavior.Cascade);
         });

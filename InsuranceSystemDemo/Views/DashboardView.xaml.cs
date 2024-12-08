@@ -113,22 +113,22 @@ public partial class DashboardView : Window
             else if (editedItem is Adresa adresa)
             {
                 context.Database.ExecuteSqlRaw(
-                    "BEGIN UpdateAdresa(:p_ID_ADRESA, :p_ULICE, :p_MESTO, :p_STAT, :p_CISLO_POPISНЕ, :p_PSC); END;",
+                    "BEGIN UpdateAdresa(:p_ID_ADRESA, :p_ULICE, :p_MESTO, :p_STAT, :p_CISLO_POPISNЕ, :p_PSC); END;",
                     new OracleParameter("p_ID_ADRESA", adresa.IdAdresa),
                     new OracleParameter("p_ULICE", adresa.Ulice),
                     new OracleParameter("p_MESTО", adresa.Mesto),
                     new OracleParameter("p_STAT", adresa.Stat),
-                    new OracleParameter("p_CISЛO_POPИСНЕ", adresa.CisloPopisne),
+                    new OracleParameter("p_CISLO_POPISNЕ", adresa.CisloPopisne),
                     new OracleParameter("p_PSC", adresa.PSC)
                 );
             }
             else if (editedItem is Pobocka pobocka)
             {
                 context.Database.ExecuteSqlRaw(
-                    "BEGIN UpdatePobocka(:p_ID_POBOCKY, :p_NAZEV, :p_TELEФОН, :p_ADRESA_ID_ADRESA); END;",
+                    "BEGIN UpdatePobocka(:p_ID_POBOCKY, :p_NAZEV, :p_TELEFON, :p_ADRESA_ID_ADRESA); END;",
                     new OracleParameter("p_ID_POBOCKY", pobocka.IdPobocky),
                     new OracleParameter("p_NAZEV", pobocka.Nazev),
-                    new OracleParameter("p_TELEФОН", pobocka.Telefon),
+                    new OracleParameter("p_TELEFON", pobocka.Telefon),
                     new OracleParameter("p_ADRESA_ID_ADRESA", pobocka.AdresaId)
                 );
             }
@@ -173,6 +173,18 @@ public partial class DashboardView : Window
                     new OracleParameter("p_telefon", zamestnanec.Telefon),
                     new OracleParameter("p_adresa_id", zamestnanec.AdresaIdAdresa),
                     new OracleParameter("p_popis", zamestnanec.Popis ?? (object)DBNull.Value)
+                );
+            }
+
+            else if (editedItem is Pohledavka pohledavka)
+            {
+                context.Database.ExecuteSqlRaw(
+                    "BEGIN UPDATE_POHLEDAVKA(:p_id_pohledavky, :p_suma_pohledavky, :p_datum_zacatku, :p_datum_konce, :p_pojistnasmlouva_id_pojistky); END;",
+                    new OracleParameter("p_id_pohledavky", pohledavka.IdPohledavky),
+                    new OracleParameter("p_suma_pohledavky", pohledavka.SumaPohledavky),
+                    new OracleParameter("p_datum_zacatku", pohledavka.DatumZacatku),
+                    new OracleParameter("p_datum_konce", pohledavka.DatumKonce),
+                    new OracleParameter("p_pojistnasmlouva_id_pojistky", pohledavka.PojistnaSmlouvaId)
                 );
             }
 
@@ -249,7 +261,7 @@ public partial class DashboardView : Window
             editedContract.PobockyId = originalContract.PobockyId;
             editedContract.TypPojistkyId = originalContract.TypPojistkyId;
         }
-        else if (_originalItem is Zamestnanec originalZamestnanec && currentItem is Zamestnanec editedZamestnanec) // Новый блок
+        else if (_originalItem is Zamestnanec originalZamestnanec && currentItem is Zamestnanec editedZamestnanec) 
         {
             editedZamestnanec.IdZamestnance = originalZamestnanec.IdZamestnance;
             editedZamestnanec.Role = originalZamestnanec.Role;
@@ -261,6 +273,16 @@ public partial class DashboardView : Window
             editedZamestnanec.AdresaIdAdresa = originalZamestnanec.AdresaIdAdresa;
             editedZamestnanec.Popis = originalZamestnanec.Popis;
         }
+
+        else if (_originalItem is Pohledavka originalPohledavka && currentItem is Pohledavka editedPohledavka)
+        {
+            editedPohledavka.IdPohledavky = originalPohledavka.IdPohledavky;
+            editedPohledavka.SumaPohledavky = originalPohledavka.SumaPohledavky;
+            editedPohledavka.DatumZacatku = originalPohledavka.DatumZacatku;
+            editedPohledavka.DatumKonce = originalPohledavka.DatumKonce;
+            editedPohledavka.PojistnaSmlouvaId = originalPohledavka.PojistnaSmlouvaId;
+        }
+
         ((DashboardViewModel)DataContext).SwitchToCurrentTable();
     }
 
@@ -345,6 +367,19 @@ public partial class DashboardView : Window
                 Popis = zamestnanec.Popis
             };
         }
+
+        else if (item is Pohledavka pohledavka)
+        {
+            return new Pohledavka
+            {
+                IdPohledavky = pohledavka.IdPohledavky,
+                SumaPohledavky = pohledavka.SumaPohledavky,
+                DatumZacatku = pohledavka.DatumZacatku,
+                DatumKonce = pohledavka.DatumKonce,
+                PojistnaSmlouvaId = pohledavka.PojistnaSmlouvaId
+            };
+        }
+
         throw new ArgumentException(MessageContainer.CloningError);
     }
     #endregion

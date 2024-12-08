@@ -717,13 +717,17 @@ public partial class DashboardViewModel : ObservableObject
 
     private void HandlePohledavkaDeletion(Pohledavka pohledavka)
     {
-        var result = MessageBoxDisplayer.ShowDebtDeletionConfirmation(pohledavka.IdPohledavky.ToString());
+        var result = MessageBoxDisplayer.ShowDebtDeletionConfirmation(pohledavka.SumaPohledavky.ToString("F2"));
         if (result != MessageBoxResult.Yes)
             return;
 
         try
         {
-            // TODO
+            using var context = new DatabaseContext(DatabaseContextGetter.GetDatabaseContextOptions());
+            context.Database.ExecuteSqlRaw(
+                "BEGIN DELETE_POHLEDAVKA(:p_id_pohledavky); END;",
+                new OracleParameter("p_id_pohledavky", pohledavka.IdPohledavky)
+            );
 
             MessageBoxDisplayer.ShowInfo(MessageContainer.DeleteDebtSuccess);
             SwitchToCurrentTable();
@@ -733,6 +737,12 @@ public partial class DashboardViewModel : ObservableObject
             MessageBoxDisplayer.ShowError(MessageContainer.GetUnexpectedErrorMessage(ex.Message));
         }
     }
+
+
+
+
+
+
 
     private void HandleZavazekDeletion(Zavazek zavazek)
     {

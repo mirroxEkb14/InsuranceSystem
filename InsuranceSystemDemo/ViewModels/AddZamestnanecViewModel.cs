@@ -51,6 +51,8 @@ public partial class AddZamestnanecViewModel : ObservableObject
             var context = new DatabaseContext(DatabaseContextGetter.GetDatabaseContextOptions());
             var newId = AddZamestnanecToDatabase(context);
 
+
+            MessageBoxDisplayer.ShowInfo($"Employee successfully added ");
         }
         catch (Exception ex)
         {
