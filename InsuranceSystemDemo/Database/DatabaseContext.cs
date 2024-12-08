@@ -231,10 +231,10 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
                   .HasColumnName("DATUM_ZACATKU")
                   .IsRequired();
             entity.Property(p => p.DatumKonce)
-                  .HasColumnName("DATUM_KONCE")
+                  .HasColumnName("DATIM_KONCE")
                   .IsRequired();
             entity.Property(p => p.PojistnaSmlouvaId)
-                  .HasColumnName("POJISTNASMOULVA_ID_POJISTKY")
+                  .HasColumnName("POJISTNASMLOUVA_ID_POJISTKY")
                   .IsRequired();
 
             entity.HasOne(p => p.PojistnaSmlouva)

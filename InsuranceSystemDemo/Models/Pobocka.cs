@@ -16,12 +16,14 @@ public class Pobocka
     [Column("TELEFON")]
     [StringLength(13)]
     public string Telefon { get; set; } = string.Empty;
+
+    // Navigation property
     [Column("ADRESA_ID_ADRESA")]
     public int AdresaId { get; set; }
 
-   
+    // Object property
     [ForeignKey("AdresaId")]
     public virtual Adresa? Adresa { get; set; }
 
-    public virtual ICollection<Zamestnanec> Zamestnanci { get; set; } = new List<Zamestnanec>();
+    public virtual ICollection<Zamestnanec> Zamestnanci { get; set; } = [];
 }

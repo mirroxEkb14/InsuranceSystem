@@ -15,12 +15,14 @@ public class Pohledavka
     public decimal SumaPohledavky { get; set; }
     [Column("DATUM_ZACATKU")]
     public DateTime DatumZacatku { get; set; }
-    [Column("DATUM_KONCE")]
+    [Column("DATIM_KONCE")]
     public DateTime DatumKonce { get; set; }
 
-    // Navigation properties
-    [Column("POJISTNASMOULVA_ID_POJISTKY")]
+    // Navigation property
+    [Column("POJISTNASMLOUVA_ID_POJISTKY")]
     public int PojistnaSmlouvaId { get; set; }
+
+    // Object property
     [ForeignKey("PojistnaSmlouvaId")]
     public virtual PojistnaSmlouva? PojistnaSmlouva { get; set; }
 }

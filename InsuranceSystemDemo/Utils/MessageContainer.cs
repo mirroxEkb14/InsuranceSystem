@@ -11,6 +11,8 @@ public static class MessageContainer
     private const string DeleteAddressConfirmation = "Are you sure you want to delete the address at {0} {1}?";
     private const string DeleteBranchConfirmation = "Are you sure you want to delete the branch {0} with phone number {1}?";
 
+    public const string CloningError = "Unsupported type for cloning";
+
     public const string AdminRole = "Admin";
     public const string UserRole = "User";
 
@@ -20,6 +22,7 @@ public static class MessageContainer
     public const string TypPojistkyTableName = "TypPojistky";
     public const string ContractsTableName = "PojistnaSmlouva";
     public const string ZamestnanecTableName= "Zamestnanec";
+    public const string PohledavkaTableName = "Pohledavka";
 
     public const string AddFunctionalityNotSupported = "Add functionality is not supported for this table.";
 

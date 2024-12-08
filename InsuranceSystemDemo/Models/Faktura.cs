@@ -6,7 +6,7 @@ namespace InsuranceSystemDemo.Models;
 [Table("FAKTURA")]
 public class Faktura
 {
-    // Navigation propertн
+    // Navigation property
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
     [Column("ID_PLATBY")]

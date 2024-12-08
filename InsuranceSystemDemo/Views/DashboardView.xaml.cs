@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Oracle.ManagedDataAccess.Client;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 #endregion
 
 namespace InsuranceSystemDemo.Views;
@@ -27,25 +28,32 @@ public partial class DashboardView : Window
 
     private void MainDataGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
     {
-        
+        var columnName = e.PropertyName;
         if (DataContext is DashboardViewModel viewModel)
         {
-           
-            if (e.PropertyName.Contains("Id", StringComparison.OrdinalIgnoreCase))
+            if (columnName.Contains("Id", StringComparison.OrdinalIgnoreCase) ||
+                columnName.Equals("Adresa") || columnName.Equals("Zamestnanci") ||
+                columnName.Equals("Klient") || columnName.Equals("Pobocka") ||
+                columnName.Equals("TypPojistky") || columnName.Equals("PojistnaSmlouva"))
             {
                 e.Cancel = true;
                 return;
             }
-
-            
             if (viewModel.CurrentTableName == MessageContainer.ZamestnanecTableName && e.PropertyName == "Jmeno")
             {
                 e.Column.Width = 150;
             }
+            if (e.PropertyType == typeof(DateTime))
+            {
+                var textColumn = new DataGridTextColumn
+                {
+                    Binding = new Binding(e.PropertyName) { StringFormat = "dd.MM.yyyy" },
+                    Header = e.Column.Header
+                };
+                e.Column = textColumn;
+            }
         }
     }
-
-
 
     private void MainDataGrid_LoadingRow(object sender, DataGridRowEventArgs e) =>
         e.Row.Header = (e.Row.GetIndex() + 1).ToString();
@@ -188,14 +196,6 @@ public partial class DashboardView : Window
         }
     }
 
-
-
-
-
-
-
-
-
     private void RestoreOriginalItem(object currentItem)
     {
         if (_originalItem is Klient originalKlient && currentItem is Klient editedKlient)
@@ -259,11 +259,8 @@ public partial class DashboardView : Window
             editedZamestnanec.AdresaIdAdresa = originalZamestnanec.AdresaIdAdresa;
             editedZamestnanec.Popis = originalZamestnanec.Popis;
         }
-
-    ((DashboardViewModel)DataContext).SwitchToCurrentTable();
+        ((DashboardViewModel)DataContext).SwitchToCurrentTable();
     }
-
-
 
     private static object CloneItem(object item)
     {
@@ -346,12 +343,7 @@ public partial class DashboardView : Window
                 Popis = zamestnanec.Popis
             };
         }
-
-        throw new ArgumentException("Unsupported type for cloning");
+        throw new ArgumentException(MessageContainer.CloningError);
     }
-
-
-
-
     #endregion
 }

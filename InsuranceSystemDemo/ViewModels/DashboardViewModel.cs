@@ -32,11 +32,7 @@ public partial class DashboardViewModel : ObservableObject
     //
     // Summary:
     //     Is marked as «public», because is used in the «Dashboard.xaml.cs» code-behind to handle
-    //         the «DataGrid» cell editing.\
-
-   
-
-
+    //         the «DataGrid» cell editing.
     public void SwitchToCurrentTable()
     {
         switch (CurrentTableName)
@@ -59,14 +55,14 @@ public partial class DashboardViewModel : ObservableObject
             case MessageContainer.ZamestnanecTableName:
                 SwitchToZamestnanec();
                 break;
-
+            case MessageContainer.PohledavkaTableName:
+                SwitchToPohledavka();
+                break;
             default:
-                CurrentTableData = new ObservableCollection<object>();
+                CurrentTableData = [];
                 break;
         }
     }
-
-
 
     #region Switch Tables Commands
     [RelayCommand]
@@ -110,7 +106,6 @@ public partial class DashboardViewModel : ObservableObject
     {
         CurrentTableName = MessageContainer.ContractsTableName;
         var contracts = _context.PojistnaSmlouva.ToList();
-
         CurrentTableData = new ObservableCollection<object>(contracts);
     }
 
@@ -118,21 +113,22 @@ public partial class DashboardViewModel : ObservableObject
     public void SwitchToZamestnanec()
     {
         CurrentTableName = MessageContainer.ZamestnanecTableName;
-
-        
         var zamestnanci = _context.Zamestnanci
             .Include(z => z.Pobocka) 
             .Include(z => z.Adresa)  
             .ToList();
-
-       
         CurrentTableData = new ObservableCollection<object>(zamestnanci);
     }
 
-
-
-
-
+    [RelayCommand]
+    public void SwitchToPohledavka()
+    {
+        CurrentTableName = MessageContainer.PohledavkaTableName;
+        var pohledavky = _context.Pohledavky
+            .Include(p => p.PojistnaSmlouva)
+            .ToList();
+        CurrentTableData = new ObservableCollection<object>(pohledavky);
+    }
     #endregion
 
     #region Search Commands
@@ -172,13 +168,14 @@ public partial class DashboardViewModel : ObservableObject
             case MessageContainer.ZamestnanecTableName:
                 SearchZamestnanci(searchTerm);
                 break;
-
+            case MessageContainer.PohledavkaTableName:
+                SearchPohledavky(searchTerm);
+                break;
             default:
                 SwitchToCurrentTable();
                 break;
         }
     }
-
 
     private void SearchKlienti(string searchTerm)
     {
@@ -218,17 +215,12 @@ public partial class DashboardViewModel : ObservableObject
             .ToList();
         CurrentTableData = new ObservableCollection<object>(filteredBranches);
     }
-
-
-
     private void SearchTypyPojisty(string searchTerm)
     {
         try
         {
             var filteredInsuranceTypes = _context.TypPojistky.ToList();
-
             var lowerTerm = searchTerm.ToLower();
-
             filteredInsuranceTypes = filteredInsuranceTypes
                 .Where(t =>
                     (t.Dostupnost != null && t.Dostupnost.ToLower().Contains(lowerTerm)) ||
@@ -238,28 +230,19 @@ public partial class DashboardViewModel : ObservableObject
                     t.MinimalneKryti.ToString().Contains(searchTerm) ||
                     t.DatimZacatku.ToString("yyyy-MM-dd").Contains(searchTerm))
                 .ToList();
-
             CurrentTableData = new ObservableCollection<object>(filteredInsuranceTypes);
-
-
-           
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"An error occurred during search: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBoxDisplayer.ShowError(ex.Message);
         }
     }
     private void SearchContracts(string searchTerm)
     {
         try
         {
-            
             var filteredContracts = _context.PojistnaSmlouva.ToList();
-
-           
             var lowerTerm = searchTerm.ToLower();
-
-            
             filteredContracts = filteredContracts
                 .Where(c =>
                     c.PojistnaCastka.ToString().Contains(searchTerm) || 
@@ -271,13 +254,11 @@ public partial class DashboardViewModel : ObservableObject
                     c.DatumUkonceniPlatnosti.ToString("d", System.Globalization.CultureInfo.InvariantCulture).Contains(searchTerm) || 
                     c.DataVystaveni.ToString("d", System.Globalization.CultureInfo.InvariantCulture).Contains(searchTerm)) 
                 .ToList();
-
-           
             CurrentTableData = new ObservableCollection<object>(filteredContracts);
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"An error occurred during search: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBoxDisplayer.ShowError(ex.Message);
         }
     }
 
@@ -291,18 +272,23 @@ public partial class DashboardViewModel : ObservableObject
                 (z.Email != null && z.Email.ToLower().Contains(searchTerm)) ||
                 z.Telefon.ToString().Contains(searchTerm))
             .ToList();
-
         CurrentTableData = new ObservableCollection<object>(results);
     }
 
-
-
-
-
-
-
-
-
+    private void SearchPohledavky(string searchTerm)
+    {
+        string lowerQuery = searchTerm.ToLower();
+        var filteredPohledavky = _context.Pohledavky
+            .Include(p => p.PojistnaSmlouva)
+            .AsEnumerable()
+            .Where(p =>
+                p.SumaPohledavky.ToString().ToLower().Contains(lowerQuery) ||
+                p.DatumZacatku.ToString("dd.MM.yyyy h:mm:ss tt").ToLower().Contains(lowerQuery) ||
+                p.DatumKonce.ToString("dd.MM.yyyy h:mm:ss tt").ToLower().Contains(lowerQuery) ||
+                p.PojistnaSmlouvaId.ToString().ToLower().Contains(lowerQuery))
+            .ToList();
+        CurrentTableData = new ObservableCollection<object>(filteredPohledavky);
+    }
     #endregion
 
     #region Button Commands

@@ -21,6 +21,8 @@ public class Platba
 
     // Navigation properties
     [Column("POJISTNASMLOUVA_ID")]
+
+    // Object properties
     public int PojistnaSmlouvaId { get; set; }
     [ForeignKey("KlientId")]
     public virtual Klient? Klient { get; set; }

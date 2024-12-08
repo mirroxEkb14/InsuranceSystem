@@ -19,6 +19,8 @@ public class PojistnaPlneni
     public int PojistnaSmlouvaId { get; set; }
     [Column("ZAVAZKY_ID_ZAVAZKY")]
     public int ZavazkyId { get; set; }
+
+    // Object properties
     [ForeignKey("PojistnaSmlouvaId")]
     public virtual PojistnaSmlouva? PojistnaSmlouva { get; set; }
     [ForeignKey("ZavazkyId")]
