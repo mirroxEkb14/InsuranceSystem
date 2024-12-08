@@ -42,6 +42,7 @@
                 <MenuItem Header="Zavazek" Command="{Binding SwitchToZavazekCommand}" />
                 <MenuItem Header="PojistnaPlneni" Command="{Binding SwitchToPojistnaPlneniCommand}" />
                 <MenuItem Header="Platba" Command="{Binding SwitchToPlatbaCommand}" />
+                <MenuItem Header="Hotovost" Command="{Binding SwitchToHotovostCommand}" />
             </MenuItem>
         </Menu>
 

@@ -100,4 +100,13 @@ public static class MessageBoxDisplayer
             MessageBoxButton.YesNo,
             MessageBoxImage.Warning);
     }
+
+    public static MessageBoxResult ShowCashDeletionConfirmation(string cashId)
+    {
+        return MessageBox.Show(
+            $"Are you sure you want to delete the cash payment with ID {cashId}?",
+            "Delete Confirmation",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning);
+    }
 }

@@ -12,6 +12,10 @@ public class Hotovost
     [Column("ID_PLATBY")]
     public int IdPlatby { get; set; }
 
+    // Object property
+    [ForeignKey("IdPlatby")]
+    public virtual Platba? Platba { get; set; } = null!;
+
     [Column("PRIJATO")]
     public decimal Prijato { get; set; }
     [Column("VRACENO")]

@@ -16,6 +16,7 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
     public DbSet<Zavazek> Zavazky { get; set; }
     public DbSet<PojistnaPlneni> PojistnePlneni { get; set; }
     public DbSet<Platba> Platby { get; set; }
+    public DbSet<Hotovost> Hotovosti { get; set; }
 
     //
     // Summary:
@@ -50,8 +51,9 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
         ConfigureEmployee(modelBuilder);
         ConfigureDebt(modelBuilder);
         ConfigureBankfill(modelBuilder);
-        ConfigurInsuranceFulfilment(modelBuilder);
-        ConfigurPayment(modelBuilder);
+        ConfigureInsuranceFulfilment(modelBuilder);
+        ConfigurePayment(modelBuilder);
+        ConfigureCash(modelBuilder);
 
         base.OnModelCreating(modelBuilder);
     }
@@ -312,7 +314,7 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
         });
     }
 
-    private static void ConfigurInsuranceFulfilment(ModelBuilder modelBuilder)
+    private static void ConfigureInsuranceFulfilment(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<PojistnaPlneni>(entity =>
         {
@@ -340,7 +342,7 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
         });
     }
 
-    private static void ConfigurPayment(ModelBuilder modelBuilder)
+    private static void ConfigurePayment(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Platba>(entity =>
         {
@@ -371,6 +373,30 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
             entity.HasOne(e => e.PojistnaSmlouva)
                 .WithMany()
                 .HasForeignKey(e => e.PojistnaSmlouvaIdPojistky)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+    }
+
+    private static void ConfigureCash(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Hotovost>(entity =>
+        {
+            entity.ToTable("HOTOVOST");
+            entity.HasKey(e => e.IdPlatby);
+
+            entity.Property(e => e.IdPlatby)
+                .HasColumnName("ID_PLATBY")
+                .IsRequired();
+            entity.Property(e => e.Prijato)
+                .HasColumnName("PRIJATO")
+                .IsRequired();
+            entity.Property(e => e.Vraceno)
+                .HasColumnName("VRACENO")
+                .IsRequired();
+
+            entity.HasOne(e => e.Platba)
+                .WithMany()
+                .HasForeignKey(e => e.IdPlatby)
                 .OnDelete(DeleteBehavior.Cascade);
         });
     }

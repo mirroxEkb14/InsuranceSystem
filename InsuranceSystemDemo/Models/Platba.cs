@@ -28,4 +28,7 @@ public class Platba
     public virtual Klient? Klient { get; set; }
     [ForeignKey("PojistnaSmlouvaIdPojistky")]
     public virtual PojistnaSmlouva? PojistnaSmlouva { get; set; }
+
+    [NotMapped]
+    public string Name => $"{SumaPlatby}, {DatumPlatby:dd.MM.yyyy}, {TypPlatby}";
 }

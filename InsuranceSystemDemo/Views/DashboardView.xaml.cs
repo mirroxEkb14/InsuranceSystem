@@ -35,7 +35,8 @@ public partial class DashboardView : Window
                 columnName.Equals("Adresa") || columnName.Equals("Zamestnanci") ||
                 columnName.Equals("Klient") || columnName.Equals("Pobocka") ||
                 columnName.Equals("TypPojistky") || columnName.Equals("PojistnaSmlouva") ||
-                columnName.Equals("Pohledavka") || columnName.Equals("Zavazky"))
+                columnName.Equals("Pohledavka") || columnName.Equals("Zavazky") ||
+                columnName.Equals("Platba"))
             {
                 e.Cancel = true;
                 return;

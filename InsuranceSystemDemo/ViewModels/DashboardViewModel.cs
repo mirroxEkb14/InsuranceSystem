@@ -10,6 +10,7 @@ using Oracle.ManagedDataAccess.Client;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 #endregion
 
 namespace InsuranceSystemDemo.ViewModels;
@@ -67,6 +68,9 @@ public partial class DashboardViewModel : ObservableObject
                 break;
             case MessageContainer.PlatbaTableName:
                 SwitchToPlatba();
+                break;
+            case MessageContainer.HotovostTableName:
+                SwitchToHotovost();
                 break;
             default:
                 CurrentTableData = [];
@@ -171,6 +175,16 @@ public partial class DashboardViewModel : ObservableObject
             .ToList();
         CurrentTableData = new ObservableCollection<object>(platby);
     }
+
+    [RelayCommand]
+    public void SwitchToHotovost()
+    {
+        CurrentTableName = MessageContainer.HotovostTableName;
+        var hotovosti = _context.Hotovosti
+            .Include(h => h.Platba)
+            .ToList();
+        CurrentTableData = new ObservableCollection<object>(hotovosti);
+    }
     #endregion
 
     #region Search Commands
@@ -221,6 +235,9 @@ public partial class DashboardViewModel : ObservableObject
                 break;
             case MessageContainer.PlatbaTableName:
                 SearchPlatby(searchTerm);
+                break;
+            case MessageContainer.HotovostTableName:
+                SearchHotovosti(searchTerm);
                 break;
             default:
                 SwitchToCurrentTable();
@@ -387,6 +404,16 @@ public partial class DashboardViewModel : ObservableObject
             .ToList();
         CurrentTableData = new ObservableCollection<object>(filteredPlatby);
     }
+
+    private void SearchHotovosti(string searchTerm)
+    {
+        var lowerQuery = searchTerm.ToLower();
+        var filteredHotovosti = _context.Hotovosti
+            .Where(h => h.Prijato.ToString().Contains(lowerQuery) ||
+                        h.Vraceno.ToString().Contains(lowerQuery))
+            .ToList();
+        CurrentTableData = new ObservableCollection<object>(filteredHotovosti);
+    }
     #endregion
 
     #region Button Commands
@@ -426,6 +453,9 @@ public partial class DashboardViewModel : ObservableObject
             case MessageContainer.PlatbaTableName:
                 addView = new AddPlatbaView();
                 break;
+            case MessageContainer.HotovostTableName:
+                addView = new AddHotovostView();
+                break;
             default:
                 MessageBoxDisplayer.ShowInfo(MessageContainer.AddFunctionalityNotSupported);
                 return;
@@ -463,6 +493,8 @@ public partial class DashboardViewModel : ObservableObject
             HandlePojistnaPlneniDeletion(selectedPojistnaPlneni);
         else if (SelectedItem is Platba selectedPlatba)
             HandlePlatbaDeletion(selectedPlatba);
+        else if (SelectedItem is Hotovost selectedHotovost)
+            HandleHotovostDeletion(selectedHotovost);
         else
             MessageBoxDisplayer.ShowInfo(MessageContainer.DeleteFunctionalityNotSupported);
     }
@@ -687,6 +719,25 @@ public partial class DashboardViewModel : ObservableObject
             // TODO
 
             MessageBoxDisplayer.ShowInfo(MessageContainer.DeletePaymentSuccess);
+            SwitchToCurrentTable();
+        }
+        catch (Exception ex)
+        {
+            MessageBoxDisplayer.ShowError(MessageContainer.GetUnexpectedErrorMessage(ex.Message));
+        }
+    }
+
+    private void HandleHotovostDeletion(Hotovost hotovost)
+    {
+        var result = MessageBoxDisplayer.ShowCashDeletionConfirmation(hotovost.IdPlatby.ToString());
+        if (result != MessageBoxResult.Yes)
+            return;
+
+        try
+        {
+            // TODO
+
+            MessageBoxDisplayer.ShowInfo(MessageContainer.DeleteCashPaymentSuccess);
             SwitchToCurrentTable();
         }
         catch (Exception ex)
