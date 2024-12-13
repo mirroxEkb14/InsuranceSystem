@@ -6,11 +6,16 @@ using InsuranceSystemDemo.Models;
 using InsuranceSystemDemo.Utils;
 using InsuranceSystemDemo.Views;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Win32;
 using Oracle.ManagedDataAccess.Client;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using ClosedXML.Excel;
+
 #endregion
 
 namespace InsuranceSystemDemo.ViewModels;
@@ -524,7 +529,70 @@ public partial class DashboardViewModel : ObservableObject
         SwitchToCurrentTable(); 
     }
 
+
+
     [RelayCommand]
+    public void Download()
+    {
+        if (CurrentTableData == null || !CurrentTableData.Any())
+        {
+            MessageBoxDisplayer.ShowInfo("No data to download.");
+            return;
+        }
+
+       
+        SaveFileDialog saveFileDialog = new SaveFileDialog
+        {
+            Filter = "Excel Files (*.xlsx)|*.xlsx|All Files (*.*)|*.*",
+            DefaultExt = ".xlsx",
+            FileName = $"{CurrentTableName}_Export"
+        };
+
+        if (saveFileDialog.ShowDialog() == true)
+        {
+            try
+            {
+                using (var workbook = new XLWorkbook())
+                {
+                    var worksheet = workbook.Worksheets.Add(CurrentTableName);
+
+                    
+                    var itemType = CurrentTableData.First().GetType();
+                    var properties = itemType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                                             .Where(p => !p.Name.Contains("Id", StringComparison.OrdinalIgnoreCase)) 
+                                             .ToList();
+
+                    
+                    for (int col = 0; col < properties.Count; col++)
+                    {
+                        worksheet.Cell(1, col + 1).Value = properties[col].Name;
+                    }
+
+                   
+                    int row = 2;
+                    foreach (var item in CurrentTableData)
+                    {
+                        for (int col = 0; col < properties.Count; col++)
+                        {
+                            worksheet.Cell(row, col + 1).Value = properties[col].GetValue(item)?.ToString() ?? string.Empty;
+                        }
+                        row++;
+                    }
+
+                   
+                    workbook.SaveAs(saveFileDialog.FileName);
+                }
+
+                MessageBoxDisplayer.ShowInfo("Data successfully exported to Excel.");
+            }
+            catch (Exception ex)
+            {
+                MessageBoxDisplayer.ShowError($"An error occurred while exporting data: {ex.Message}");
+            }
+        }
+    }
+
+        [RelayCommand]
     public void DeleteItem()
     {
         if (SelectedItem == null)

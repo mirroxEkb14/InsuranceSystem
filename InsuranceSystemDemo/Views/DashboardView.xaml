@@ -72,6 +72,7 @@
         <StackPanel Orientation="Horizontal" Grid.Row="3" HorizontalAlignment="Center" Margin="10">
             <Button Content="Add" Width="120" Height="30" Margin="10" Command="{Binding AddItemCommand}" />
             <Button Content="Delete" Width="120" Height="30" Margin="10" Command="{Binding DeleteItemCommand}" />
+            <Button Content="Download" Width="120" Height="30" Margin="10" Command="{Binding DownloadCommand}" />
         </StackPanel>
     </Grid>
 </Window>
