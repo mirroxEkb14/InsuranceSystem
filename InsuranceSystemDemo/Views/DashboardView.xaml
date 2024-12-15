@@ -10,26 +10,19 @@
         WindowStartupLocation="CenterScreen"
         ResizeMode="CanResize">
 
-    <!-- The «DataContext» is added in the code-behind to ensure passing
-    configured «DatabaseContext» options to «DashboardViewModel». -->
-
     <Window.Background>
-        <ImageBrush ImageSource="/Resources/a_photorealistic_serene_and_professional_horizontal_background.png" Stretch="UniformToFill" Opacity="0.8" />
+        <ImageBrush ImageSource="/Resources/a_photorealistic_serene_and_professional_horizontal_background.png" 
+                    Stretch="UniformToFill" Opacity="0.8" />
     </Window.Background>
 
     <Grid>
         <Grid.RowDefinitions>
-            <!-- Menu -->
             <RowDefinition Height="Auto" />
-            <!-- Search Bar -->
             <RowDefinition Height="Auto" />
-            <!-- DataGrid -->
             <RowDefinition Height="*" />
-            <!-- Buttons -->
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!-- Menu for switching tables -->
         <Menu Grid.Row="0" VerticalAlignment="Top">
             <MenuItem Header="Tables">
                 <MenuItem Header="Klienti" Command="{Binding SwitchToKlientiCommand}" />
@@ -48,31 +41,29 @@
             </MenuItem>
         </Menu>
 
-        <!-- Search Bar -->
         <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="10">
             <Label Content="Search:" VerticalAlignment="Center" />
-            <TextBox x:Name="SearchTextBox" Width="200" Margin="10,0" VerticalContentAlignment="Center" Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox x:Name="SearchTextBox" Width="200" Margin="10,0" 
+                     VerticalContentAlignment="Center" Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" />
             <Button Content="Clear" Width="60" Command="{Binding ClearSearchCommand}" />
         </StackPanel>
 
-        <!-- Logout Button -->
         <Button Content="Logout" Grid.Row="1" HorizontalAlignment="Right"
                 Margin="10" Width="100" Height="30" 
                 Command="{Binding LogoutCommand}" />
 
-        <!-- DataGrid -->
         <DataGrid x:Name="MainDataGrid" AutoGenerateColumns="True" CanUserAddRows="False" Margin="10"
                   SelectionMode="Single" Grid.Row="2"
-                  ItemsSource="{Binding CurrentTableData}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
-                  RowEditEnding="MainDataGrid_RowEditEnding" BeginningEdit="MainDataGrid_BeginningEdit"
-                  AutoGeneratingColumn="MainDataGrid_AutoGeneratingColumn" LoadingRow="MainDataGrid_LoadingRow">
+                  ItemsSource="{Binding CurrentTableData}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}">
         </DataGrid>
 
-        <!-- Action Buttons -->
-        <StackPanel Orientation="Horizontal" Grid.Row="3" HorizontalAlignment="Center" Margin="10">
-            <Button Content="Add" Width="120" Height="30" Margin="10" Command="{Binding AddItemCommand}" />
-            <Button Content="Delete" Width="120" Height="30" Margin="10" Command="{Binding DeleteItemCommand}" />
-            <Button Content="Download" Width="120" Height="30" Margin="10" Command="{Binding DownloadCommand}" />
-        </StackPanel>
+        <UniformGrid Grid.Row="3" Rows="1" Columns="6" HorizontalAlignment="Center" Margin="10">
+            <Button Content="Add" Command="{Binding AddItemCommand}" Margin="5"/>
+            <Button Content="Delete" Command="{Binding DeleteItemCommand}" Margin="5"/>
+            <Button Content="Download" Command="{Binding DownloadCommand}" Margin="5"/>
+            <Button Content="Load Payments" Command="{Binding LoadPaymentsCommand}" Margin="5"/>
+            <Button Content="Load Debts" Command="{Binding LoadZavazkyCommand}" Margin="5"/>
+            <Button Content="Load Active Contracts" Command="{Binding LoadActiveContractsForSelectedClientCommand}" Margin="5"/>
+        </UniformGrid>
     </Grid>
 </Window>

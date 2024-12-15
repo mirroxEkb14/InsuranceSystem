@@ -20,6 +20,14 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
     public DbSet<Karta> Karty { get; set; }
     public DbSet<Faktura> Faktury { get; set; }
 
+
+    public DbSet<PlatbyView> PlatbyView { get; set; }
+
+    public DbSet<ZavazkyView> ZavazkyView { get; set; }
+
+    public DbSet<AktivniSmlouvyView> AktivniSmlouvyView { get; set; }
+
+
     //
     // Summary:
     //     Defines the connection string for the DB.
@@ -60,6 +68,8 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
         ConfigureBill(modelBuilder);
 
         base.OnModelCreating(modelBuilder);
+        ConfigureZavazkyView(modelBuilder);
+        ConfigureAktivniSmlouvyView(modelBuilder);
     }
 
     #region Table Configuring Logic
@@ -480,5 +490,63 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
                 .OnDelete(DeleteBehavior.Cascade);
         });
     }
+
+
+    private static void ConfigurePlatbyView(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<PlatbyView>(entity =>
+        {
+            entity.HasKey(e => e.KlientId); 
+            entity.ToView("V_KLIENT_PLATBY"); 
+
+            entity.Property(e => e.KlientId).HasColumnName("KLIENT_ID");
+            entity.Property(e => e.Jmeno).HasColumnName("JMENO");
+            entity.Property(e => e.Prijmeni).HasColumnName("PRIJMENI");
+            entity.Property(e => e.Email).HasColumnName("EMAIL");
+            entity.Property(e => e.Telefon).HasColumnName("TELEFON");
+            entity.Property(e => e.SumaPlatby).HasColumnName("SUMA_PLATBY");
+            entity.Property(e => e.DatumPlatby).HasColumnName("DATUM_PLATBY");
+        });
+    }
+
+
+    private static void ConfigureZavazkyView(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<ZavazkyView>(entity =>
+        {
+            entity.HasKey(e => e.ZavazekId);
+            entity.ToView("V_KLIENT_ZAVAZKY");
+
+            entity.Property(e => e.ZavazekId).HasColumnName("ZAVAZEK_ID");
+            entity.Property(e => e.SumaZavazky).HasColumnName("SUMA_ZAVAZKY");
+            entity.Property(e => e.DataVzniku).HasColumnName("DATA_VZNIKU");
+            entity.Property(e => e.DataSplatnosti).HasColumnName("DATA_SPLATNISTI");
+            entity.Property(e => e.PohledavkaId).HasColumnName("POHLEDAVKA_ID");
+            entity.Property(e => e.SumaPohledavky).HasColumnName("SUMA_POHLEDAVKY");
+            entity.Property(e => e.DatumZacatku).HasColumnName("DATUM_ZACATKU");
+            entity.Property(e => e.DatumKonce).HasColumnName("DATUM_KONCE");
+        });
+    }
+
+
+    private static void ConfigureAktivniSmlouvyView(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<AktivniSmlouvyView>(entity =>
+        {
+            entity.HasKey(e => e.PojistkaId);
+            entity.ToView("V_AKTIVNI_SMLUVY");
+
+            entity.Property(e => e.PojistkaId).HasColumnName("POJISTKA_ID");
+            entity.Property(e => e.KlientId).HasColumnName("KLIENT_ID");
+            entity.Property(e => e.Jmeno).HasColumnName("JMENO");
+            entity.Property(e => e.Prijmeni).HasColumnName("PRIJMENI");
+            entity.Property(e => e.Castka).HasColumnName("CASTKA");
+            entity.Property(e => e.DatumZacatku).HasColumnName("DATUM_ZACATKU");
+            entity.Property(e => e.DatumUkonceni).HasColumnName("DATUM_UKONCENI");
+        });
+    }
+
+
+
     #endregion
 }

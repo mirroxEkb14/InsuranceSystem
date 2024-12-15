@@ -90,6 +90,95 @@ public partial class DashboardViewModel : ObservableObject
     }
 
     #region Switch Tables Commands
+
+
+
+
+    [RelayCommand]
+    public void LoadPaymentsForSelectedClient()
+    {
+        if (SelectedItem is not Klient selectedClient || selectedClient == null)
+            return;
+
+        var payments = _context.PlatbyView
+            .Where(p => p.KlientId == selectedClient.IdKlientu)
+            .ToList();
+
+        if (payments.Count == 0)
+        {
+            MessageBox.Show($"No payments found for client: {selectedClient.Prijmeni}",
+                            "No Data", MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+
+        CurrentTableName = $"Payments for Client ID: {selectedClient.IdKlientu}";
+        CurrentTableData = new ObservableCollection<object>(payments);
+    }
+
+
+
+
+
+
+
+    [RelayCommand]
+    public void LoadZavazkyForSelectedClient()
+    {
+        if (SelectedItem is not Klient selectedClient || selectedClient == null)
+        {
+            MessageBox.Show("Please select a client.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
+
+        var zavazky = _context.ZavazkyView
+            .Where(z => z.KlientId == selectedClient.IdKlientu)
+            .ToList();
+
+        if (zavazky.Count == 0)
+        {
+            MessageBox.Show($"No debts found for client: {selectedClient.Jmeno} {selectedClient.Prijmeni}.",
+                            "No Data", MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+
+        CurrentTableName = $"Debts for Client: {selectedClient.Jmeno} {selectedClient.Prijmeni}";
+        CurrentTableData = new ObservableCollection<object>(zavazky);
+    }
+
+
+
+
+
+
+    [RelayCommand]
+    public void LoadActiveContractsForSelectedClient()
+    {
+        if (SelectedItem is not Klient selectedClient || selectedClient == null)
+        {
+            MessageBox.Show("Please select a client.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
+
+        var activeContracts = _context.AktivniSmlouvyView
+            .Where(c => c.KlientId == selectedClient.IdKlientu)
+            .ToList();
+
+        if (activeContracts.Count == 0)
+        {
+            MessageBox.Show($"No active contracts found for client: {selectedClient.Jmeno} {selectedClient.Prijmeni}.",
+                            "No Data", MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+
+        CurrentTableName = $"Active Contracts for Client: {selectedClient.Jmeno} {selectedClient.Prijmeni}";
+        CurrentTableData = new ObservableCollection<object>(activeContracts);
+    }
+
+
+
+
+
+
     [RelayCommand]
     public void SwitchToKlienti()
     {
