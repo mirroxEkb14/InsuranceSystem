@@ -63,6 +63,8 @@
             <Button Content="Total Payments" Command="{Binding LoadTotalPaymentsForSelectedClientCommand}" Margin="5" Height="30" />
             <Button Content="Last Contract Date" Command="{Binding LoadLastActiveContractDateForSelectedClientCommand}" Margin="5" Height="30" />
             <Button Content="Expired Contracts" Command="{Binding LoadExpiredContractsForSelectedClientCommand}" Margin="5" Height="30" />
+            <Button Content="Load top Debts" Command="{Binding LoadTopClientsCommand}" Margin="5" Height="30" IsCancel="True" />
+
 
         </StackPanel>
 

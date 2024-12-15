@@ -17,6 +17,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using ClosedXML.Excel;
 using System.Globalization;
 using System.Windows.Controls;
+using System.Data;
 
 #endregion
 
@@ -309,7 +310,44 @@ public partial class DashboardViewModel : ObservableObject
 
 
 
+    #region Procedury
 
+    [RelayCommand]
+    public void LoadTopClients()
+    {
+        try
+        {
+            decimal debtThreshold = 0;   // Порог задолженности
+            decimal paymentLimit = 99999999; // Порог платежей за последние 30 дней
+
+            var topClients = _context.TopClients
+                .FromSqlRaw("BEGIN GetClientsDebtAndPayments(:p1, :p2, :p3); END;",
+                            new OracleParameter("p1", debtThreshold),
+                            new OracleParameter("p2", paymentLimit),
+                            new OracleParameter("p3", OracleDbType.RefCursor, ParameterDirection.Output))
+                .ToList();
+
+            if (topClients.Count == 0)
+            {
+                MessageBox.Show("No clients found with the specified criteria.",
+                                "No Data", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            CurrentTableName = "Top Clients";
+            CurrentTableData = new ObservableCollection<object>(topClients);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+
+
+
+
+    #endregion
 
 
 

@@ -29,6 +29,9 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
 
     public DbSet<ExpiredContractsView> ExpiredContractsView { get; set; }
 
+    public DbSet<TopClientsView> TopClients { get; set; }
+
+
 
     //
     // Summary:
@@ -73,6 +76,8 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
         ConfigureZavazkyView(modelBuilder);
         ConfigureAktivniSmlouvyView(modelBuilder);
         ConfigureExpiredContractsView(modelBuilder);
+
+        modelBuilder.Entity<TopClientsView>().HasNoKey();
     }
 
     #region Table Configuring Logic
