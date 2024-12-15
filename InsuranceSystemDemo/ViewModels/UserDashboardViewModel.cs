@@ -31,12 +31,15 @@ namespace InsuranceSystemDemo.ViewModels
         public IRelayCommand UploadPhotoCommand { get; }
         public IRelayCommand SearchPolicyCommand { get; }
 
+        public IRelayCommand DeletePhotoCommand { get; }
+
         public UserDashboardViewModel(string currentUsername)
         {
             _currentUsername = currentUsername;
 
             UploadPhotoCommand = new RelayCommand(UploadPhoto);
             SearchPolicyCommand = new RelayCommand(SearchPolicy);
+            DeletePhotoCommand = new RelayCommand(DeletePhoto);
 
             LoadPhotoFromDatabase();
         }
@@ -52,13 +55,14 @@ namespace InsuranceSystemDemo.ViewModels
             if (openFileDialog.ShowDialog() == true)
             {
                 var photoData = File.ReadAllBytes(openFileDialog.FileName);
+                var fileName = openFileDialog.FileName; 
 
-                SavePhotoToDatabase(photoData);
+                SavePhotoToDatabase(photoData, fileName);
 
-                
                 UserPhoto = LoadImageFromBytes(photoData);
             }
         }
+
 
         private void LoadPhotoFromDatabase()
         {
@@ -72,7 +76,7 @@ namespace InsuranceSystemDemo.ViewModels
             }
         }
 
-        private void SavePhotoToDatabase(byte[] photoData)
+        private void SavePhotoToDatabase(byte[] photoData, string fileName)
         {
             using var dbContext = new DatabaseContext(DatabaseContextGetter.GetDatabaseContextOptions());
 
@@ -81,9 +85,11 @@ namespace InsuranceSystemDemo.ViewModels
             if (user != null)
             {
                 user.Photo = photoData;
+                user.FileExtension = Path.GetExtension(fileName).TrimStart('.').ToLower();
                 dbContext.SaveChanges();
             }
         }
+
 
         private BitmapImage LoadImageFromBytes(byte[] imageData)
         {
@@ -94,6 +100,27 @@ namespace InsuranceSystemDemo.ViewModels
             bitmap.CacheOption = BitmapCacheOption.OnLoad;
             bitmap.EndInit();
             return bitmap;
+        }
+
+
+        private void DeletePhoto()
+        {
+            using var dbContext = new DatabaseContext(DatabaseContextGetter.GetDatabaseContextOptions());
+
+            var user = dbContext.Users.FirstOrDefault(u => u.Username == _currentUsername);
+
+            if (user != null && user.Photo != null)
+            {
+                user.Photo = null;
+                dbContext.SaveChanges();
+
+                UserPhoto = null;
+                MessageBoxDisplayer.ShowInfo("Photo deleted successfully.");
+            }
+            else
+            {
+                MessageBoxDisplayer.ShowError("No photo to delete.");
+            }
         }
 
         private ObservableCollection<PojistnaSmlouva> _foundPolicies;

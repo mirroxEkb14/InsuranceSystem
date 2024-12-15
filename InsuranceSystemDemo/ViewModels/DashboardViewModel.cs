@@ -31,7 +31,7 @@ public partial class DashboardViewModel : ObservableObject
     [ObservableProperty] private object? selectedItem;
 
     private readonly DatabaseContext _context;
-
+    
     public DashboardViewModel(DatabaseContext context)
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
