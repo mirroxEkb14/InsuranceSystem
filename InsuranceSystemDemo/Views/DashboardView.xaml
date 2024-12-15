@@ -1,14 +1,7 @@
 ﻿<Window x:Class="InsuranceSystemDemo.Views.DashboardView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:InsuranceSystemDemo.Views"
-        xmlns:vm="clr-namespace:InsuranceSystemDemo.ViewModels"
-        mc:Ignorable="d"
-        Title="Dashboard" Height="450" Width="800"
-        WindowStartupLocation="CenterScreen"
-        ResizeMode="CanResize">
+        Title="Dashboard" Height="450" Width="800" WindowStartupLocation="CenterScreen">
 
     <Window.Background>
         <ImageBrush ImageSource="/Resources/a_photorealistic_serene_and_professional_horizontal_background.png" 
@@ -16,6 +9,11 @@
     </Window.Background>
 
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="160" />
+        </Grid.ColumnDefinitions>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -23,7 +21,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Menu Grid.Row="0" VerticalAlignment="Top">
+        <Menu Grid.Row="0" Grid.ColumnSpan="2" VerticalAlignment="Top">
             <MenuItem Header="Tables">
                 <MenuItem Header="Klienti" Command="{Binding SwitchToKlientiCommand}" />
                 <MenuItem Header="Adresy" Command="{Binding SwitchToAdresyCommand}" />
@@ -41,29 +39,37 @@
             </MenuItem>
         </Menu>
 
-        <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="10">
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Margin="10">
             <Label Content="Search:" VerticalAlignment="Center" />
-            <TextBox x:Name="SearchTextBox" Width="200" Margin="10,0" 
-                     VerticalContentAlignment="Center" Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox Width="200" Margin="10,0" Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" />
             <Button Content="Clear" Width="60" Command="{Binding ClearSearchCommand}" />
         </StackPanel>
 
-        <Button Content="Logout" Grid.Row="1" HorizontalAlignment="Right"
-                Margin="10" Width="100" Height="30" 
-                Command="{Binding LogoutCommand}" />
+        <Button Content="Logout" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right"
+                Margin="10" Width="100" Height="30" Command="{Binding LogoutCommand}" />
 
-        <DataGrid x:Name="MainDataGrid" AutoGenerateColumns="True" CanUserAddRows="False" Margin="10"
-                  SelectionMode="Single" Grid.Row="2"
-                  ItemsSource="{Binding CurrentTableData}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}">
+        <DataGrid x:Name="MainDataGrid" Grid.Row="2" Grid.Column="0" Margin="10"
+          AutoGenerateColumns="True" CanUserAddRows="False"
+          ItemsSource="{Binding CurrentTableData}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+          AutoGeneratingColumn="MainDataGrid_AutoGeneratingColumn"
+          LoadingRow="MainDataGrid_LoadingRow">
+           
         </DataGrid>
 
-        <UniformGrid Grid.Row="3" Rows="1" Columns="6" HorizontalAlignment="Center" Margin="10">
-            <Button Content="Add" Command="{Binding AddItemCommand}" Margin="5"/>
-            <Button Content="Delete" Command="{Binding DeleteItemCommand}" Margin="5"/>
-            <Button Content="Download" Command="{Binding DownloadCommand}" Margin="5"/>
-            <Button Content="Load Payments" Command="{Binding LoadPaymentsCommand}" Margin="5"/>
-            <Button Content="Load Debts" Command="{Binding LoadZavazkyCommand}" Margin="5"/>
-            <Button Content="Load Active Contracts" Command="{Binding LoadActiveContractsForSelectedClientCommand}" Margin="5"/>
+        <StackPanel Grid.Row="2" Grid.Column="1" VerticalAlignment="Top" Margin="5">
+            <Button Content="Load Payments" Command="{Binding LoadPaymentsForSelectedClientCommand}" Margin="5" Height="30" />
+            <Button Content="Load Debts" Command="{Binding LoadZavazkyForSelectedClientCommand}" Margin="5" Height="30" />
+            <Button Content="Load Active Contracts" Command="{Binding LoadActiveContractsForSelectedClientCommand}" Margin="5" Height="30" />
+            <Button Content="Total Payments" Command="{Binding LoadTotalPaymentsForSelectedClientCommand}" Margin="5" Height="30" />
+            <Button Content="Last Contract Date" Command="{Binding LoadLastActiveContractDateForSelectedClientCommand}" Margin="5" Height="30" />
+            <Button Content="Expired Contracts" Command="{Binding LoadExpiredContractsForSelectedClientCommand}" Margin="5" Height="30" />
+
+        </StackPanel>
+
+        <UniformGrid Grid.Row="3" Grid.Column="0" Rows="1" Columns="3" HorizontalAlignment="Center" Margin="10">
+            <Button Content="Add" Command="{Binding AddItemCommand}" Margin="5" Width="100" Height="30" />
+            <Button Content="Delete" Command="{Binding DeleteItemCommand}" Margin="5" Width="100" Height="30" />
+            <Button Content="Download" Command="{Binding DownloadCommand}" Margin="5" Width="100" Height="30" />
         </UniformGrid>
     </Grid>
 </Window>

@@ -15,6 +15,8 @@ using System.Reflection;
 using System.Windows;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using ClosedXML.Excel;
+using System.Globalization;
+using System.Windows.Controls;
 
 #endregion
 
@@ -35,6 +37,21 @@ public partial class DashboardViewModel : ObservableObject
         CurrentTableName = MessageContainer.KlientiTableName;
         SwitchToKlientiCommand.Execute(null);
     }
+
+    public void MainDataGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+    {
+        if (e.PropertyName.Contains("id", StringComparison.OrdinalIgnoreCase))
+        {
+            e.Cancel = true;
+        }
+    }
+
+    public void MainDataGrid_LoadingRow(object sender, DataGridRowEventArgs e)
+    {
+        e.Row.Header = (e.Row.GetIndex() + 1).ToString();
+    }
+
+
 
     //
     // Summary:
@@ -93,7 +110,7 @@ public partial class DashboardViewModel : ObservableObject
 
 
 
-
+    #region Views
     [RelayCommand]
     public void LoadPaymentsForSelectedClient()
     {
@@ -173,6 +190,123 @@ public partial class DashboardViewModel : ObservableObject
         CurrentTableName = $"Active Contracts for Client: {selectedClient.Jmeno} {selectedClient.Prijmeni}";
         CurrentTableData = new ObservableCollection<object>(activeContracts);
     }
+
+
+
+
+    #endregion
+
+
+    #region Funkce
+
+    [RelayCommand]
+    public void LoadTotalPaymentsForSelectedClient()
+    {
+        if (SelectedItem is not Klient selectedClient || selectedClient == null)
+        {
+            MessageBox.Show("Please select a client.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
+
+        var clientId = selectedClient.IdKlientu;
+
+        var totalPayments = _context.PlatbyView
+            .FromSqlInterpolated($"SELECT GET_TOTAL_PAYMENTS_FOR_CLIENT({clientId}) AS SUMA_PLATBY FROM DUAL")
+            .Select(x => x.SumaPlatby)
+            .FirstOrDefault();
+
+        if (totalPayments == 0)
+        {
+            MessageBox.Show($"No payments found for client: {selectedClient.Jmeno} {selectedClient.Prijmeni}.",
+                            "No Data", MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+
+        var culture = new CultureInfo("cs-CZ");
+        MessageBox.Show($"Total payments for client {selectedClient.Jmeno} {selectedClient.Prijmeni}: {totalPayments.ToString("C", culture)}",
+                        "Total Payments", MessageBoxButton.OK, MessageBoxImage.Information);
+    }
+
+
+
+    [RelayCommand]
+    public void LoadLastActiveContractDateForSelectedClient()
+    {
+        if (SelectedItem is not Klient selectedClient || selectedClient == null)
+        {
+            MessageBox.Show("Please select a client.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
+
+        var clientId = selectedClient.IdKlientu;
+
+        DateTime? lastContractDate;
+
+        using (var command = _context.Database.GetDbConnection().CreateCommand())
+        {
+            command.CommandText = "SELECT GET_LAST_ACTIVE_CONTRACT_DATE(:clientId) FROM DUAL";
+            command.CommandType = System.Data.CommandType.Text;
+
+            var parameter = command.CreateParameter();
+            parameter.ParameterName = "clientId";
+            parameter.Value = clientId;
+            command.Parameters.Add(parameter);
+
+            _context.Database.OpenConnection();
+
+            var result = command.ExecuteScalar();
+            lastContractDate = result == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(result);
+        }
+
+        if (lastContractDate == null)
+        {
+            MessageBox.Show($"No active contracts found for client: {selectedClient.Jmeno} {selectedClient.Prijmeni}.",
+                            "No Data", MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+
+        MessageBox.Show($"Last active contract date for client {selectedClient.Jmeno} {selectedClient.Prijmeni}: {lastContractDate.Value.ToShortDateString()}",
+                        "Last Active Contract", MessageBoxButton.OK, MessageBoxImage.Information);
+    }
+
+
+
+    [RelayCommand]
+    public void LoadExpiredContractsForSelectedClient()
+    {
+        if (SelectedItem is not Klient selectedClient || selectedClient == null)
+        {
+            MessageBox.Show("Please select a client.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
+
+        var clientId = selectedClient.IdKlientu;
+
+        var expiredContracts = _context.Set<ExpiredContractsView>()
+     .FromSqlInterpolated($"SELECT * FROM V_EXPIRED_CONTRACTS WHERE KLIENT_ID_KLIENTU = {clientId}")
+     .ToList();
+
+        if (expiredContracts.Count == 0)
+        {
+            MessageBox.Show($"No expired contracts found for client: {selectedClient.Jmeno} {selectedClient.Prijmeni}.",
+                            "No Expired Contracts", MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+
+        CurrentTableName = $"Expired Contracts for Client: {selectedClient.Jmeno} {selectedClient.Prijmeni}";
+        CurrentTableData = new ObservableCollection<object>(expiredContracts);
+
+    }
+
+
+
+
+
+
+
+
+    #endregion
+
 
 
 

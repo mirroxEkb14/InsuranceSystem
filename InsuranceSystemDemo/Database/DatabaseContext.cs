@@ -27,6 +27,8 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
 
     public DbSet<AktivniSmlouvyView> AktivniSmlouvyView { get; set; }
 
+    public DbSet<ExpiredContractsView> ExpiredContractsView { get; set; }
+
 
     //
     // Summary:
@@ -70,6 +72,7 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
         base.OnModelCreating(modelBuilder);
         ConfigureZavazkyView(modelBuilder);
         ConfigureAktivniSmlouvyView(modelBuilder);
+        ConfigureExpiredContractsView(modelBuilder);
     }
 
     #region Table Configuring Logic
@@ -545,6 +548,24 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
             entity.Property(e => e.DatumUkonceni).HasColumnName("DATUM_UKONCENI");
         });
     }
+
+
+
+    private static void ConfigureExpiredContractsView(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<ExpiredContractsView>(entity =>
+        {
+            entity.HasKey(e => e.PojistkaId);
+            entity.ToView("V_EXPIRED_CONTRACTS");
+
+            entity.Property(e => e.PojistkaId).HasColumnName("ID_POJISTKY");
+            entity.Property(e => e.KlientId).HasColumnName("KLIENT_ID_KLIENTU");
+            entity.Property(e => e.DatumZacatkuPlatnosti).HasColumnName("DATUM_ZACATKU_PLATNOSTI");
+            entity.Property(e => e.DatumUkonceniPlatnosti).HasColumnName("DATUM_UKONCENI_PLATNOSTI");
+            entity.Property(e => e.Cena).HasColumnName("CENA");
+        });
+    }
+
 
 
 
