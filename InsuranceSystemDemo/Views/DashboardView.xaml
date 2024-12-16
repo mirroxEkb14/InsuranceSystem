@@ -49,12 +49,16 @@
                 Margin="10" Width="100" Height="30" Command="{Binding LogoutCommand}" />
 
         <DataGrid x:Name="MainDataGrid" Grid.Row="2" Grid.Column="0" Margin="10"
-          AutoGenerateColumns="True" CanUserAddRows="False"
-          ItemsSource="{Binding CurrentTableData}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+          AutoGenerateColumns="True" 
+          CanUserAddRows="False"
+          ItemsSource="{Binding CurrentTableData}" 
+          SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
           AutoGeneratingColumn="MainDataGrid_AutoGeneratingColumn"
-          LoadingRow="MainDataGrid_LoadingRow">
-
+          LoadingRow="MainDataGrid_LoadingRow"
+          BeginningEdit="MainDataGrid_BeginningEdit"
+          RowEditEnding="MainDataGrid_RowEditEnding">
         </DataGrid>
+
 
         <StackPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" Margin="5,5,5,0" Height="370" Grid.RowSpan="3">
             <Button Content="Load Payments" Command="{Binding LoadPaymentsForSelectedClientCommand}" Margin="5" Height="30" />

@@ -165,17 +165,18 @@ public partial class DashboardView : Window
             else if (editedItem is Zamestnanec zamestnanec) 
             {
                 context.Database.ExecuteSqlRaw(
-                    "BEGIN UPDATEZAMESTNANEC(:p_id_zamestnance, :p_role, :p_pobocky_id, :p_jmeno, :p_prijmeni, :p_email, :p_telefon, :p_adresa_id, :p_popis); END;",
-                    new OracleParameter("p_id_zamestnance", zamestnanec.IdZamestnance),
-                    new OracleParameter("p_role", zamestnanec.Role),
-                    new OracleParameter("p_pobocky_id", zamestnanec.PobockyIdPobocky),
-                    new OracleParameter("p_jmeno", zamestnanec.Jmeno),
-                    new OracleParameter("p_prijmeni", zamestnanec.Prijmeni),
-                    new OracleParameter("p_email", zamestnanec.Email ?? (object)DBNull.Value),
-                    new OracleParameter("p_telefon", zamestnanec.Telefon),
-                    new OracleParameter("p_adresa_id", zamestnanec.AdresaIdAdresa),
-                    new OracleParameter("p_popis", zamestnanec.Popis ?? (object)DBNull.Value)
-                );
+    "BEGIN UPDATEZAMESTNANEC(:p_id_zamestnance, :p_role, :p_pobocky_id, :p_jmeno, :p_prijmeni, :p_email, :p_telefon, :p_adresa_id, :p_popis, :p_hierarchy_level); END;",
+    new OracleParameter("p_id_zamestnance", zamestnanec.IdZamestnance),
+    new OracleParameter("p_role", zamestnanec.Role),
+    new OracleParameter("p_pobocky_id", zamestnanec.PobockyIdPobocky),
+    new OracleParameter("p_jmeno", zamestnanec.Jmeno),
+    new OracleParameter("p_prijmeni", zamestnanec.Prijmeni),
+    new OracleParameter("p_email", zamestnanec.Email ?? (object)DBNull.Value),
+    new OracleParameter("p_telefon", zamestnanec.Telefon),
+    new OracleParameter("p_adresa_id", zamestnanec.AdresaIdAdresa),
+    new OracleParameter("p_popis", zamestnanec.Popis ?? (object)DBNull.Value),
+    new OracleParameter("p_hierarchy_level", zamestnanec.HierarchyLevel ?? (object)DBNull.Value) 
+);
             }
 
             else if (editedItem is Pohledavka pohledavka)
