@@ -24,6 +24,8 @@ public partial class DashboardView : Window
         var options = DatabaseContextGetter.GetDatabaseContextOptions();
         var context = new DatabaseContext(options);
         DataContext = new DashboardViewModel(context);
+
+        
     }
 
     private void MainDataGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)

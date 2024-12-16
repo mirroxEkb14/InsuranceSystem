@@ -317,8 +317,8 @@ public partial class DashboardViewModel : ObservableObject
     {
         try
         {
-            decimal debtThreshold = 0;   // Порог задолженности
-            decimal paymentLimit = 99999999; // Порог платежей за последние 30 дней
+            decimal debtThreshold = 0;   
+            decimal paymentLimit = 99999999; 
 
             var topClients = _context.TopClients
                 .FromSqlRaw("BEGIN GetClientsDebtAndPayments(:p1, :p2, :p3); END;",
@@ -342,6 +342,73 @@ public partial class DashboardViewModel : ObservableObject
             MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
+
+
+
+
+
+    #endregion
+
+    #region Exp Cursor
+    [RelayCommand]
+    public void LoadClientsWithoutActiveContracts()
+    {
+        try
+        {
+            using (var command = _context.Database.GetDbConnection().CreateCommand())
+            {
+                command.CommandText = "GetClientsWithoutActiveContracts";
+                command.CommandType = CommandType.StoredProcedure;
+
+                var p_cursor = new OracleParameter
+                {
+                    ParameterName = "p_cursor",
+                    OracleDbType = OracleDbType.RefCursor,
+                    Direction = ParameterDirection.Output
+                };
+
+                command.Parameters.Add(p_cursor);
+
+                _context.Database.OpenConnection();
+
+                using (var reader = command.ExecuteReader())
+                {
+                    var clients = new List<object>();
+
+                    while (reader.Read())
+                    {
+                        var client = new
+                        {
+                            Jmeno = reader.GetString(1),
+                            Prijmeni = reader.GetString(2)
+                        };
+                        clients.Add(client);
+                    }
+
+                    if (clients.Count == 0)
+                    {
+                        MessageBox.Show("No clients found without active contracts.",
+                                        "No Data", MessageBoxButton.OK, MessageBoxImage.Information);
+                        return;
+                    }
+
+                    CurrentTableName = "Clients Without Active Contracts";
+                    CurrentTableData = new ObservableCollection<object>(clients);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+
+
+
+
+
+
 
 
 

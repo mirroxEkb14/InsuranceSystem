@@ -21,11 +21,11 @@ public class Klient
     [Column("DATUM_NAROZENI")]
     public DateTime? DatumNarozeni { get; set; }
 
-    // Navigation property
+  
     [Column("ADRESA_ID_ADRESA")]
     public int? AdresaId { get; set; }
 
-    // Object properties
+   
     [ForeignKey("AdresaId")]
     public Adresa? Adresa { get; set; }
 

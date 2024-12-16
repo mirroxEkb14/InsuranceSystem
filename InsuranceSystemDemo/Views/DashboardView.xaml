@@ -53,20 +53,23 @@
           ItemsSource="{Binding CurrentTableData}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
           AutoGeneratingColumn="MainDataGrid_AutoGeneratingColumn"
           LoadingRow="MainDataGrid_LoadingRow">
-           
+
         </DataGrid>
 
-        <StackPanel Grid.Row="2" Grid.Column="1" VerticalAlignment="Top" Margin="5">
+        <StackPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" Margin="5,5,5,0" Height="370" Grid.RowSpan="3">
             <Button Content="Load Payments" Command="{Binding LoadPaymentsForSelectedClientCommand}" Margin="5" Height="30" />
             <Button Content="Load Debts" Command="{Binding LoadZavazkyForSelectedClientCommand}" Margin="5" Height="30" />
             <Button Content="Load Active Contracts" Command="{Binding LoadActiveContractsForSelectedClientCommand}" Margin="5" Height="30" />
             <Button Content="Total Payments" Command="{Binding LoadTotalPaymentsForSelectedClientCommand}" Margin="5" Height="30" />
             <Button Content="Last Contract Date" Command="{Binding LoadLastActiveContractDateForSelectedClientCommand}" Margin="5" Height="30" />
             <Button Content="Expired Contracts" Command="{Binding LoadExpiredContractsForSelectedClientCommand}" Margin="5" Height="30" />
-            <Button Content="Load top Debts" Command="{Binding LoadTopClientsCommand}" Margin="5" Height="30" IsCancel="True" />
-
+            <Button Content="Load Top Debts" Command="{Binding LoadTopClientsCommand}" Margin="5" Height="30" />
+            <Button Content="Clients Without Active Contracts"
+        Command="{Binding LoadClientsWithoutActiveContractsCommand}"
+        Margin="5" Height="30" />
 
         </StackPanel>
+
 
         <UniformGrid Grid.Row="3" Grid.Column="0" Rows="1" Columns="3" HorizontalAlignment="Center" Margin="10">
             <Button Content="Add" Command="{Binding AddItemCommand}" Margin="5" Width="100" Height="30" />

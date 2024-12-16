@@ -1,2 +1,7 @@
-3 views - load payments 1 v klient platby 2 load debts v klioent zavazky 3 load active contracts 
-3 funkce - 1 total payments  (get total payments) 2 last contact date (GET_LAST_ACTIVE_CONTRACT_DATE) 3 Expired Contracts ( V_EXPIRED_CONTRACTS)
+3) 3 views - load payments 1 v klient platby 2 load debts v klioent zavazky 3 load active contracts 
+4) 3 funkce - 1 total payments  (get total payments) 2 last contact date (GET_LAST_ACTIVE_CONTRACT_DATE) 3 Expired Contracts ( V_EXPIRED_CONTRACTS)
+5) 4 uložené procedury  updte delete add slozita Load top Debts (GetClientsDebtAndPayments)
+6) trg_ValidatePhotoUpload
+7) + 
+8) +
+9) imp + exp (cur_ClientsNoActiveContracts)

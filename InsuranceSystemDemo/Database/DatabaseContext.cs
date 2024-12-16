@@ -31,6 +31,11 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
 
     public DbSet<TopClientsView> TopClients { get; set; }
 
+    public DbSet<ClientWithoutActive> ClientsWithoutActiveContracts { get; set; }
+
+
+
+
 
 
     //
