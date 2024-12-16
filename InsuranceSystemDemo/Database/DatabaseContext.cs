@@ -35,6 +35,11 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
 
 
 
+    public DbSet<ZamestnanecHierarchyResult> ZamestnanecHierarchyView { get; set; }
+
+
+
+
 
 
 

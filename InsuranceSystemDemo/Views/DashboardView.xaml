@@ -71,6 +71,8 @@
             <Button Content="Clients Without Active Contracts"
         Command="{Binding LoadClientsWithoutActiveContractsCommand}"
         Margin="5" Height="30" />
+            <Button Content="Load Employee Hierarchy" Command="{Binding LoadZamestnanciHierarchyCommand}" Margin="5" Height="30" />
+
 
         </StackPanel>
 

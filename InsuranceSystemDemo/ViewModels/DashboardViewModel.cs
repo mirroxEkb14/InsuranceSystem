@@ -416,6 +416,51 @@ public partial class DashboardViewModel : ObservableObject
 
     #endregion
 
+    #region DOtaz
+    [RelayCommand]
+    public void LoadZamestnanciHierarchy()
+    {
+        var hierarchyData = _context.Set<ZamestnanecHierarchyResult>()
+            .FromSqlRaw(@"
+            SELECT 
+                LPAD(' ', LEVEL * 4, ' ') || JMENO || ' ' || PRIJMENI AS EMP_HIER,
+                ID_ZAMESTNANCE, 
+                MANAGER_ID, 
+                POBOCKY_ID_POBOCKY, 
+                LEVEL AS CONNECT_BY_LEVEL
+            FROM ZAMESTNANEC
+            START WITH MANAGER_ID IS NULL
+            CONNECT BY PRIOR ID_ZAMESTNANCE = MANAGER_ID
+            ORDER SIBLINGS BY JMENO")
+            .ToList();
+
+        Console.WriteLine($"Rows returned: {hierarchyData.Count}");
+        foreach (var item in hierarchyData)
+        {
+            Console.WriteLine($"Name: {item.FullNameHierarchy}, ID: {item.IdZamestnance}");
+        }
+
+        if (hierarchyData.Count == 0)
+        {
+            MessageBox.Show("Не найдено ни одного сотрудника в иерархии.",
+                            "Нет данных",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Information);
+            return;
+        }
+
+        CurrentTableName = "Иерархия сотрудников";
+        CurrentTableData = new ObservableCollection<object>(hierarchyData);
+    }
+
+
+
+
+
+
+
+    #endregion
+
 
 
     [RelayCommand]
