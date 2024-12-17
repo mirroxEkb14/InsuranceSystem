@@ -5,6 +5,7 @@ using InsuranceSystemDemo.Utils;
 using InsuranceSystemDemo.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Oracle.ManagedDataAccess.Client;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -25,8 +26,24 @@ public partial class DashboardView : Window
         var context = new DatabaseContext(options);
         DataContext = new DashboardViewModel(context);
 
-        
+        Closing += OnWindowClosing;
     }
+
+    private void OnWindowClosing(object? sender, CancelEventArgs e)
+    {
+        try
+        {
+            // Perform session cleanup in the database
+            using var context = new DatabaseContext(DatabaseContextGetter.GetDatabaseContextOptions());
+            CurrentSession.ClearSessionInDatabase(context);
+        }
+        catch (Exception ex)
+        {
+            // Log any errors (optional)
+            MessageBox.Show($"Error while clearing session: {ex.Message}");
+        }
+    }
+
 
     private void MainDataGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
     {

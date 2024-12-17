@@ -45,6 +45,7 @@ public partial class LoginViewModel : ObservableObject
             if (!ValidateUser(user))
                 return;
 
+            CurrentSession.SetSessionUser(context, user);
             OpenAppropriateWindow(user!);
         }
         catch (Exception ex)
@@ -59,6 +60,8 @@ public partial class LoginViewModel : ObservableObject
         var currentWindow = Application.Current.Windows
             .OfType<Window>()
             .SingleOrDefault(w => w.DataContext == this);
+
+        CurrentSession.SetTemporarySession(new DatabaseContext(DatabaseContextGetter.GetDatabaseContextOptions()));
 
         var registerWindow = new RegisterView();
         registerWindow.Show();

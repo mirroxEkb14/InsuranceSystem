@@ -1093,6 +1093,7 @@ public partial class DashboardViewModel : ObservableObject
     [RelayCommand]
     public void Logout()
     {
+        CurrentSession.ClearSessionInDatabase(_context);
         new LoginView().Show();
         CloseRegisterWindow();
     }
