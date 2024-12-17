@@ -4,4 +4,15 @@
 6) trg_ValidatePhotoUpload
 7) + 
 8) +
-9) imp + exp (cur_ClientsNoActiveContracts)
+9) imp + exp (GetClientsWithoutActiveContracts)
+10) +
+11)+
+12) +
+13) + 
+14) ?
+15)+
+16)+
+17) 
+18)+ 
+19)
+20)+

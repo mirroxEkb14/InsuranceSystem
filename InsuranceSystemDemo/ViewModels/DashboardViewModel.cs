@@ -335,13 +335,99 @@ public partial class DashboardViewModel : ObservableObject
             }
 
             CurrentTableName = "Top Clients";
-            CurrentTableData = new ObservableCollection<object>(topClients);
+            CurrentTableData = new ObservableCollection<object>(topClients.Cast<object>());
+
         }
         catch (Exception ex)
         {
             MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
+
+
+
+    [RelayCommand]
+    public void LoadTopClientsByContracts()
+    {
+        try
+        {
+            var topClients = _context.TopClientsByContracts
+                .FromSqlRaw("BEGIN GetTopClientsByContractCount(:p1); END;",
+                            new OracleParameter("p1", OracleDbType.RefCursor, ParameterDirection.Output))
+                .ToList();
+
+            if (topClients.Count == 0)
+            {
+                MessageBox.Show("No clients found.", "No Data", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            CurrentTableName = "Top Clients By Contracts";
+            CurrentTableData = new ObservableCollection<object>(
+    topClients.Cast<object>()
+);
+
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+
+
+    [RelayCommand]
+    public void LoadEmployeesWithoutSubordinates()
+    {
+        try
+        {
+            var employees = _context.EmployeesWithoutSubordinates
+                .FromSqlRaw("BEGIN GetEmployeesWithoutSubordinates(:p1); END;",
+                            new OracleParameter("p1", OracleDbType.RefCursor, ParameterDirection.Output))
+                .ToList();
+
+            if (employees.Count == 0)
+            {
+                MessageBox.Show("No employees without subordinates found.", "No Data", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            CurrentTableName = "Employees Without Subordinates";
+            CurrentTableData = new ObservableCollection<object>(employees.Cast<object>());
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    [RelayCommand]
+    public void LoadTop5OldestContracts()
+    {
+        try
+        {
+            var oldestContracts = _context.Top5OldestContracts
+                .FromSqlRaw("BEGIN GetTop5EmployeesWithOldestContracts(:p1); END;",
+                            new OracleParameter("p1", OracleDbType.RefCursor, ParameterDirection.Output))
+                .ToList();
+
+            if (oldestContracts.Count == 0)
+            {
+                MessageBox.Show("No records found.", "No Data", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            CurrentTableName = "Top 5 Oldest Contracts";
+            CurrentTableData = new ObservableCollection<object>(oldestContracts.Cast<object>());
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+
+
 
 
 

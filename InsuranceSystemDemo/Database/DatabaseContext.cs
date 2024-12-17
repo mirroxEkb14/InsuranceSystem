@@ -38,6 +38,17 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
     public DbSet<ZamestnanecHierarchyResult> ZamestnanecHierarchyView { get; set; }
 
 
+    public DbSet<TopClientsByContractsView> TopClientsByContracts { get; set; }
+
+
+    public DbSet<EmployeesWithoutSubordinatesView> EmployeesWithoutSubordinates { get; set; }
+
+    public DbSet<Top5OldestContractsView> Top5OldestContracts { get; set; }
+
+
+
+
+
 
 
 
@@ -88,6 +99,13 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbCont
         ConfigureExpiredContractsView(modelBuilder);
 
         modelBuilder.Entity<TopClientsView>().HasNoKey();
+        modelBuilder.Entity<TopClientsByContractsView>().HasNoKey();
+        modelBuilder.Entity<EmployeesWithoutSubordinatesView>()
+        .HasNoKey();
+
+        modelBuilder.Entity<Top5OldestContractsView>()
+        .HasNoKey();
+
     }
 
     #region Table Configuring Logic
